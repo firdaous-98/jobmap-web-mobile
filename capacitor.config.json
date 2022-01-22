@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "jobmap_web_mobile",
+	"webDir": "www",
+	"bundledWebRuntime": false
+}

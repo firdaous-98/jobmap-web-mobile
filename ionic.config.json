@@ -1,0 +1,7 @@
+{
+  "name": "jobmap_web_mobile",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
