@@ -1,0 +1,14 @@
+<app-header
+  [showBack]="true">
+</app-header>
+<ion-content>
+  <div class="container">
+    <app-question
+      *ngIf="questionsArray"
+      [question]="currentQuestion"
+      [numberOfQuestions]="numberOfQuestions"
+      (nextQuestionEvent)="getResponse($event)">
+    </app-question>
+  </div>
+  
+</ion-content>

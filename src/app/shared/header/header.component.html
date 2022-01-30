@@ -1,0 +1,14 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+        <ion-button 
+          *ngIf="showBack"
+          (click)="onBackClicked()">
+        <ion-icon slot="icon-only" name="arrow-back">
+        </ion-icon>
+    </ion-button>
+    </ion-buttons>  
+    <img src="./assets/img/graduation_hat.png" alt="logo" slot="end">
+  </ion-toolbar>
+</ion-header>
+

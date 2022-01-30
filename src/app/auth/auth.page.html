@@ -1,0 +1,57 @@
+<ion-content>
+  <div class="title-container">
+    <img src="./assets/img/graduation_hat.png" alt="logo">
+  </div>
+
+  <form #form="ngForm" (ngSubmit)="onSubmit()">
+    <ion-card>
+      <ng-container *ngIf="submissionType === 'join'">
+        <ion-item>
+          <ion-label position="floating">Nom</ion-label>
+          <ion-input #NomInput="ngModel" ngModel type="text" name="nom" required></ion-input>
+        </ion-item>
+        <ion-text *ngIf="!NomInput.valid && NomInput.touched" color="danger">
+            Veuillez renseigner votre nom
+        </ion-text>
+      </ng-container>
+
+      <ng-container *ngIf="submissionType === 'join'">
+        <ion-item>
+          <ion-label position="floating">Prénom</ion-label>
+          <ion-input #PrenomInput="ngModel" ngModel type="text" name="prenom" required></ion-input>
+        </ion-item>
+        <ion-text *ngIf="!PrenomInput.valid && PrenomInput.touched" color="danger">
+            Veuillez renseigner votre prénom
+        </ion-text>
+      </ng-container>
+
+      <ion-item>
+        <ion-label position="floating">Adresse Email</ion-label>
+        <ion-input #EmailInput="ngModel" ngModel [pattern]="regexEmail" type="email" name="email" required></ion-input>
+      </ion-item>
+      <ion-text *ngIf="!EmailInput.valid && EmailInput.touched" color="danger">
+          Veuillez renseigner une adresse email valide
+      </ion-text>
+
+      <ion-item>
+        <ion-label position="floating">Mot de passe</ion-label>            
+        <ion-icon (click)="toggleShowPassword()" slot="end" [name]="passwordType=='password' ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        <ion-input #PasswordInput="ngModel" ngModel [type]="passwordType" name="password" required></ion-input>
+      </ion-item>
+      <ion-text *ngIf="!PasswordInput.valid && PasswordInput.touched" color="danger">
+          Veuillez renseigner votre mot de passe
+      </ion-text>
+
+      <ion-button [disabled]="!form.valid" type="submit" expand="block">
+        {{ submissionType === 'login' ? 'Se connecter' : 'S\'inscrire' }}
+      </ion-button>
+
+    </ion-card>
+  </form>
+  <div class="toggle-text">
+      {{ submissionType === 'login' ? 'Vous n\'avez pas de compte ?' : 'Vous avez déjà un compte ?' }}
+      <ion-text (click)="toggleText()" color="primary">
+          {{ submissionType === 'login' ? 'Créer un compte' : 'Se connecter' }}
+      </ion-text>
+  </div>
+</ion-content>
