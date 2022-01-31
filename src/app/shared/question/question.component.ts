@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, SimpleChanges } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { CodeHolland } from 'src/app/core/enums/code-holland.enum';
 import { Level } from 'src/app/core/enums/level.enum';
@@ -12,6 +12,19 @@ import { Question } from 'src/app/core/models/question.model';
 export class QuestionComponent {
 
   @Input()
+  set isBack(value: boolean){
+    debugger
+    if(value){
+      if(this.index != 0){
+        this.index--;
+      }
+      else {
+        this.previousQuestionEvent.emit();
+      }
+    }
+  }
+
+  @Input()
   question: Question;
 
   @Input()
@@ -20,7 +33,10 @@ export class QuestionComponent {
   @Output()
   nextQuestionEvent = new EventEmitter();
 
-  response: CodeHolland;
+  @Output()
+  previousQuestionEvent = new EventEmitter();
+
+  response: string;
 
   stepFourResponses: CodeHolland[] = [];
 
@@ -39,20 +55,22 @@ export class QuestionComponent {
     else {
       if(this.question.id_step == '4'){
         for (let i = 0; i < this.currentChoice; i++) {
-          this.stepFourResponses.push(this.question.choix[0].code_holland);
+          this.stepFourResponses.push(this.getCodeHolland(this.question.choix[0].code_holland));
         }
+
+        this.currentChoice = undefined;
+        
         if(this.index < this.question.choix.length - 1){
           this.index++;
         }
         else {
           this.index = 0;
-          this.currentChoice = undefined;
           this.nextQuestionEvent.emit(this.stepFourResponses);
           this.stepFourResponses = [];
         }
       }
       else {
-        this.nextQuestionEvent.emit(this.response);
+        this.nextQuestionEvent.emit(this.getCodeHolland(this.response));
         this.response = undefined;
       }
       
@@ -66,5 +84,22 @@ export class QuestionComponent {
   selectChoiceBox(value: any) {
     console.log(value);
     this.currentChoice = value;
+  }
+
+  getCodeHolland(code: string): CodeHolland {
+    switch(code){
+      case "R":
+        return CodeHolland.R;
+      case "I":
+        return CodeHolland.I;
+      case "A":
+        return CodeHolland.A;
+      case "S":
+        return CodeHolland.S;
+      case "E":
+        return CodeHolland.E;
+      case "C":
+        return CodeHolland.C;
+    }
   }
 }
