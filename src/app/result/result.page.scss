@@ -1,3 +1,97 @@
 ion-content{
     --ion-background-color:rgb(241, 240, 237);
 }
+
+.container {
+    background-color: #6c5ce7;
+    height: 100%;
+    padding-top: 7vh;
+    .item {
+        width: 75%;
+        margin: auto;
+        .content {
+            padding-top: 5vh;
+            .title {
+                h4 {
+                    color: #ecf0f1;
+                }
+            }
+            .text {
+                span {
+                    color: #ecf0f1;
+                }
+            }
+            .border {
+                border: 2px solid #2d3436;
+                width: 100%;
+                display: grid;
+                margin-top: 10px;
+                padding-top: auto;
+                padding-left: 10px;
+                color: #ecf0f1;
+                .line {
+                    margin-top: 5px;
+                    margin-bottom: 5px;
+                    .char {
+                        font-weight: 900;
+                    }
+                }
+            }
+        }
+
+        .metier {
+            margin-top: 5vh;
+            background-color: #f1c40f;
+            .content {
+                text-align: center;
+                padding-top: 15px;
+                height: 50px;
+                // margin-top: auto;
+                margin: auto;
+                color: #ecf0f1;
+                font-weight: 900;
+            }
+        }
+    }
+    .chart-p {
+        // width: 80%;
+        // display: block;
+        height: 170px;
+        position: relative;
+        border-left: 1px solid #f1c40f;
+        border-bottom: 1px solid #f1c40f;
+        margin: auto;
+        .chart-text {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            font-weight: 900;
+            color: #ecf0f1;
+        }
+    }
+
+    .chart {
+        display: inline-block;
+        width: 25%;
+        background-color: #ecf0f1;
+        position: absolute;
+        bottom: 0px;
+        left: 0;
+    }
+
+    .chart-a {
+        margin-left: 5%;
+        background-color: #f1c40f;
+    }
+
+    .chart-b {
+        left: 37.5%;
+        background-color: #e74c3c;
+    }
+    .chart-c {
+        left: 70%;
+        background-color: #27ae60;
+    }
+}
