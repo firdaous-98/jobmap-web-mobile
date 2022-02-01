@@ -11,14 +11,14 @@ export class HeaderComponent implements OnInit {
   showBack: boolean;
 
   @Output()
-  backClickEvent = new EventEmitter<boolean>();
+  backClickEvent = new EventEmitter();
 
   constructor() { }
 
   ngOnInit() {}
 
   onBackClicked() {
-    this.backClickEvent.emit(true);
+    this.backClickEvent.emit();
   }
 
 }

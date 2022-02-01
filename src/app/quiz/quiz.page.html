@@ -1,6 +1,6 @@
 <app-header
   [showBack]="true"
-  (backClickEvent)="backClick($event)">
+  (backClickEvent)="getPreviousQuestion()">
 </app-header>
 <ion-content>
   <div class="container">
@@ -8,9 +8,9 @@
       *ngIf="questionsArray"
       [isBack]="isBack"
       [question]="currentQuestion"
+      [previousResponse]="previousResponse"
       [numberOfQuestions]="numberOfQuestions"
-      (nextQuestionEvent)="getResponse($event)"
-      (previousQuestionEvent)="getPreviousQuestion()">
+      (nextQuestionEvent)="getResponse($event)">
     </app-question>
   </div>
   

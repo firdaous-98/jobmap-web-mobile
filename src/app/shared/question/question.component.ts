@@ -3,6 +3,7 @@ import { ToastController } from '@ionic/angular';
 import { CodeHolland } from 'src/app/core/enums/code-holland.enum';
 import { Level } from 'src/app/core/enums/level.enum';
 import { Question } from 'src/app/core/models/question.model';
+import { Reponse } from 'src/app/core/models/reponse.model';
 
 @Component({
   selector: 'app-question',
@@ -13,13 +14,12 @@ export class QuestionComponent {
 
   @Input()
   set isBack(value: boolean){
-    debugger
     if(value){
       if(this.index != 0){
         this.index--;
       }
       else {
-        this.previousQuestionEvent.emit();
+        // this.previousQuestionEvent.emit();
       }
     }
   }
@@ -30,20 +30,31 @@ export class QuestionComponent {
   @Input()
   numberOfQuestions: number;
 
-  @Output()
-  nextQuestionEvent = new EventEmitter();
+  @Input()
+  set previousResponse(value: CodeHolland | CodeHolland[]){
+    debugger
+    if(value != null && typeof value == 'number'){
+      this.response = this.getCodeHollandEnumToString(value);
+    }
+    else {
+      switch((value as CodeHolland[])?.length){
+        case 1:
+          this.currentChoice = Level.Faible;
+        case 2: 
+          this.currentChoice = Level.Moyen;
+        case 3:
+          this.currentChoice = Level.Fort;
+      }
+    }
+  }
 
   @Output()
-  previousQuestionEvent = new EventEmitter();
+  nextQuestionEvent = new EventEmitter<Reponse>();
 
   response: string;
-
   stepFourResponses: CodeHolland[] = [];
-
   currentChoice: Level;
-
   Level = Level;
-
   index = 0;
 
   constructor(public toastController: ToastController) {}
@@ -55,7 +66,7 @@ export class QuestionComponent {
     else {
       if(this.question.id_step == '4'){
         for (let i = 0; i < this.currentChoice; i++) {
-          this.stepFourResponses.push(this.getCodeHolland(this.question.choix[0].code_holland));
+          this.stepFourResponses.push(this.getCodeHollandStringToEnum(this.question.choix[0].code_holland));
         }
 
         this.currentChoice = undefined;
@@ -65,12 +76,20 @@ export class QuestionComponent {
         }
         else {
           this.index = 0;
-          this.nextQuestionEvent.emit(this.stepFourResponses);
+          const reponse: Reponse = {
+            id_quest: this.question.id_quest,
+            code_holland: this.stepFourResponses
+          }
+          this.nextQuestionEvent.emit(reponse);
           this.stepFourResponses = [];
         }
       }
       else {
-        this.nextQuestionEvent.emit(this.getCodeHolland(this.response));
+        const reponse: Reponse = {
+          id_quest: this.question.id_quest,
+          code_holland: this.getCodeHollandStringToEnum(this.response)
+        }
+        this.nextQuestionEvent.emit(reponse);
         this.response = undefined;
       }
       
@@ -82,11 +101,10 @@ export class QuestionComponent {
   }
 
   selectChoiceBox(value: any) {
-    console.log(value);
     this.currentChoice = value;
   }
 
-  getCodeHolland(code: string): CodeHolland {
+  getCodeHollandStringToEnum(code: string): CodeHolland {
     switch(code){
       case "R":
         return CodeHolland.R;
@@ -100,6 +118,23 @@ export class QuestionComponent {
         return CodeHolland.E;
       case "C":
         return CodeHolland.C;
+    }
+  }
+
+  getCodeHollandEnumToString(code: CodeHolland): string {
+    switch(code){
+      case CodeHolland.R:
+        return "R";
+      case CodeHolland.I:
+        return "I";
+      case CodeHolland.A:
+        return "A";
+      case CodeHolland.S:
+        return "S";
+      case CodeHolland.E:
+        return "E";
+      case CodeHolland.C:
+        return "C";
     }
   }
 }

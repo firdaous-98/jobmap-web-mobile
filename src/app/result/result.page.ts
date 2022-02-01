@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Score } from '../core/models/score.model';
 
 @Component({
   selector: 'app-result',
   templateUrl: './result.page.html',
   styleUrls: ['./result.page.scss'],
 })
-export class ResultPage implements OnInit {
+export class ResultPage {
+
+  resultat: Score[];
 
   constructor(private router: Router) {
-    console.log(this.router.getCurrentNavigation().extras.state.example);
+    this.resultat = this.router.getCurrentNavigation().extras.state?.resultat;
    }
-
-  ngOnInit() {
-  }
 
 }
