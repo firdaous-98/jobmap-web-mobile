@@ -95,4 +95,13 @@ export class AppService {
         return this.http.post<any>(this.API_ENDPOINT + 'resultat/get_metier_typebac.php', body);
     }
 
+    /**
+     * get partner score
+     * @param adresse_email the partner email address
+     */
+    getPartnerScore(adresse_email: string): Observable<any> {
+        const body = { adresse_email };
+        return this.http.post<any>(this.API_ENDPOINT + 'resultat/get_partner_score.php', body);
+    }
+
 }

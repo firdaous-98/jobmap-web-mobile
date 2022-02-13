@@ -81,18 +81,97 @@
             </tbody> 
         </table>
     </div>
+
+    <ng-container *ngIf="!showOtherResult">
+        <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Parent"> 
+            Souhaitez-vous comparer votre résultat avec celui de votre fils/ étudiant ?
+        </ion-label>
+        <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Etudiant"> 
+            Souhaitez-vous comparer votre résultat avec celui de votre parent/ professeur ?
+        </ion-label>
+        <ion-item>
+            <ion-label position="floating">Adresse Email</ion-label>
+            <ion-input #EmailInput="ngModel" ngModel [(ngModel)]="emailPartner" [pattern]="regexEmail" type="email" name="email" required></ion-input>
+        </ion-item>
+        <ion-text *ngIf="!EmailInput.valid && EmailInput.touched" color="danger">
+            Veuillez renseigner une adresse email valide
+        </ion-text>
+        <ion-button class="button" *ngIf="EmailInput.valid && scorePartner == null" (click)="getPartnerScore()">Voir le résultat obtenu par eux</ion-button>
+    </ng-container>
     
-    <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Parent"> 
-        Souhaitez-vous comparer votre résultat avec celui de votre fils/ étudiant ?
-    </ion-label>
-    <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Etudiant"> 
-        Souhaitez-vous comparer votre résultat avec celui de votre parent/ professeur ?
-    </ion-label>
-    <ion-item>
-        <ion-label position="fixed">Saisir leur adresse e-mail :</ion-label><br>
-        <ion-input placeholder="exemple@exemple.com" [(ngModel)]="emailSon"></ion-input>
-    </ion-item>
     
+
+    <ng-container *ngIf="!twoEquals && showOtherResult">
+            <div class="container">
+                <div class="item">
+                    <div class="chart-p">
+                        <div class="chart chart-a" [style.height]="OtherFirstHeight">
+                            <span class="chart-text"> {{ autreResultat[0].key }} </span>
+                        </div>
+                        <div class="chart chart-b" [style.height]="OtherSecondHeight">
+                            <span class="chart-text"> {{ autreResultat[1].key }} </span>
+                        </div>
+                        <div class="chart chart-c" [style.height]="OtherThirdHeight">
+                            <span class="chart-text"> {{ autreResultat[2].key }} </span>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="item">
+                    <div class="content">
+                        <div class="title">
+                            <h4>Explication de {{ OtherCodeHollandCompose }}</h4>
+                        </div>
+                        <div class="border">
+                            <div class="line"><span class="char"> {{ autreResultat[0].key }}: </span><span class="word"> {{ getExplanation(autreResultat[0].key) }} </span></div>
+                            <div class="line"><span class="char"> {{ autreResultat[1].key }}: </span><span class="word"> {{ getExplanation(autreResultat[1].key) }} </span></div>
+                            <div class="line"><span class="char"> {{ autreResultat[2].key }}: </span><span class="word"> {{ getExplanation(autreResultat[2].key) }} </span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <div class="table">
+            <table class="center" *ngIf="showOtherResult && OtherListeMetiers?.length > 0">
+                <thead>
+                    <tr>
+                        <th>Métier(s)</th>
+                        <th>D</th>
+                        <th>P</th>
+                        <th>C</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let metier of OtherListeMetiers">
+                        <td>{{ metier.libelle_metier }}</td>
+                        <td>{{ metier.id_donnees }}</td>
+                        <td>{{ metier.id_personnes }}</td>
+                        <td>{{ metier.id_choses }}</td>
+                    </tr>
+                </tbody> 
+            </table>
+        </div>
+        <div class="table" *ngIf="showOtherResult && [anneeEtude.College3, anneeEtude.TroncCommun].includes(annee_etude)">
+            <table class="center" *ngIf="OtherListeTypeBac?.length > 0">
+                <thead>
+                    <tr>
+                        <th>Les types de bac convenables à ce/ces métier(s)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let typebac of OtherListeTypeBac">
+                        <td>{{ typebac.libelle_typebac }}</td>
+                    </tr>
+                </tbody> 
+            </table>
+        </div>
+
+    <ng-container *ngIf="showNoOtherScore">
+            <ion-text>L'utilisateur ayant cette adresse email n'a pas encore passé ce quiz</ion-text>
+            <ion-button class="button">Invitez-les à passer le quiz</ion-button>
+    </ng-container>
+    
+
     <ion-button class="button" (click)="generatePdf()">Télécharger votre résultat</ion-button>
     <ion-button class="button" (click)="redoQuiz()">Refaire le quiz</ion-button>
 

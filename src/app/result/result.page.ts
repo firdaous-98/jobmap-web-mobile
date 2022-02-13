@@ -35,7 +35,12 @@ export class ResultPage {
 
   public chartOptions: Partial<ChartOptions>;
 
+  regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  emailPartner!: string;
+  scorePartner?: any;
+
   resultat: Score[];
+  autreResultat: Score[];
   fromQuiz!: boolean;
 
   id_type_utilisateur!: TypeUtilisateur;
@@ -46,17 +51,27 @@ export class ResultPage {
 
   codeHollandCompose: string;
   twoEquals: boolean = false;
+  showOtherResult: boolean = false;
 
   FirstHeight: string = '';
   SecondHeight: string = '';
   ThirdHeight: string = '';
 
+  OtherFirstHeight: string = '';
+  OtherSecondHeight: string = '';
+  OtherThirdHeight: string = '';
+
   listeMetiers: Metier[];
   listeTypeBac: TypeBac[];
   id_codeholland!: number;
 
+  OtherCodeHollandCompose: string;
+  OtherListeMetiers: Metier[];
+  OtherListeTypeBac: TypeBac[];
+
+  showNoOtherScore = false;
+
   constructor(private router: Router, private service: AppService) {
-    debugger
     this.resultat = this.router.getCurrentNavigation().extras.state?.resultat;
     this.fromQuiz = this.router.getCurrentNavigation().extras.state?.fromQuiz;
     this.tokenInfo = UserHelper.getTokenInfo();
@@ -64,7 +79,6 @@ export class ResultPage {
 
 
   async ngOnInit() {
-    debugger
     if(this.resultat != null) {
       this.checkEquality();
       if(!this.twoEquals) {
@@ -137,6 +151,42 @@ export class ResultPage {
       .subscribe(result => {
       console.log(result);
     });
+  }
+
+  async getPartnerScore() {
+    this.autreResultat = [];
+    var result = await this.service.getPartnerScore(this.emailPartner).toPromise();
+    if(result?.scoring != undefined) {
+      this.showNoOtherScore = false;
+      this.scorePartner = result;
+      console.log(this.scorePartner);
+      this.OtherCodeHollandCompose = this.scorePartner?.scoring;
+
+      var score = this.scorePartner?.scoring.split("");
+
+      this.autreResultat.push({ key: score[0], value: parseInt(this.scorePartner?.score_firstletter) });
+      this.autreResultat.push({ key: score[1], value: parseInt(this.scorePartner?.score_secondletter) });
+      this.autreResultat.push({ key: score[2], value: parseInt(this.scorePartner?.score_thirdletter) });
+
+      const total = this.autreResultat.reduce((a, b) => a + b.value, 0);
+      this.OtherFirstHeight = (this.autreResultat[0].value * 170 / total).toString() + 'px';
+      this.OtherSecondHeight = (this.autreResultat[1].value * 170 / total).toString() + 'px';
+      this.OtherThirdHeight = (this.autreResultat[2].value * 170 / total).toString() + 'px';
+
+      var result = await this.service.getMetiers(this.OtherCodeHollandCompose, this.scorePartner?.id_nf).toPromise();
+      this.OtherListeMetiers = result as unknown as Metier[];
+
+      const id_metiers = this.OtherListeMetiers.map(e => e.id_metier);
+      var result2 = await this.service.getMetierTypeBac(id_metiers).toPromise();
+      this.OtherListeTypeBac = result2;
+
+      this.showOtherResult = true;
+      
+    }
+
+    else {
+      this.showNoOtherScore = true;
+    }
   }
 
   getExplanation(code: string) {
