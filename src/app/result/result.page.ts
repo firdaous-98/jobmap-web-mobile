@@ -330,6 +330,16 @@ export class ResultPage {
         }
     };
     pdfMake.createPdf(documentDefinition).download();
+    this.service.resultDownloaded(
+      this.tokenInfo.adresse_email,
+      parseInt(this.tokenInfo.id_utilisateur),
+      this.id_codeholland,
+      this.codeHollandCompose,
+      parseInt(localStorage.getItem('id_nf'))
+    ).subscribe(result => {
+      console.log(result);
+      
+    })
    }
 
    getBase64Image() {

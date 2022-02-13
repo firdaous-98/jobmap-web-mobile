@@ -104,4 +104,23 @@ export class AppService {
         return this.http.post<any>(this.API_ENDPOINT + 'resultat/get_partner_score.php', body);
     }
 
+    /**
+     * save download info
+     */
+    resultDownloaded(
+        adresse_email: string, 
+        id_utilisateur: number, 
+        id_codeholland: number, 
+        code_hol_compose: string,
+        id_nf: number): Observable<any> {
+        const body = { 
+            adresse_email, 
+            id_utilisateur,
+            id_codeholland, 
+            code_hol_compose,
+            id_nf
+        };
+        return this.http.post<any>(this.API_ENDPOINT + 'resultat/result_downloaded.php', body);
+    }
+
 }
