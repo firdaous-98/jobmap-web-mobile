@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { ResultPageRoutingModule } from './result-routing.module';
+import { InfoPageRoutingModule } from './info-routing.module';
 
-import { ResultPage } from './result.page';
+import { InfoPage } from './info.page';
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
@@ -15,8 +15,8 @@ import { SharedModule } from '../shared/shared.module';
     FormsModule,
     IonicModule,
     SharedModule,
-    ResultPageRoutingModule
+    InfoPageRoutingModule
   ],
-  declarations: [ResultPage]
+  declarations: [InfoPage]
 })
-export class ResultPageModule {}
+export class InfoPageModule {}

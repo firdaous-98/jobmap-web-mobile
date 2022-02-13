@@ -5,3 +5,8 @@ export interface Choix {
     libellechoix: string;
     code_holland: string;
 }
+
+export interface ResultChoix {
+    id: string;
+    code_holland: CodeHolland;
+}

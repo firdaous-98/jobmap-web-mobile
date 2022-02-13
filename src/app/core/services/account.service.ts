@@ -1,6 +1,7 @@
-import { Injectable } from "@angular/core";
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
+import { UserUpdate } from "../models/user.model";
 
 @Injectable({
     providedIn: 'root'
@@ -34,4 +35,13 @@ export class AccountService {
         const bodyLogin = { nom, prenom, adresse_email, motdepasse };
         return this.http.post<any>(this.API_ENDPOINT + 'create_user.php', bodyLogin);
     }
+
+    /**
+     * Update user
+     * @param user user to update
+     */
+    update(user: UserUpdate): Observable<any> {
+        return this.http.post<any>(this.API_ENDPOINT + 'update_user.php', user);
+    }
+
 }

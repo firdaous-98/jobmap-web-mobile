@@ -1,20 +1,31 @@
 <ion-label class="numero-etape">étape 0{{ question.id_step }}/04</ion-label>
 <ion-label class="libelle-etape">{{ question.Libelle_step }}</ion-label>
 <ion-card>
-    <ng-container *ngIf="question.id_step != '4'">
+    <ng-container *ngIf="question.id_step != '4' && question.id_step != '2'">
         <ion-list>
             <ion-radio-group [value]="response" (ionChange)="selectChoice($event)">
                 <ion-list-header>
-                    <ion-label>{{question.Libelle_quest}}/{{numberOfQuestions}}</ion-label>
+                    <ion-label>{{ question.Libelle_quest }}/{{ numberOfQuestions }}</ion-label>
                 </ion-list-header>
             
                 <ion-item *ngFor="let choix of question.choix">
-                    <p>{{ choix.libellechoix }}</p>
+                    <ion-label>{{ choix.libellechoix }}</ion-label>
                     <ion-radio slot="start" [value]="choix.code_holland"></ion-radio>
                 </ion-item>
             </ion-radio-group>
         </ion-list>
     </ng-container>
+
+    <ng-container *ngIf="question.id_step == '2'">
+        <ion-card-title>{{ question.Libelle_quest }}/{{ numberOfQuestions }}</ion-card-title>
+        <ion-list>
+            <ion-item *ngFor="let choix of question.choix;let i=index">
+                    <ion-label>{{ choix.libellechoix }}</ion-label>
+                <ion-checkbox slot="start" (ionChange)="selectStepTwoResponses($event, i)"></ion-checkbox>
+            </ion-item>
+        </ion-list>
+    </ng-container>
+    
     <ng-container *ngIf="question.id_step == '4'">
         <ion-card-title>{{ question.choix[index].libellechoix }}</ion-card-title>
         <ion-grid>

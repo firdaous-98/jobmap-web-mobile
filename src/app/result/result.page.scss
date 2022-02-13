@@ -3,7 +3,7 @@ ion-content{
 }
 
 .container {
-    background-color: #6c5ce7;
+    // background-color: #6c5ce7;
     height: 100%;
     padding-top: 7vh;
     .item {
@@ -13,22 +13,22 @@ ion-content{
             padding-top: 5vh;
             .title {
                 h4 {
-                    color: #ecf0f1;
+                    color: #0f0f0f;
                 }
             }
             .text {
                 span {
-                    color: #ecf0f1;
+                    color: #0f0f0f;
                 }
             }
             .border {
-                border: 2px solid #2d3436;
+                border: 2px solid #858b8d;
                 width: 100%;
                 display: grid;
                 margin-top: 10px;
                 padding-top: auto;
                 padding-left: 10px;
-                color: #ecf0f1;
+                color: #0f0f0f;
                 .line {
                     margin-top: 5px;
                     margin-bottom: 5px;
@@ -95,3 +95,78 @@ ion-content{
         background-color: #27ae60;
     }
 }
+
+.button {
+    --background: #ff9f04;
+    bottom: 10px;
+    display: flex;
+  }
+
+.button.redo {
+    position: fixed;
+}
+
+  ion-card {
+    box-shadow: none;
+    border: 1px solid #e1e1e1;
+    margin-top: 50px;
+    width: 450px;
+  
+    ion-card-title {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+        font-size: 1.5rem !important;
+    }
+
+    ion-card-content {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+        font-size: 1rem !important;
+    }
+  }
+
+  table {
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
+    padding: 20px;
+  }
+
+  .center {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  thead {
+    background: SteelBlue;
+    color: white;
+  }
+  
+  th,
+  td {
+    padding: 5px 10px;
+  }
+  
+  tbody tr:nth-child(even) {
+    background: WhiteSmoke;
+  }
+  
+  tbody tr td:nth-child(2) {
+    text-align:center;
+  }
+  
+  tbody tr td:nth-child(3),
+  tbody tr td:nth-child(4) {
+    text-align: right;
+    font-family: monospace;
+  }
+ 
+  
+//   table, th, td {
+//     border: 1px solid black;
+//   }
+//   table{
+//     border-collapse: collapse;
+//   }
+  
+  

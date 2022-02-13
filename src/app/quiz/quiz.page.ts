@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CodeHolland } from '../core/enums/code-holland.enum';
 import { Question } from '../core/models/question.model';
@@ -29,9 +29,9 @@ export class QuizPage {
    initQuestions() {
     this.service.get_questionsArray().subscribe((result: Question[]) => {
       this.questionsArray = result;
-      this.currentQuestion = this.questionsArray[0];
+      // this.currentQuestion = this.questionsArray[0];
+      this.currentQuestion = this.questionsArray.find(e => e.id_step == "4" && e.id_quest == "49")
       this.numberOfQuestions = this.questionsArray.filter(e => e.id_step == this.currentQuestion.id_step).length;
-      // this.currentQuestion = this.questionsArray.find(e => e.id_step == "4" && e.id_quest == "46")
     });
   }
 
@@ -40,14 +40,13 @@ export class QuizPage {
   }
 
   getResponse(reponse: Reponse){
-    debugger
     var existingQuestionIndex = this.reponses.findIndex(e => e.id_quest == this.currentQuestion.id_quest);
     if (existingQuestionIndex != -1){
       this.reponses[existingQuestionIndex].code_holland = reponse.code_holland;
     }
     else {
       this.reponses.push(reponse);
-    }
+    }    
 
     var nextQuestion = this.questionsArray.find(question => 
       question.id_quest == (this.currentQuestion.id_quest != '40' ? this.incrementString(this.currentQuestion.id_quest) : '46'));
@@ -58,18 +57,17 @@ export class QuizPage {
     }
     else {
       var resultat = this.composeCodeHolland();
-      this.router.navigate(['/result'], { state: { resultat: resultat }});
+      this.router.navigate(['/result'], { state: { resultat: resultat, fromQuiz: true }});
     }
   }
 
   getPreviousQuestion(){
-    debugger
     var previousQuestion = this.questionsArray.find(question => 
       question.id_quest == (this.currentQuestion.id_quest != '46' ? this.decrementString(this.currentQuestion.id_quest) : '40'));
       
     if(previousQuestion != null){
       this.numberOfQuestions = this.questionsArray.filter(e => e.id_step == previousQuestion.id_step).length;
-      this.previousResponse = this.reponses.find(e => e.id_quest == previousQuestion.id_quest)?.code_holland;
+      this.previousResponse = this.reponses.find(e => e.id_quest == previousQuestion.id_quest)?.code_holland as CodeHolland;
       this.currentQuestion = previousQuestion;
     }
     else {
@@ -90,15 +88,13 @@ export class QuizPage {
   }
 
   composeCodeHolland() {
-
     this.reponses.forEach(reponse => {
-      debugger
       if(typeof reponse.code_holland == 'number'){
         this.incrementScore(reponse.code_holland);
       }
       else {
-        reponse.code_holland.forEach(code => {
-          this.incrementScore(code);
+        reponse.code_holland.forEach(choix => {
+          this.incrementScore(choix.code_holland);
         })
       }
     });

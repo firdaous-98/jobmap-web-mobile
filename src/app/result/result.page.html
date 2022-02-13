@@ -1,42 +1,85 @@
+<app-header
+  [showBack]="fromQuiz">
+</app-header>
 <ion-content>
-    <div class="container">
-        <div class="item">
-            <div class="chart-p">
-                <div class="chart chart-a" [style.height]="RHeight">
-                    <span class="chart-text"> R </span>
-                </div>
-                <div class="chart chart-b" [style.height]="IHeight">
-                    <span class="chart-text"> I </span>
-                </div>
-                <div class="chart chart-c" [style.height]="AHeight">
-                    <span class="chart-text"> A </span>
-                </div>
-            </div>
-        </div>
-
-        <div class="item">
-            <div class="content">
-                <div class="title">
-                    <h4>Explication de RIA</h4>
-                </div>
-                <div class="text">
-                    <span>Cela pourra vous aidez à trouver le métier qui correspond à votre profil</span>
-                </div>
-                <div class="border">
-                    <div class="line"><span class="char">R:</span><span class="word">Realistic</span></div>
-                    <div class="line"><span class="char">I:</span><span class="word">Interval</span></div>
-                    <div class="line"><span class="char">A:</span><span class="word">Aaaaaa</span></div>
+    <ng-container *ngIf="twoEquals">
+        <ion-card>
+            <ion-card-title> Oops ! </ion-card-title>
+            <ion-card-content>
+                Vos réponses n'ont pas pu donné un résultat précis, veuillez refaire le quiz :)
+            </ion-card-content>
+        </ion-card>
+        <ion-button class="button redo" (click)="redoQuiz()">Refaire le quiz</ion-button>
+    </ng-container>
+    
+    <ng-container *ngIf="!twoEquals">
+        <div class="container">
+            <div class="item">
+                <div class="chart-p">
+                    <div class="chart chart-a" [style.height]="FirstHeight">
+                        <span class="chart-text"> {{ resultat[0].key }} </span>
+                    </div>
+                    <div class="chart chart-b" [style.height]="SecondHeight">
+                        <span class="chart-text"> {{ resultat[1].key }} </span>
+                    </div>
+                    <div class="chart chart-c" [style.height]="ThirdHeight">
+                        <span class="chart-text"> {{ resultat[2].key }} </span>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="item">
-            <div class="metier">
+        
+            <div class="item">
                 <div class="content">
-                    <span>
-                        10 Metier
-                    </span>
+                    <div class="title">
+                        <h4>Explication de {{ codeHollandCompose }}</h4>
+                    </div>
+                    <div class="text">
+                        <span>Cela pourra vous aidez à trouver le métier qui correspond à votre profil</span>
+                    </div>
+                    <div class="border">
+                        <div class="line"><span class="char"> {{ resultat[0].key }}: </span><span class="word"> {{ getExplanation(resultat[0].key) }} </span></div>
+                        <div class="line"><span class="char"> {{ resultat[1].key }}: </span><span class="word"> {{ getExplanation(resultat[1].key) }} </span></div>
+                        <div class="line"><span class="char"> {{ resultat[2].key }}: </span><span class="word"> {{ getExplanation(resultat[2].key) }} </span></div>
+                    </div>
                 </div>
+                <table class="center" *ngIf="listeMetiers?.length > 0">
+                    <thead>
+                        <tr>
+                            <th>Métier(s)</th>
+                            <th>D</th>
+                            <th>P</th>
+                            <th>C</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let metier of listeMetiers">
+                            <td>{{ metier.libelle_metier }}</td>
+                            <td>{{ metier.id_donnees }}</td>
+                            <td>{{ metier.id_personnes }}</td>
+                            <td>{{ metier.id_choses }}</td>
+                        </tr>
+                    </tbody> 
+                </table>
+                <table class="center" *ngIf="listeTypeBac?.length > 0">
+                    <thead>
+                        <tr>
+                            <th>Les types de bac convenables à ce/ces métier(s)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let typebac of listeTypeBac">
+                            <td>{{ typebac.libelle_typebac }}</td>
+                        </tr>
+                    </tbody> 
+                </table>
             </div>
         </div>
-    </div>
+    </ng-container>
+
+    <ion-label> Souhaitez-vous comparer votre résultat avec celui de votre fils/ fille ?</ion-label>
+    <ion-item>
+        <ion-label position="fixed">Saisir son adresse e-mail :</ion-label><br>
+        <ion-input placeholder="exemple@exemple.com" [(ngModel)]="emailSon"></ion-input>
+    </ion-item>
+
+</ion-content>

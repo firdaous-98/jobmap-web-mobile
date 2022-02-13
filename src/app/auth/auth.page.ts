@@ -16,6 +16,7 @@ export class AuthPage implements OnInit {
   submissionType : 'login' | 'join' = 'login';
   passwordType = 'password';
   regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  TOKEN = 'token';
 
 
   constructor(
@@ -36,6 +37,7 @@ export class AuthPage implements OnInit {
             const helper = new JwtHelperService();
             const token = result.jwt;
             if(token != null && !helper.isTokenExpired(token)){
+              localStorage.setItem(this.TOKEN, token);
               this.router.navigate(['/home']);
             }
             else {

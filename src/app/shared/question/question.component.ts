@@ -1,7 +1,8 @@
-import { Component, Input, OnInit, Output, EventEmitter, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { CodeHolland } from 'src/app/core/enums/code-holland.enum';
 import { Level } from 'src/app/core/enums/level.enum';
+import { ResultChoix } from 'src/app/core/models/choix.model';
 import { Question } from 'src/app/core/models/question.model';
 import { Reponse } from 'src/app/core/models/reponse.model';
 
@@ -32,7 +33,6 @@ export class QuestionComponent {
 
   @Input()
   set previousResponse(value: CodeHolland | CodeHolland[]){
-    debugger
     if(value != null && typeof value == 'number'){
       this.response = this.getCodeHollandEnumToString(value);
     }
@@ -52,7 +52,8 @@ export class QuestionComponent {
   nextQuestionEvent = new EventEmitter<Reponse>();
 
   response: string;
-  stepFourResponses: CodeHolland[] = [];
+  stepTwoResponses: ResultChoix[] = [];
+  stepFourResponses: ResultChoix[] = [];
   currentChoice: Level;
   Level = Level;
   index = 0;
@@ -60,13 +61,17 @@ export class QuestionComponent {
   constructor(public toastController: ToastController) {}
   
   async goToNextQuestion(){
-    if(this.response == null && this.currentChoice == null){
-      (await this.toastController.create({ message: 'Veuillez chosir une réponse', duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+    if(this.response == null && this.currentChoice == null && this.stepTwoResponses.length == 0){
+      (await this.toastController.create({ message: 'Veuillez choisir une réponse', duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
     }
     else {
       if(this.question.id_step == '4'){
         for (let i = 0; i < this.currentChoice; i++) {
-          this.stepFourResponses.push(this.getCodeHollandStringToEnum(this.question.choix[0].code_holland));
+          var choix: ResultChoix = {
+            id: this.question.choix[this.index].id,
+            code_holland: this.getCodeHollandStringToEnum(this.question.choix[this.index].code_holland)
+          }
+          this.stepFourResponses.push(choix);
         }
 
         this.currentChoice = undefined;
@@ -83,6 +88,13 @@ export class QuestionComponent {
           this.nextQuestionEvent.emit(reponse);
           this.stepFourResponses = [];
         }
+      } else if (this.question.id_step == '2') {
+        const reponse: Reponse = {
+          id_quest: this.question.id_quest,
+          code_holland: this.stepTwoResponses
+        }
+        this.nextQuestionEvent.emit(reponse);
+        this.stepTwoResponses = [];
       }
       else {
         const reponse: Reponse = {
@@ -93,7 +105,7 @@ export class QuestionComponent {
         this.response = undefined;
       }
       
-    }
+    }    
   }
 
   selectChoice(value: any) {
@@ -102,6 +114,18 @@ export class QuestionComponent {
 
   selectChoiceBox(value: any) {
     this.currentChoice = value;
+  }
+
+  selectStepTwoResponses(value: any, index: number) {
+    if (value.detail.checked) {
+      var choix: ResultChoix = {
+        id: this.question.choix[index].id,
+        code_holland: this.getCodeHollandStringToEnum(this.question.choix[index].code_holland)
+      }
+      this.stepTwoResponses?.push(choix);
+    } else {
+        this.stepTwoResponses = this.stepTwoResponses.filter(e => e.id !== this.question.choix[index]?.id);
+    }
   }
 
   getCodeHollandStringToEnum(code: string): CodeHolland {
