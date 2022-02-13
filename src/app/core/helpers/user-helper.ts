@@ -16,7 +16,9 @@ export class UserHelper {
             id_utilisateur: token.data.id_utilisateur,
             nom: token.data.nom,
             prenom: token.data.prenom,
-            adresse_email: token.data.adresse_email
+            adresse_email: token.data.adresse_email,
+            id_typeutilisateur: token.data.id_typeutilisateur,
+            id_annee_etude: token.data.id_annee_etude
         };
     }
         

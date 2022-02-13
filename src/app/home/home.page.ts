@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserHelper } from '../core/helpers/user-helper';
 import { Score } from '../core/models/score.model';
+import { TokenInfo } from '../core/models/token.model';
 import { AppService } from '../core/services/app.service';
 
 @Component({
@@ -13,6 +14,7 @@ export class HomePage {
 
   scoring?: string;
   resultat: Score[] = [];
+  tokenInfo!: TokenInfo;
 
   constructor(
     private router: Router,
@@ -21,6 +23,9 @@ export class HomePage {
   }
 
   async ngOnInit() {
+    this.tokenInfo = UserHelper.getTokenInfo();
+    localStorage.setItem('id_type_utilisateur', this.tokenInfo.id_typeutilisateur);
+    localStorage.setItem('annee_etude', this.tokenInfo.id_annee_etude);
     await this.getScore();
     if(this.resultat != null && this.resultat != undefined) {
       this.router.navigate(['/result'], { state: { resultat: this.resultat, fromQuiz: false }});
@@ -28,10 +33,10 @@ export class HomePage {
   }
 
   async getScore() {
-    debugger
-    const id_utilisateur = parseInt(UserHelper.getTokenInfo().id_utilisateur);
+    const id_utilisateur = parseInt(this.tokenInfo.id_utilisateur);
     var response = await this.service.getScore(id_utilisateur).toPromise();
     this.scoring = response?.scoring;
+    localStorage.setItem('id_nf', response?.id_nf);
     var score = this.scoring.split("");
     this.resultat.push({ key: score[0], value: parseInt(response?.score_firstletter) });
     this.resultat.push({ key: score[1], value: parseInt(response?.score_secondletter) });

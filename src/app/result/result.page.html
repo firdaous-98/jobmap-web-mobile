@@ -1,7 +1,9 @@
 <app-header
-  [showBack]="fromQuiz">
+  [showBack]="true"
+  (backClickEvent)="backClick()">
 </app-header>
 <ion-content>
+    <ion-label class="title">Vous avez obtenu :</ion-label>
     <ng-container *ngIf="twoEquals">
         <ion-card>
             <ion-card-title> Oops ! </ion-card-title>
@@ -9,7 +11,7 @@
                 Vos réponses n'ont pas pu donné un résultat précis, veuillez refaire le quiz :)
             </ion-card-content>
         </ion-card>
-        <ion-button class="button redo" (click)="redoQuiz()">Refaire le quiz</ion-button>
+        <ion-button class="button" (click)="redoQuiz()">Refaire le quiz</ion-button>
     </ng-container>
     
     <ng-container *ngIf="!twoEquals">
@@ -42,44 +44,64 @@
                         <div class="line"><span class="char"> {{ resultat[2].key }}: </span><span class="word"> {{ getExplanation(resultat[2].key) }} </span></div>
                     </div>
                 </div>
-                <table class="center" *ngIf="listeMetiers?.length > 0">
-                    <thead>
-                        <tr>
-                            <th>Métier(s)</th>
-                            <th>D</th>
-                            <th>P</th>
-                            <th>C</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let metier of listeMetiers">
-                            <td>{{ metier.libelle_metier }}</td>
-                            <td>{{ metier.id_donnees }}</td>
-                            <td>{{ metier.id_personnes }}</td>
-                            <td>{{ metier.id_choses }}</td>
-                        </tr>
-                    </tbody> 
-                </table>
-                <table class="center" *ngIf="listeTypeBac?.length > 0">
-                    <thead>
-                        <tr>
-                            <th>Les types de bac convenables à ce/ces métier(s)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let typebac of listeTypeBac">
-                            <td>{{ typebac.libelle_typebac }}</td>
-                        </tr>
-                    </tbody> 
-                </table>
             </div>
         </div>
     </ng-container>
-
-    <ion-label> Souhaitez-vous comparer votre résultat avec celui de votre fils/ fille ?</ion-label>
+    <div class="table">
+        <table class="center" *ngIf="listeMetiers?.length > 0">
+            <thead>
+                <tr>
+                    <th>Métier(s)</th>
+                    <th>D</th>
+                    <th>P</th>
+                    <th>C</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let metier of listeMetiers">
+                    <td>{{ metier.libelle_metier }}</td>
+                    <td>{{ metier.id_donnees }}</td>
+                    <td>{{ metier.id_personnes }}</td>
+                    <td>{{ metier.id_choses }}</td>
+                </tr>
+            </tbody> 
+        </table>
+    </div>
+    <div class="table" *ngIf="[anneeEtude.College3, anneeEtude.TroncCommun].includes(annee_etude)">
+        <table class="center" *ngIf="listeTypeBac?.length > 0">
+            <thead>
+                <tr>
+                    <th>Les types de bac convenables à ce/ces métier(s)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let typebac of listeTypeBac">
+                    <td>{{ typebac.libelle_typebac }}</td>
+                </tr>
+            </tbody> 
+        </table>
+    </div>
+    
+    <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Parent"> 
+        Souhaitez-vous comparer votre résultat avec celui de votre fils/ étudiant ?
+    </ion-label>
+    <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Etudiant"> 
+        Souhaitez-vous comparer votre résultat avec celui de votre parent/ professeur ?
+    </ion-label>
     <ion-item>
-        <ion-label position="fixed">Saisir son adresse e-mail :</ion-label><br>
+        <ion-label position="fixed">Saisir leur adresse e-mail :</ion-label><br>
         <ion-input placeholder="exemple@exemple.com" [(ngModel)]="emailSon"></ion-input>
     </ion-item>
+    
+    <ion-button class="button" (click)="generatePdf()">Télécharger votre résultat</ion-button>
+    <ion-button class="button" (click)="redoQuiz()">Refaire le quiz</ion-button>
 
+    <div style="visibility: hidden;">
+            <apx-chart
+              [series]="chartOptions?.series"
+              [chart]="chartOptions?.chart"
+              [xaxis]="chartOptions?.xaxis"
+              [title]="chartOptions?.title"
+            ></apx-chart>
+          </div>
 </ion-content>

@@ -8,6 +8,7 @@ import { ResultPageRoutingModule } from './result-routing.module';
 
 import { ResultPage } from './result.page';
 import { SharedModule } from '../shared/shared.module';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import { SharedModule } from '../shared/shared.module';
     FormsModule,
     IonicModule,
     SharedModule,
+    NgApexchartsModule,
     ResultPageRoutingModule
   ],
   declarations: [ResultPage]

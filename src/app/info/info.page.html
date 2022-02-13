@@ -29,7 +29,8 @@
         </ion-grid>
     </ng-container>
     <ng-container *ngIf="showNiveau">
-        <ion-card-title> Votre situation actuelle </ion-card-title>
+        <ion-card-title *ngIf="typeUtilisateur == TypeUtilisateur.Etudiant"> Votre situation actuelle </ion-card-title>
+        <ion-card-title *ngIf="typeUtilisateur == TypeUtilisateur.Parent"> La situation actuelle de votre fils/ étudiant </ion-card-title>
         <ion-list>
           <ion-radio-group [value]="niveauEtude" (ionChange)="selectNiveauEtude($event)">
             <ion-item *ngFor="let niveau of listeNiveauxEtude">

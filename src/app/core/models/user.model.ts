@@ -6,7 +6,8 @@ export interface User {
     nom: string,
     prenom: string,
     adresse_email: string,
-    id_typebac: number
+    id_typebac: number,
+    id_annee_etude: number
 }
 
 
@@ -16,5 +17,6 @@ export interface UserUpdate {
     prenom: string,
     adresse_email: string,
     id_typebac: number,
+    id_annee_etude: number,
     jwt: string
 }

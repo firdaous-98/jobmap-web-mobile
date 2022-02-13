@@ -2,9 +2,22 @@ ion-content{
     --ion-background-color:rgb(241, 240, 237);
 }
 
+.title {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    font-size: 1.5rem !important;
+  }
+
+  .button {
+    --background: #ff9f04;
+    --width: 60px;
+    display: flex;
+  }
+
 .container {
     // background-color: #6c5ce7;
-    height: 100%;
+    height: 80%;
     padding-top: 7vh;
     .item {
         width: 75%;
@@ -96,16 +109,6 @@ ion-content{
     }
 }
 
-.button {
-    --background: #ff9f04;
-    bottom: 10px;
-    display: flex;
-  }
-
-.button.redo {
-    position: fixed;
-}
-
   ion-card {
     box-shadow: none;
     border: 1px solid #e1e1e1;
@@ -129,7 +132,13 @@ ion-content{
 
   table {
     font-family: "Helvetica Neue", Helvetica, sans-serif;
-    padding: 20px;
+    padding: 5px;
+  }
+
+  .table {
+    padding-top: 30px;
+    padding-bottom: 30px;
+
   }
 
   .center {
@@ -145,6 +154,7 @@ ion-content{
   th,
   td {
     padding: 5px 10px;
+    text-align: center;
   }
   
   tbody tr:nth-child(even) {

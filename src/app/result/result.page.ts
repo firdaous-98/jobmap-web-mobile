@@ -1,10 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import {
+  ApexAxisChartSeries,
+  ApexChart, ApexTitleSubtitle, ApexXAxis, ChartComponent
+} from 'ng-apexcharts';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { AnneeEtudeEnum } from '../core/enums/annee-etude.enum';
+import { TypeUtilisateur } from '../core/enums/type-utilisateur.enum';
 import { UserHelper } from '../core/helpers/user-helper';
 import { Metier } from '../core/models/metier.model';
 import { Score } from '../core/models/score.model';
+import { TokenInfo } from '../core/models/token.model';
 import { TypeBac } from '../core/models/type-bac.model';
 import { AppService } from '../core/services/app.service';
+
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
+export type ChartOptions = {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  xaxis: ApexXAxis;
+  title: ApexTitleSubtitle;
+};
 
 @Component({
   selector: 'app-result',
@@ -13,8 +31,18 @@ import { AppService } from '../core/services/app.service';
 })
 export class ResultPage {
 
+  @ViewChild('chart') chart: ChartComponent;
+
+  public chartOptions: Partial<ChartOptions>;
+
   resultat: Score[];
   fromQuiz!: boolean;
+
+  id_type_utilisateur!: TypeUtilisateur;
+  annee_etude!: AnneeEtudeEnum;
+  typeUtilisateur = TypeUtilisateur;
+  anneeEtude = AnneeEtudeEnum;
+  tokenInfo!: TokenInfo;
 
   codeHollandCompose: string;
   twoEquals: boolean = false;
@@ -28,12 +56,15 @@ export class ResultPage {
   id_codeholland!: number;
 
   constructor(private router: Router, private service: AppService) {
+    debugger
     this.resultat = this.router.getCurrentNavigation().extras.state?.resultat;
     this.fromQuiz = this.router.getCurrentNavigation().extras.state?.fromQuiz;
+    this.tokenInfo = UserHelper.getTokenInfo();
    }
 
 
   async ngOnInit() {
+    debugger
     if(this.resultat != null) {
       this.checkEquality();
       if(!this.twoEquals) {
@@ -42,8 +73,20 @@ export class ResultPage {
         await this.getMetiers();
         await this.getTypesBac();
         if(this.fromQuiz) this.saveScore();
+        this.generateChart();
+        this.id_type_utilisateur = parseInt(localStorage.getItem('id_type_utilisateur'));
+        this.annee_etude = parseInt(localStorage.getItem('annee_etude'));
       }
     }
+  }
+
+  @HostListener('unloaded')
+  ngOnDestroy() {
+    console.log('Items destroyed');
+  }
+
+  backClick(){
+    this.router.navigate(['/home']);
   }
 
   checkEquality(){
@@ -81,7 +124,7 @@ export class ResultPage {
   }
 
   saveScore() {
-    const id_utilisateur = parseInt(UserHelper.getTokenInfo().id_utilisateur);
+    const id_utilisateur = parseInt(this.tokenInfo?.id_utilisateur);
     const id_nf = parseInt(localStorage.getItem('id_nf'));
     this.service.saveScore(
       this.codeHollandCompose, 
@@ -114,8 +157,151 @@ export class ResultPage {
   }
 
   redoQuiz(){
-    this.router.navigate(['/quiz']);
+    this.router.navigate(['/info']);
   }
 
+  generateChart() {
+    this.chartOptions = {
+      series: [
+        {
+          name: 'My-series',
+          data: [this.resultat[0].value, this.resultat[1].value, this.resultat[2].value],
+        },
+      ],
+      chart: {
+        height: 350,
+        type: 'bar',
+      },
+      title: {
+        text: '',
+      },
+      xaxis: {
+        categories: [
+          this.resultat[0].key,
+          this.resultat[1].key,
+          this.resultat[2].key
+        ],
+      },
+    };
+  }
 
+  async generatePdf(){
+    const documentDefinition = { 
+      content: [
+        {
+          text: 'Résultat du quiz',
+          bold: true,
+          fontSize: 20,
+          alignment: 'center',
+          margin: [0, 0, 0, 20]
+        },
+        {
+          columns: [
+            [{
+              text: this.tokenInfo.nom + ' ' + this.tokenInfo.prenom,
+              style: 'name'
+            },
+            {
+              text: 'Email : ' + this.tokenInfo.adresse_email,
+            },
+            {
+              text: 'Vous avez obtenu le score : ' + this.codeHollandCompose,
+              bold: true,
+              fontSize: 18,
+              alignment: 'center',
+              margin: [20, 0, 0, 20]
+            }
+            ]
+          ]
+        },
+        {
+          image: await this.getBase64Image(),
+          width: 500
+        },
+        {
+          text: 'Cela pourra vous aidez à trouver le métier qui correspond à votre profil : ',
+          fontSize: 15,
+          margin: [20, 0, 0, 0]
+        },
+        {
+          text: ' ',
+          fontSize: 15,
+          margin: [20, 0, 0, 0]
+        },
+        {
+          columns: [
+            { width: '*', text: '' },
+            {
+              width: 'auto',
+              table: {
+                  body: [
+                      [
+                          {
+                               text : this.resultat[0].key + ": " + this.getExplanation(this.resultat[0].key)
+                          } 
+                      ],
+                      [
+                          {
+                               text : this.resultat[1].key + ": " + this.getExplanation(this.resultat[1].key)
+                          } 
+                      ],
+                      [
+                          {
+                               text : this.resultat[2].key + ": " + this.getExplanation(this.resultat[2].key)
+                          } 
+                      ],
+                  ]
+              },
+              layout: {
+                hLineColor: function(i, node) {
+                    return (i === 0 || i === node.table.body.length) ? 'black' : 'white';
+                },
+                vLineColor: function(i, node) {
+                    'blue';
+                },
+                paddingLeft: function(i, node) { return 80; },
+                paddingRight: function(i, node) { return 80; },
+                paddingTop: function(i, node) { return 10; },
+                paddingBottom: function(i, node) { return 10; }
+            }
+            },
+            { width: '*', text: '' }
+          ]
+      }
+      ],
+      defaultStyle: {
+        alignment: 'justify'
+        },
+        styles: {
+          name: {
+            fontSize: 16,
+            bold: true
+          }
+        }
+    };
+    pdfMake.createPdf(documentDefinition).download();
+   }
+
+   getBase64Image() {
+    return new Promise((resolve, reject) => {
+         const img = new Image();
+         const svgElement: SVGGraphicsElement =
+         document.querySelector('.apexcharts-svg');
+         const imageBlobURL = 'data:image/svg+xml;charset=utf-8,' +
+            encodeURIComponent(svgElement.outerHTML);
+         img.onload = ()=> {
+            var canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            const dataURL = canvas.toDataURL('image/png');
+            resolve(dataURL);
+         };
+         img.onerror = (error) => {
+           reject(error);
+         };
+         img.src = imageBlobURL;
+       });
+  }
 }

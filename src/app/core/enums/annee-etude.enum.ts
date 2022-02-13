@@ -1,4 +1,4 @@
-export enum AnneeEtude {
+export enum AnneeEtudeEnum {
     College1 = 1,
     College2 = 2, 
     College3 = 3,

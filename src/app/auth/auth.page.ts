@@ -37,7 +37,7 @@ export class AuthPage implements OnInit {
             const helper = new JwtHelperService();
             const token = result.jwt;
             if(token != null && !helper.isTokenExpired(token)){
-              localStorage.setItem(this.TOKEN, token);
+              localStorage.setItem(this.TOKEN, token);              
               this.router.navigate(['/home']);
             }
             else {
