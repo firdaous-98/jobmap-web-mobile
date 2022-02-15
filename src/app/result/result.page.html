@@ -76,17 +76,17 @@
             </thead>
             <tbody>
                 <tr *ngFor="let typebac of listeTypeBac">
-                    <td>{{ typebac.libelle_typebac }}</td>
+                    <td>{{ typebac.libelle_typebac_complet }}</td>
                 </tr>
             </tbody> 
         </table>
     </div>
 
     <ng-container *ngIf="!showOtherResult">
-        <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Parent"> 
+        <ion-label class="label" *ngIf="id_type_utilisateur == typeUtilisateur.Parent"> 
             Souhaitez-vous comparer votre résultat avec celui de votre fils/ étudiant ?
         </ion-label>
-        <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Etudiant"> 
+        <ion-label class="label" *ngIf="id_type_utilisateur == typeUtilisateur.Etudiant"> 
             Souhaitez-vous comparer votre résultat avec celui de votre parent/ professeur ?
         </ion-label>
         <ion-item>
@@ -103,6 +103,8 @@
 
     <ng-container *ngIf="!twoEquals && showOtherResult">
             <div class="container">
+                    <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Parent" class="title">Résultat obtenu par votre fils/ étudiant :</ion-label>
+                    <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Etudiant" class="title">Résultat obtenu par votre parent/ professeur :</ion-label>
                 <div class="item">
                     <div class="chart-p">
                         <div class="chart chart-a" [style.height]="OtherFirstHeight">
@@ -160,14 +162,14 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let typebac of OtherListeTypeBac">
-                        <td>{{ typebac.libelle_typebac }}</td>
+                        <td>{{ typebac.libelle_typebac_complet }}</td>
                     </tr>
                 </tbody> 
             </table>
         </div>
 
     <ng-container *ngIf="showNoOtherScore">
-            <ion-text>L'utilisateur ayant cette adresse email n'a pas encore répondu au questionnaire</ion-text>
+            <ion-text class="label">L'utilisateur ayant cette adresse email n'a pas encore répondu au questionnaire</ion-text>
             <ion-button class="button">Invitez-les à répondre au questionnaire</ion-button>
     </ng-container>
     

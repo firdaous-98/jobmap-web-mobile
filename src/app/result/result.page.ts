@@ -236,6 +236,17 @@ export class ResultPage {
   }
 
   async generatePdf(){
+
+    var metierRows: any[] = [];
+
+    metierRows = [[ 'Métier(s)', 'Score données', 'Score personnes', 'Score choses' ]] ;
+
+    this.listeMetiers.forEach(metier => {
+      metierRows.push([metier.libelle_metier, metier.id_donnees.toString(), metier.id_personnes.toString(), metier.id_choses.toString()]);
+    });
+
+    console.log(metierRows);
+
     const documentDefinition = { 
       content: [
         {
@@ -317,6 +328,21 @@ export class ResultPage {
             },
             { width: '*', text: '' }
           ]
+      },
+      {
+        text: 'Métiers et professions correspondant à votre profil RIASEC :',
+        fontSize: 15,
+        margin: [20, 20, 0, 0]
+      },
+      {
+        layout: 'lightHorizontalLines', // optional
+        table: {
+          headerRows: 1,
+          widths: [ '*', 'auto', 100, '*' ],
+  
+          body: metierRows
+        },
+        margin: 20
       }
       ],
       defaultStyle: {
@@ -338,7 +364,6 @@ export class ResultPage {
       parseInt(localStorage.getItem('id_nf'))
     ).subscribe(result => {
       console.log(result);
-      
     })
    }
 
