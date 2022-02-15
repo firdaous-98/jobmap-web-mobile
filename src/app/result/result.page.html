@@ -8,10 +8,10 @@
         <ion-card>
             <ion-card-title> Oops ! </ion-card-title>
             <ion-card-content>
-                Vos réponses n'ont pas pu donné un résultat précis, veuillez refaire le quiz :)
+                Vos réponses n'ont pas pu donné un résultat précis, veuillez refaire le questionnaire :)
             </ion-card-content>
         </ion-card>
-        <ion-button class="button" (click)="redoQuiz()">Refaire le quiz</ion-button>
+        <ion-button class="button" (click)="redoQuiz()">Refaire le questionnaire</ion-button>
     </ng-container>
     
     <ng-container *ngIf="!twoEquals">
@@ -167,13 +167,13 @@
         </div>
 
     <ng-container *ngIf="showNoOtherScore">
-            <ion-text>L'utilisateur ayant cette adresse email n'a pas encore passé ce quiz</ion-text>
-            <ion-button class="button">Invitez-les à passer le quiz</ion-button>
+            <ion-text>L'utilisateur ayant cette adresse email n'a pas encore répondu au questionnaire</ion-text>
+            <ion-button class="button">Invitez-les à répondre au questionnaire</ion-button>
     </ng-container>
     
 
-    <ion-button class="button" (click)="generatePdf()">Télécharger votre résultat</ion-button>
-    <ion-button class="button" (click)="redoQuiz()">Refaire le quiz</ion-button>
+    <ion-button class="button" (click)="generatePdf()">Télécharger votre résultat et recevoir un rapport approfondi</ion-button>
+    <ion-button class="button" (click)="redoQuiz()">Refaire le questionnaire</ion-button>
 
     <div style="visibility: hidden;">
             <apx-chart

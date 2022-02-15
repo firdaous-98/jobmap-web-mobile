@@ -239,7 +239,7 @@ export class ResultPage {
     const documentDefinition = { 
       content: [
         {
-          text: 'Résultat du quiz',
+          text: 'Résultat du questionnaire',
           bold: true,
           fontSize: 20,
           alignment: 'center',

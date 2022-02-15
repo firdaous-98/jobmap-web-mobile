@@ -14,37 +14,18 @@ import { Reponse } from 'src/app/core/models/reponse.model';
 export class QuestionComponent {
 
   @Input()
-  set isBack(value: boolean){
-    if(value){
-      if(this.index != 0){
-        this.index--;
-      }
-      else {
-        // this.previousQuestionEvent.emit();
-      }
-    }
-  }
-
-  @Input()
   question: Question;
 
   @Input()
   numberOfQuestions: number;
 
   @Input()
-  set previousResponse(value: CodeHolland | CodeHolland[]){
-    if(value != null && typeof value == 'number'){
-      this.response = this.getCodeHollandEnumToString(value);
+  set previousResponse(value: CodeHolland | ResultChoix[]){
+    if(value != null && ["1", "3"].includes(this.question.id_step)) {
+      this.response = this.getCodeHollandEnumToString(value as CodeHolland);
     }
-    else {
-      switch((value as CodeHolland[])?.length){
-        case 1:
-          this.currentChoice = Level.Faible;
-        case 2: 
-          this.currentChoice = Level.Moyen;
-        case 3:
-          this.currentChoice = Level.Fort;
-      }
+    else if (value != null && this.question.id_step == "2") {
+      this.stepTwoResponses = value as ResultChoix[];
     }
   }
 
@@ -114,6 +95,10 @@ export class QuestionComponent {
 
   selectChoiceBox(value: any) {
     this.currentChoice = value;
+  }
+
+  isChecked(id: string) {
+    return this.stepTwoResponses.map(e => e.id).includes(id);
   }
 
   selectStepTwoResponses(value: any, index: number) {

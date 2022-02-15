@@ -23,7 +23,6 @@ export class HomePage {
   }
 
   async ngOnInit() {
-    debugger
     this.tokenInfo = UserHelper.getTokenInfo();
     localStorage.setItem('id_type_utilisateur', this.tokenInfo.id_typeutilisateur);
     localStorage.setItem('annee_etude', this.tokenInfo.id_annee_etude);

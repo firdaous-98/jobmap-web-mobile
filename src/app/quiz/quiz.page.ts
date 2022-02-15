@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CodeHolland } from '../core/enums/code-holland.enum';
+import { ResultChoix } from '../core/models/choix.model';
 import { Question } from '../core/models/question.model';
 import { Reponse, Scores } from '../core/models/reponse.model';
 import { Score } from '../core/models/score.model';
@@ -16,7 +17,7 @@ export class QuizPage {
   questionsArray: Question[];
   currentQuestion: Question;
   reponses: Reponse[] = [];
-  previousResponse: CodeHolland | CodeHolland[];
+  previousResponse: CodeHolland | ResultChoix[];
   numberOfQuestions: number = 1;
   isBack: boolean = false;
   scores: Scores;
@@ -30,7 +31,8 @@ export class QuizPage {
     this.service.get_questionsArray().subscribe((result: Question[]) => {
       this.questionsArray = result;
       // this.currentQuestion = this.questionsArray[0];
-      this.currentQuestion = this.questionsArray.find(e => e.id_step == "4" && e.id_quest == "49")
+      this.currentQuestion = this.questionsArray.find(e => e.id_quest == "40")
+      // this.currentQuestion = this.questionsArray.find(e => e.id_step == "4" && e.id_quest == "49")
       this.numberOfQuestions = this.questionsArray.filter(e => e.id_step == this.currentQuestion.id_step).length;
     });
   }
@@ -46,7 +48,10 @@ export class QuizPage {
     }
     else {
       this.reponses.push(reponse);
-    }    
+    } 
+    
+    console.log(this.reponses);
+    
 
     var nextQuestion = this.questionsArray.find(question => 
       question.id_quest == (this.currentQuestion.id_quest != '40' ? this.incrementString(this.currentQuestion.id_quest) : '46'));

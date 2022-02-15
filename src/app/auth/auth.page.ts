@@ -41,7 +41,7 @@ export class AuthPage implements OnInit {
               this.router.navigate(['/home']);
             }
             else {
-              (await this.toastController.create({ message: 'Votre token est expirée', duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+              (await this.toastController.create({ message: 'Votre session est expirée', duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
             }
           }
           else {

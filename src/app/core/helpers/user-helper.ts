@@ -12,7 +12,6 @@ export class UserHelper {
     }
 
     private static mapTokenToTokenInfo(token: any): TokenInfo {
-        debugger
         return {
             id_utilisateur: token.data.id_utilisateur,
             nom: token.data.nom,
