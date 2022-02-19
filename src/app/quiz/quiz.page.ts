@@ -17,6 +17,8 @@ export class QuizPage {
   questionsArray: Question[];
   currentQuestion: Question;
   reponses: Reponse[] = [];
+  reponsesPerStep: Reponse[] = [];
+  resultPerStep: {id_step: string, resultat: any}[] = [];
   previousResponse: CodeHolland | ResultChoix[];
   numberOfQuestions: number = 1;
   isBack: boolean = false;
@@ -30,8 +32,8 @@ export class QuizPage {
    initQuestions() {
     this.service.get_questionsArray().subscribe((result: Question[]) => {
       this.questionsArray = result;
-      // this.currentQuestion = this.questionsArray[0];
-      this.currentQuestion = this.questionsArray.find(e => e.id_quest == "40")
+      this.currentQuestion = this.questionsArray[0];
+      // this.currentQuestion = this.questionsArray.find(e => e.id_quest == "40")
       // this.currentQuestion = this.questionsArray.find(e => e.id_step == "4" && e.id_quest == "49")
       this.numberOfQuestions = this.questionsArray.filter(e => e.id_step == this.currentQuestion.id_step).length;
     });
@@ -48,21 +50,34 @@ export class QuizPage {
     }
     else {
       this.reponses.push(reponse);
-    } 
-    
-    console.log(this.reponses);
-    
+    }     
 
     var nextQuestion = this.questionsArray.find(question => 
       question.id_quest == (this.currentQuestion.id_quest != '40' ? this.incrementString(this.currentQuestion.id_quest) : '46'));
 
     if(nextQuestion != null){
+      if(nextQuestion.id_step != this.currentQuestion.id_step) {
+        this.reponsesPerStep = this.reponses.filter(e => e.id_step == this.currentQuestion.id_step);
+        var resultat = this.composeCodeHolland(this.reponsesPerStep);
+        this.resultPerStep.push({
+          id_step: this.currentQuestion.id_step,
+          resultat: resultat
+        });
+
+        this.reponsesPerStep = [];
+      }
       this.numberOfQuestions = this.questionsArray.filter(e => e.id_step == nextQuestion.id_step).length;
       this.currentQuestion = nextQuestion;
     }
     else {
-      var resultat = this.composeCodeHolland();
-      this.router.navigate(['/result'], { state: { resultat: resultat, fromQuiz: true }});
+      this.reponsesPerStep = this.reponses.filter(e => e.id_step == "4");
+        var resultat = this.composeCodeHolland(this.reponsesPerStep);
+        this.resultPerStep.push({
+          id_step: "4",
+          resultat: resultat
+        });
+      var resultat = this.composeCodeHolland(this.reponses);
+      this.router.navigate(['/result'], { state: { resultat: resultat, resultPerStep: this.resultPerStep, fromQuiz: true }});
     }
   }
 
@@ -92,8 +107,9 @@ export class QuizPage {
     return newValue.toString();
   }
 
-  composeCodeHolland() {
-    this.reponses.forEach(reponse => {
+  composeCodeHolland(reponses: Reponse[]) {
+    this.initScore();
+    reponses.forEach(reponse => {
       if(typeof reponse.code_holland == 'number'){
         this.incrementScore(reponse.code_holland);
       }

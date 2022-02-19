@@ -64,7 +64,11 @@ export class AppService {
         id_nf: number,
         score_firstletter: number,
         score_secondletter: number,
-        score_thirdletter: number): Observable<any> {
+        score_thirdletter: number,
+        score_firststep: string,
+        score_secondstep: string,
+        score_thirdstep: string,
+        score_fourthstep: string): Observable<any> {
         const body = { 
             scoring, 
             id_codeholland, 
@@ -72,7 +76,11 @@ export class AppService {
             id_nf,
             score_firstletter,
             score_secondletter,
-            score_thirdletter
+            score_thirdletter,
+            score_firststep,
+            score_secondstep,
+            score_thirdstep,
+            score_fourthstep
         };
         return this.http.post<any>(this.API_ENDPOINT + 'resultat/save_score.php', body);
     }
@@ -121,6 +129,22 @@ export class AppService {
             id_nf
         };
         return this.http.post<any>(this.API_ENDPOINT + 'resultat/result_downloaded.php', body);
+    }
+
+    /**
+     * send email
+     */
+    sendEmail(
+        emailTo: string,
+        emailSubject: string,
+        emailBody: string
+    ): Observable<any> {
+        const body = { 
+            emailTo, 
+            emailSubject,
+            emailBody
+        };
+        return this.http.post<any>(this.API_ENDPOINT + 'sendmail/send_mail.php', body);
     }
 
 }

@@ -82,7 +82,7 @@
         </table>
     </div>
 
-    <ng-container *ngIf="!showOtherResult">
+    <ng-container *ngIf="!showOtherResult && !twoEquals">
         <ion-label class="label" *ngIf="id_type_utilisateur == typeUtilisateur.Parent"> 
             Souhaitez-vous comparer votre résultat avec celui de votre fils/ étudiant ?
         </ion-label>
@@ -168,9 +168,9 @@
             </table>
         </div>
 
-    <ng-container *ngIf="showNoOtherScore">
+    <ng-container *ngIf="showNoOtherScore && !invitationSent">
             <ion-text class="label">L'utilisateur ayant cette adresse email n'a pas encore répondu au questionnaire</ion-text>
-            <ion-button class="button">Invitez-les à répondre au questionnaire</ion-button>
+            <ion-button class="button" (click)="sendInvitation()">Invitez-les à répondre au questionnaire</ion-button>
     </ng-container>
     
 

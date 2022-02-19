@@ -64,6 +64,7 @@ export class QuestionComponent {
           this.index = 0;
           const reponse: Reponse = {
             id_quest: this.question.id_quest,
+            id_step: this.question.id_step,
             code_holland: this.stepFourResponses
           }
           this.nextQuestionEvent.emit(reponse);
@@ -72,6 +73,7 @@ export class QuestionComponent {
       } else if (this.question.id_step == '2') {
         const reponse: Reponse = {
           id_quest: this.question.id_quest,
+          id_step: this.question.id_step,
           code_holland: this.stepTwoResponses
         }
         this.nextQuestionEvent.emit(reponse);
@@ -80,6 +82,7 @@ export class QuestionComponent {
       else {
         const reponse: Reponse = {
           id_quest: this.question.id_quest,
+          id_step: this.question.id_step,
           code_holland: this.getCodeHollandStringToEnum(this.response)
         }
         this.nextQuestionEvent.emit(reponse);

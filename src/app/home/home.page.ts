@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserHelper } from '../core/helpers/user-helper';
 import { Score } from '../core/models/score.model';
@@ -15,6 +15,7 @@ export class HomePage {
   scoring?: string;
   resultat: Score[] = [];
   tokenInfo!: TokenInfo;
+  hasScore = false;
 
   constructor(
     private router: Router,
@@ -28,7 +29,7 @@ export class HomePage {
     localStorage.setItem('annee_etude', this.tokenInfo.id_annee_etude);
     await this.getScore();
     if(this.resultat != null && this.resultat != undefined) {
-      this.router.navigate(['/result'], { state: { resultat: this.resultat, fromQuiz: false }});
+      this.hasScore = true;
     }
   }
 
@@ -37,10 +38,14 @@ export class HomePage {
     var response = await this.service.getScore(id_utilisateur).toPromise();
     this.scoring = response?.scoring;
     localStorage.setItem('id_nf', response?.id_nf);
-    var score = this.scoring.split("");
+    var score = this.scoring?.split("");
     this.resultat.push({ key: score[0], value: parseInt(response?.score_firstletter) });
     this.resultat.push({ key: score[1], value: parseInt(response?.score_secondletter) });
     this.resultat.push({ key: score[2], value: parseInt(response?.score_thirdletter) });
+  }
+
+  goToResultat() {
+    this.router.navigate(['/result'], { state: { resultat: this.resultat, fromQuiz: false }});
   }
 
   startQuiz(){
@@ -50,5 +55,10 @@ export class HomePage {
   logOut(){
     localStorage.clear();
     this.router.navigate(['/auth']);
+  }
+
+  @HostListener('unloaded')
+  ngOnDestroy() {
+    console.log('Items destroyed');
   }
 }

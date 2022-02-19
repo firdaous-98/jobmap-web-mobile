@@ -40,6 +40,7 @@ export class ResultPage {
   scorePartner?: any;
 
   resultat: Score[];
+  resultPerStep: {id_step: string, resultat: any}[] = [];
   autreResultat: Score[];
   fromQuiz!: boolean;
 
@@ -70,9 +71,13 @@ export class ResultPage {
   OtherListeTypeBac: TypeBac[];
 
   showNoOtherScore = false;
+  invitationSent = false;
+
+  link = "afa9.org";
 
   constructor(private router: Router, private service: AppService) {
     this.resultat = this.router.getCurrentNavigation().extras.state?.resultat;
+    this.resultPerStep = this.router.getCurrentNavigation().extras.state?.resultPerStep;
     this.fromQuiz = this.router.getCurrentNavigation().extras.state?.fromQuiz;
     this.tokenInfo = UserHelper.getTokenInfo();
    }
@@ -140,14 +145,25 @@ export class ResultPage {
   saveScore() {
     const id_utilisateur = parseInt(this.tokenInfo?.id_utilisateur);
     const id_nf = parseInt(localStorage.getItem('id_nf'));
+
+    var resultatStepOne = this.resultPerStep?.find(e => e.id_step == "1").resultat;
+    var resultatStepTwo = this.resultPerStep?.find(e => e.id_step == "2").resultat;
+    var resultatStepThree = this.resultPerStep?.find(e => e.id_step == "3").resultat;
+    var resultatStepFour = this.resultPerStep?.find(e => e.id_step == "4").resultat;
+
     this.service.saveScore(
       this.codeHollandCompose, 
       this.id_codeholland, 
       id_utilisateur,
       id_nf,
-      this.resultat[0].value,
-      this.resultat[1].value,
-      this.resultat[2].value)
+      this.resultat[0]?.value,
+      this.resultat[1]?.value,
+      this.resultat[2]?.value,
+      resultatStepOne.map(f => f.key).join(''),
+      resultatStepTwo.map(f => f.key).join(''),
+      resultatStepThree.map(f => f.key).join(''),
+      resultatStepFour.map(f => f.key).join('')
+      )
       .subscribe(result => {
       console.log(result);
     });
@@ -206,6 +222,17 @@ export class ResultPage {
     }
   }
 
+  sendInvitation() {
+    this.service.sendEmail(
+      this.emailPartner,
+      "Invitation Afa9",
+      `${this.tokenInfo.prenom} ${this.tokenInfo.nom} vous invite à passer le test présent sur ce lien: ${this.link}`
+    ).subscribe(_ => {
+      console.log("email sent");
+      this.invitationSent = true;
+    });
+  }
+
   redoQuiz(){
     this.router.navigate(['/info']);
   }
@@ -244,8 +271,6 @@ export class ResultPage {
     this.listeMetiers.forEach(metier => {
       metierRows.push([metier.libelle_metier, metier.id_donnees.toString(), metier.id_personnes.toString(), metier.id_choses.toString()]);
     });
-
-    console.log(metierRows);
 
     const documentDefinition = { 
       content: [
@@ -356,6 +381,7 @@ export class ResultPage {
         }
     };
     pdfMake.createPdf(documentDefinition).download();
+
     this.service.resultDownloaded(
       this.tokenInfo.adresse_email,
       parseInt(this.tokenInfo.id_utilisateur),
@@ -364,7 +390,7 @@ export class ResultPage {
       parseInt(localStorage.getItem('id_nf'))
     ).subscribe(result => {
       console.log(result);
-    })
+    });
    }
 
    getBase64Image() {

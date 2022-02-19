@@ -3,6 +3,7 @@ import { ResultChoix } from "./choix.model";
 
 export interface Reponse {
     id_quest: string;
+    id_step: string;
     code_holland: CodeHolland | ResultChoix[];
 }
 

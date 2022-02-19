@@ -2,6 +2,14 @@ ion-content{
   --ion-background-color:rgb(241, 240, 237);
 }
 
+.get-result {
+  --background: #3d5959b2;
+  position: fixed;
+  left: 0;
+  bottom: 90px;
+  right: 0;
+}
+
 .start-quiz {
   --background: #3d5959;
   position: fixed;
