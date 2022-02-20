@@ -56,6 +56,9 @@ export class AuthPage implements OnInit {
             (await this.toastController.create({ message: 'Votre compte a été bien créé', duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
             this.submissionType = 'login';
           }
+          else if(result.message == "Email address already exists") {
+            (await this.toastController.create({ message: 'Cette adresse email est déjà prise par un autre compte', duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+          }
         });
 
       }
