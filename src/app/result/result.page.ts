@@ -41,6 +41,11 @@ export class ResultPage {
 
   resultat: Score[];
   resultPerStep: {id_step: string, resultat: any}[] = [];
+  resultatStepOne = "";
+  resultatStepTwo = "";
+  resultatStepThree = "";
+  resultatStepFour = "";
+
   autreResultat: Score[];
   fromQuiz!: boolean;
 
@@ -77,8 +82,8 @@ export class ResultPage {
 
   constructor(private router: Router, private service: AppService) {
     this.resultat = this.router.getCurrentNavigation().extras.state?.resultat;
-    this.resultPerStep = this.router.getCurrentNavigation().extras.state?.resultPerStep;
     this.fromQuiz = this.router.getCurrentNavigation().extras.state?.fromQuiz;
+    this.resultPerStep = this.router.getCurrentNavigation().extras.state?.resultPerStep;
     this.tokenInfo = UserHelper.getTokenInfo();
    }
 
@@ -142,14 +147,27 @@ export class ResultPage {
     this.listeTypeBac = result;
   }
 
+  mapResultPerStep() {
+
+    if(this.fromQuiz) {
+      this.resultatStepOne = this.resultPerStep?.find(e => e.id_step == "1").resultat.map(f => f.key).join('');
+      this.resultatStepTwo = this.resultPerStep?.find(e => e.id_step == "2").resultat.map(f => f.key).join('');
+      this.resultatStepThree = this.resultPerStep?.find(e => e.id_step == "3").resultat.map(f => f.key).join('');
+      this.resultatStepFour = this.resultPerStep?.find(e => e.id_step == "4").resultat.map(f => f.key).join('');
+    }
+    else {
+      this.resultatStepOne = this.resultPerStep?.find(e => e.id_step == "1").resultat;
+      this.resultatStepTwo = this.resultPerStep?.find(e => e.id_step == "2").resultat;
+      this.resultatStepThree = this.resultPerStep?.find(e => e.id_step == "3").resultat;
+      this.resultatStepFour = this.resultPerStep?.find(e => e.id_step == "4").resultat;
+    }
+  }
+
   saveScore() {
     const id_utilisateur = parseInt(this.tokenInfo?.id_utilisateur);
     const id_nf = parseInt(localStorage.getItem('id_nf'));
 
-    var resultatStepOne = this.resultPerStep?.find(e => e.id_step == "1").resultat;
-    var resultatStepTwo = this.resultPerStep?.find(e => e.id_step == "2").resultat;
-    var resultatStepThree = this.resultPerStep?.find(e => e.id_step == "3").resultat;
-    var resultatStepFour = this.resultPerStep?.find(e => e.id_step == "4").resultat;
+    this.mapResultPerStep();
 
     this.service.saveScore(
       this.codeHollandCompose, 
@@ -159,10 +177,10 @@ export class ResultPage {
       this.resultat[0]?.value,
       this.resultat[1]?.value,
       this.resultat[2]?.value,
-      resultatStepOne.map(f => f.key).join(''),
-      resultatStepTwo.map(f => f.key).join(''),
-      resultatStepThree.map(f => f.key).join(''),
-      resultatStepFour.map(f => f.key).join('')
+      this.resultatStepOne,
+      this.resultatStepTwo,
+      this.resultatStepThree,
+      this.resultatStepFour
       )
       .subscribe(result => {
       console.log(result);
@@ -231,6 +249,33 @@ export class ResultPage {
       console.log("email sent");
       this.invitationSent = true;
     });
+  }
+
+  sendRequestMail() {
+
+    this.mapResultPerStep();
+
+    var email = "bendoudouch.98@gmail.com";
+    var subject = "Demande de reception du rapport approfondi";
+    var body = `<p>${this.tokenInfo.prenom} ${this.tokenInfo.nom} vient de passer le questionnaire RIASEC et souhaite recevoir un rapport approfondi </p><br>`
+              + "Résultat obtenu : <br>"
+              + `Score final : ${this.codeHollandCompose} <br>` 
+              + `Scores intermédiaires : <br>` 
+              + `Etape 1 : ${this.resultatStepOne} <br>` 
+              + `Etape 2 : ${this.resultatStepTwo} <br>` 
+              + `Etape 3 : ${this.resultatStepThree} <br>` 
+              + `Etape 4 : ${this.resultatStepFour} <br>` 
+              + `Adresse email de l'utilisateur: ${this.tokenInfo.adresse_email} <br>` ;
+
+  this.service.sendEmail(
+    email,
+    subject,
+    body
+  ).subscribe(_ => {
+    console.log("email sent");
+    this.invitationSent = true;
+  });
+
   }
 
   redoQuiz(){
@@ -391,6 +436,8 @@ export class ResultPage {
     ).subscribe(result => {
       console.log(result);
     });
+
+    this.sendRequestMail();
    }
 
    getBase64Image() {

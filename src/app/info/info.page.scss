@@ -9,6 +9,7 @@ ion-content{
 }
 
 ion-card {
+    margin-top: 50px;
     box-shadow: none;
     border: 1px solid #e1e1e1;
     width: 450px;
@@ -53,6 +54,8 @@ ion-card {
 
   .next {
     --background: #ff9f04;
-    bottom: 10px;
-    display: flex;
+    bottom: 50px;
+    left: 10rem;
+    right: 10rem;
+    position: fixed;
   }

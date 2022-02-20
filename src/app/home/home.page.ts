@@ -14,6 +14,7 @@ export class HomePage {
 
   scoring?: string;
   resultat: Score[] = [];
+  resultPerStep: {id_step: string, resultat: any}[] = [];
   tokenInfo!: TokenInfo;
   hasScore = false;
 
@@ -28,7 +29,7 @@ export class HomePage {
     localStorage.setItem('id_type_utilisateur', this.tokenInfo.id_typeutilisateur);
     localStorage.setItem('annee_etude', this.tokenInfo.id_annee_etude);
     await this.getScore();
-    if(this.resultat != null && this.resultat != undefined) {
+    if(this.resultat?.length > 0) {
       this.hasScore = true;
     }
   }
@@ -36,16 +37,25 @@ export class HomePage {
   async getScore() {
     const id_utilisateur = parseInt(this.tokenInfo.id_utilisateur);
     var response = await this.service.getScore(id_utilisateur).toPromise();
-    this.scoring = response?.scoring;
-    localStorage.setItem('id_nf', response?.id_nf);
-    var score = this.scoring?.split("");
-    this.resultat.push({ key: score[0], value: parseInt(response?.score_firstletter) });
-    this.resultat.push({ key: score[1], value: parseInt(response?.score_secondletter) });
-    this.resultat.push({ key: score[2], value: parseInt(response?.score_thirdletter) });
+    if(response != null) {
+      this.scoring = response?.scoring;
+      localStorage.setItem('id_nf', response?.id_nf);
+      var score = this.scoring?.split("");
+      
+      this.resultat?.push({ key: score[0], value: parseInt(response?.score_firstletter) });
+      this.resultat?.push({ key: score[1], value: parseInt(response?.score_secondletter) });
+      this.resultat?.push({ key: score[2], value: parseInt(response?.score_thirdletter) });
+
+      this.resultPerStep?.push({ id_step: "1", resultat: response?.score_firststep});
+      this.resultPerStep?.push({ id_step: "2", resultat: response?.score_secondstep});
+      this.resultPerStep?.push({ id_step: "3", resultat: response?.score_thirdstep});
+      this.resultPerStep?.push({ id_step: "4", resultat: response?.score_fourthstep});
+    }
+    
   }
 
   goToResultat() {
-    this.router.navigate(['/result'], { state: { resultat: this.resultat, fromQuiz: false }});
+    this.router.navigate(['/result'], { state: { resultat: this.resultat, resultPerStep: this.resultPerStep, fromQuiz: false }});
   }
 
   startQuiz(){

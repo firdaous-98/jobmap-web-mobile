@@ -17,8 +17,9 @@ ion-content{
 
   .button {
     --background: #ff9f04;
-    --width: 60px;
     display: flex;
+    right: 100px;
+    left: 100px;
   }
 
 .container {
@@ -118,6 +119,7 @@ ion-content{
   ion-card {
     box-shadow: none;
     border: 1px solid #e1e1e1;
+    justify-content: center;
     margin-top: 50px;
     width: 450px;
   

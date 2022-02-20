@@ -2,26 +2,28 @@ ion-content{
   --ion-background-color:rgb(241, 240, 237);
 }
 
+ion-item {
+  --ion-background-color: aqua;
+}
+
+.get-result, .start-quiz, .logout {
+  // display: flex;
+  position: fixed;
+  right: 100px;
+  left: 100px;
+}
+
 .get-result {
   --background: #3d5959b2;
-  position: fixed;
-  left: 0;
-  bottom: 90px;
-  right: 0;
+  bottom: 130px;
 }
 
 .start-quiz {
   --background: #3d5959;
-  position: fixed;
-  left: 0;
-  bottom: 50px;
-  right: 0;
+  bottom: 90px;
 }
 
 .logout {
   --background: #ff9f04;
-  position: fixed;
-  left: 0;
-  bottom: 10px;
-  right: 0;
+  bottom: 50px;
 }

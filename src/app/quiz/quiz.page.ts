@@ -76,8 +76,8 @@ export class QuizPage {
           id_step: "4",
           resultat: resultat
         });
-      var resultat = this.composeCodeHolland(this.reponses);
-      this.router.navigate(['/result'], { state: { resultat: resultat, resultPerStep: this.resultPerStep, fromQuiz: true }});
+      var resultatFinal = this.composeCodeHolland(this.reponses);
+      this.router.navigate(['/result'], { state: { resultat: resultatFinal, resultPerStep: this.resultPerStep, fromQuiz: true }});
     }
   }
 
