@@ -1,12 +1,14 @@
-ion-content{
-  --ion-background-color:rgb(241, 240, 237);
+ion-content {
+  --ion-background-color: rgb(241, 240, 237);
 }
 
 ion-item {
   --ion-background-color: aqua;
 }
 
-.get-result, .start-quiz, .logout {
+.get-result,
+.start-quiz,
+.logout {
   // display: flex;
   position: fixed;
   right: 100px;
@@ -26,4 +28,10 @@ ion-item {
 .logout {
   --background: #ff9f04;
   bottom: 50px;
+}
+
+:host .button-solid {
+    @media only screen and (max-width: 550px) {
+    font-size: 2.5vw !important;
+  }
 }

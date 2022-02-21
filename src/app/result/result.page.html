@@ -1,6 +1,4 @@
-<app-header
-  [showBack]="true"
-  (backClickEvent)="backClick()">
+<app-header [showBack]="true" (backClickEvent)="backClick()">
 </app-header>
 <ion-content>
     <ion-label class="title">Vous avez obtenu :</ion-label>
@@ -13,7 +11,7 @@
         </ion-card>
         <ion-button class="button" (click)="redoQuiz()">Refaire le questionnaire</ion-button>
     </ng-container>
-    
+
     <ng-container *ngIf="!twoEquals">
         <div class="container">
             <div class="item">
@@ -29,7 +27,7 @@
                     </div>
                 </div>
             </div>
-        
+
             <div class="item">
                 <div class="content">
                     <div class="title">
@@ -39,9 +37,12 @@
                         <span>Cela pourra vous aidez à trouver le métier qui correspond à votre profil</span>
                     </div>
                     <div class="border">
-                        <div class="line"><span class="char"> {{ resultat[0].key }}: </span><span class="word"> {{ getExplanation(resultat[0].key) }} </span></div>
-                        <div class="line"><span class="char"> {{ resultat[1].key }}: </span><span class="word"> {{ getExplanation(resultat[1].key) }} </span></div>
-                        <div class="line"><span class="char"> {{ resultat[2].key }}: </span><span class="word"> {{ getExplanation(resultat[2].key) }} </span></div>
+                        <div class="line"><span class="char"> {{ resultat[0].key }}: </span><span class="word"> {{
+                                getExplanation(resultat[0].key) }} </span></div>
+                        <div class="line"><span class="char"> {{ resultat[1].key }}: </span><span class="word"> {{
+                                getExplanation(resultat[1].key) }} </span></div>
+                        <div class="line"><span class="char"> {{ resultat[2].key }}: </span><span class="word"> {{
+                                getExplanation(resultat[2].key) }} </span></div>
                     </div>
                 </div>
             </div>
@@ -64,7 +65,7 @@
                     <td>{{ metier.id_personnes }}</td>
                     <td>{{ metier.id_choses }}</td>
                 </tr>
-            </tbody> 
+            </tbody>
         </table>
     </div>
     <div class="table" *ngIf="[anneeEtude.College3, anneeEtude.TroncCommun].includes(annee_etude)">
@@ -78,111 +79,119 @@
                 <tr *ngFor="let typebac of listeTypeBac">
                     <td>{{ typebac.libelle_typebac_complet }}</td>
                 </tr>
-            </tbody> 
+            </tbody>
         </table>
     </div>
 
     <ng-container *ngIf="!showOtherResult && !twoEquals">
-        <ion-label class="label" *ngIf="id_type_utilisateur == typeUtilisateur.Parent"> 
+        <ion-label class="label" *ngIf="id_type_utilisateur == typeUtilisateur.Parent">
             Souhaitez-vous comparer votre résultat avec celui de votre fils/ étudiant ?
         </ion-label>
-        <ion-label class="label" *ngIf="id_type_utilisateur == typeUtilisateur.Etudiant"> 
+        <ion-label class="label" *ngIf="id_type_utilisateur == typeUtilisateur.Etudiant">
             Souhaitez-vous comparer votre résultat avec celui de votre parent/ professeur ?
         </ion-label>
         <ion-item>
             <ion-label position="floating">Adresse Email</ion-label>
-            <ion-input #EmailInput="ngModel" ngModel [(ngModel)]="emailPartner" [pattern]="regexEmail" type="email" name="email" required></ion-input>
+            <ion-input #EmailInput="ngModel" ngModel [(ngModel)]="emailPartner" [pattern]="regexEmail" type="email"
+                name="email" required></ion-input>
         </ion-item>
+        
         <ion-text *ngIf="!EmailInput.valid && EmailInput.touched" color="danger">
             Veuillez renseigner une adresse email valide
         </ion-text>
-        <ion-button class="button" *ngIf="EmailInput.valid && scorePartner == null" (click)="getPartnerScore()">Voir le résultat obtenu par eux</ion-button>
+        <ion-button class="button" *ngIf="EmailInput.valid && scorePartner == null" (click)="getPartnerScore()">Voir le
+            résultat obtenu par eux</ion-button>
     </ng-container>
-    
-    
+
+
 
     <ng-container *ngIf="!twoEquals && showOtherResult">
-            <div class="container">
-                    <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Parent" class="title">Résultat obtenu par votre fils/ étudiant :</ion-label>
-                    <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Etudiant" class="title">Résultat obtenu par votre parent/ professeur :</ion-label>
-                <div class="item">
-                    <div class="chart-p">
-                        <div class="chart chart-a" [style.height]="OtherFirstHeight">
-                            <span class="chart-text"> {{ autreResultat[0].key }} </span>
-                        </div>
-                        <div class="chart chart-b" [style.height]="OtherSecondHeight">
-                            <span class="chart-text"> {{ autreResultat[1].key }} </span>
-                        </div>
-                        <div class="chart chart-c" [style.height]="OtherThirdHeight">
-                            <span class="chart-text"> {{ autreResultat[2].key }} </span>
-                        </div>
+        <div class="container">
+            <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Parent" class="title">Résultat obtenu par votre
+                fils/ étudiant :</ion-label>
+            <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Etudiant" class="title">Résultat obtenu par votre
+                parent/ professeur :</ion-label>
+            <div class="item">
+                <div class="chart-p">
+                    <div class="chart chart-a" [style.height]="OtherFirstHeight">
+                        <span class="chart-text"> {{ autreResultat[0].key }} </span>
                     </div>
-                </div>
-            
-                <div class="item">
-                    <div class="content">
-                        <div class="title">
-                            <h4>Explication de {{ OtherCodeHollandCompose }}</h4>
-                        </div>
-                        <div class="border">
-                            <div class="line"><span class="char"> {{ autreResultat[0].key }}: </span><span class="word"> {{ getExplanation(autreResultat[0].key) }} </span></div>
-                            <div class="line"><span class="char"> {{ autreResultat[1].key }}: </span><span class="word"> {{ getExplanation(autreResultat[1].key) }} </span></div>
-                            <div class="line"><span class="char"> {{ autreResultat[2].key }}: </span><span class="word"> {{ getExplanation(autreResultat[2].key) }} </span></div>
-                        </div>
+                    <div class="chart chart-b" [style.height]="OtherSecondHeight">
+                        <span class="chart-text"> {{ autreResultat[1].key }} </span>
+                    </div>
+                    <div class="chart chart-c" [style.height]="OtherThirdHeight">
+                        <span class="chart-text"> {{ autreResultat[2].key }} </span>
                     </div>
                 </div>
             </div>
-        </ng-container>
-        <div class="table">
-            <table class="center" *ngIf="showOtherResult && OtherListeMetiers?.length > 0">
-                <thead>
-                    <tr>
-                        <th>Métier(s)</th>
-                        <th>D</th>
-                        <th>P</th>
-                        <th>C</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let metier of OtherListeMetiers">
-                        <td>{{ metier.libelle_metier }}</td>
-                        <td>{{ metier.id_donnees }}</td>
-                        <td>{{ metier.id_personnes }}</td>
-                        <td>{{ metier.id_choses }}</td>
-                    </tr>
-                </tbody> 
-            </table>
+
+            <div class="item">
+                <div class="content">
+                    <div class="title">
+                        <h4>Explication de {{ OtherCodeHollandCompose }}</h4>
+                    </div>
+                    <div class="border">
+                        <div class="line"><span class="char"> {{ autreResultat[0].key }}: </span><span class="word"> {{
+                                getExplanation(autreResultat[0].key) }} </span></div>
+                        <div class="line"><span class="char"> {{ autreResultat[1].key }}: </span><span class="word"> {{
+                                getExplanation(autreResultat[1].key) }} </span></div>
+                        <div class="line"><span class="char"> {{ autreResultat[2].key }}: </span><span class="word"> {{
+                                getExplanation(autreResultat[2].key) }} </span></div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="table" *ngIf="showOtherResult && [anneeEtude.College3, anneeEtude.TroncCommun].includes(annee_etude)">
-            <table class="center" *ngIf="OtherListeTypeBac?.length > 0">
-                <thead>
-                    <tr>
-                        <th>Les types de bac convenables à ce/ces métier(s)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let typebac of OtherListeTypeBac">
-                        <td>{{ typebac.libelle_typebac_complet }}</td>
-                    </tr>
-                </tbody> 
-            </table>
-        </div>
+    </ng-container>
+    <div class="table">
+        <table class="center" *ngIf="showOtherResult && OtherListeMetiers?.length > 0">
+            <thead>
+                <tr>
+                    <th>Métier(s)</th>
+                    <th>D</th>
+                    <th>P</th>
+                    <th>C</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let metier of OtherListeMetiers">
+                    <td>{{ metier.libelle_metier }}</td>
+                    <td>{{ metier.id_donnees }}</td>
+                    <td>{{ metier.id_personnes }}</td>
+                    <td>{{ metier.id_choses }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="table" *ngIf="showOtherResult && [anneeEtude.College3, anneeEtude.TroncCommun].includes(annee_etude)">
+        <table class="center" *ngIf="OtherListeTypeBac?.length > 0">
+            <thead>
+                <tr>
+                    <th>Les types de bac convenables à ce/ces métier(s)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let typebac of OtherListeTypeBac">
+                    <td>{{ typebac.libelle_typebac_complet }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
     <ng-container *ngIf="showNoOtherScore && !invitationSent">
-            <ion-text class="label">L'utilisateur ayant cette adresse email n'a pas encore répondu au questionnaire</ion-text>
-            <ion-button class="button" (click)="sendInvitation()">Invitez-les à répondre au questionnaire</ion-button>
+        <ion-text class="label">L'utilisateur ayant cette adresse email n'a pas encore répondu au questionnaire
+        </ion-text>
+        <ion-button class="button" (click)="sendInvitation()">Invitez-les à répondre au questionnaire</ion-button>
     </ng-container>
-    
 
-    <ion-button class="button" (click)="generatePdf()">Télécharger votre résultat et recevoir un rapport approfondi</ion-button>
-    <ion-button class="button" (click)="redoQuiz()">Refaire le questionnaire</ion-button>
+
+    <div class="button-groupe">
+        <ion-button class="button" (click)="generatePdf()">Télécharger votre résultat et recevoir un rapport approfondi
+        </ion-button>
+        <ion-button class="button" (click)="redoQuiz()">Refaire le questionnaire</ion-button>
+    </div>
 
     <div style="visibility: hidden;">
-            <apx-chart
-              [series]="chartOptions?.series"
-              [chart]="chartOptions?.chart"
-              [xaxis]="chartOptions?.xaxis"
-              [title]="chartOptions?.title"
-            ></apx-chart>
-          </div>
+        <apx-chart [series]="chartOptions?.series" [chart]="chartOptions?.chart" [xaxis]="chartOptions?.xaxis"
+            [title]="chartOptions?.title"></apx-chart>
+    </div>
 </ion-content>
