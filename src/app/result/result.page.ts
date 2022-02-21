@@ -136,9 +136,10 @@ export class ResultPage {
   async getMetiers() {
     var id_nf = parseInt(localStorage.getItem('id_nf'));
     var result = await this.service.getMetiers(this.codeHollandCompose, id_nf).toPromise();
-    
-    this.listeMetiers = result as unknown as Metier[];
-    this.id_codeholland = this.listeMetiers[0].id_codeholland;
+    if(result?.message == null) {
+      this.listeMetiers = result as unknown as Metier[];
+      this.id_codeholland = this.listeMetiers[0].id_codeholland;
+    }
   }
 
   async getTypesBac() {
@@ -292,7 +293,7 @@ export class ResultPage {
       ],
       chart: {
         height: 350,
-        type: 'bar',
+        type: 'bar'
       },
       title: {
         text: '',
@@ -317,6 +318,69 @@ export class ResultPage {
       metierRows.push([metier.libelle_metier, metier.id_donnees.toString(), metier.id_personnes.toString(), metier.id_choses.toString()]);
     });
 
+    var result: any;
+    if(!this.showOtherResult) {
+      result = {
+        columns: [
+          [
+            {
+              text: 'Vous avez obtenu le score : ' + this.codeHollandCompose,
+              bold: true,
+              fontSize: 18,
+              alignment: 'center',
+              margin: [20, 0, 0, 20]
+            },
+            {
+              image: await this.getBase64Image(),
+              width: 500
+            }
+          ]
+        ]
+      }
+    } else {
+      result = {
+        columns: [
+          { width: '*', text: '' },
+          {
+            width: 'auto',
+            table: {
+              body: [
+              [
+                {
+                  text: 'Vous avez obtenu le score : ' + this.codeHollandCompose,
+                  bold: true,
+                  fontSize: 9,
+                  alignment: 'center',
+                  margin: [20, 0, 0, 20]
+                },
+                {
+                  text: (this.id_type_utilisateur == TypeUtilisateur.Parent ? 'Votre fils/ étudiant a obtenu le score : ' : 'Votre parent/prof a obtenu le score : ') + this.OtherCodeHollandCompose,
+                  bold: true,
+                  fontSize: 9,
+                  alignment: 'center',
+                  margin: [20, 0, 0, 20]
+                }
+              ],
+              [
+                {
+                  image: await this.getBase64Image(),
+                  alignment: 'center',
+                  width: 250
+                },
+                {
+                  image: await this.getBase64Image(),
+                  alignment: 'center',
+                  width: 250
+                }
+              ]
+            ]
+            },
+            margin: [5, 10, 5, 10]
+            }
+        ]
+      }
+    }
+
     const documentDefinition = { 
       content: [
         {
@@ -334,21 +398,11 @@ export class ResultPage {
             },
             {
               text: 'Email : ' + this.tokenInfo.adresse_email,
-            },
-            {
-              text: 'Vous avez obtenu le score : ' + this.codeHollandCompose,
-              bold: true,
-              fontSize: 18,
-              alignment: 'center',
-              margin: [20, 0, 0, 20]
             }
             ]
           ]
         },
-        {
-          image: await this.getBase64Image(),
-          width: 500
-        },
+        result,
         {
           text: 'Cela pourra vous aidez à trouver le métier qui correspond à votre profil : ',
           fontSize: 15,
@@ -394,7 +448,7 @@ export class ResultPage {
                 paddingRight: function(i, node) { return 80; },
                 paddingTop: function(i, node) { return 10; },
                 paddingBottom: function(i, node) { return 10; }
-            }
+              }
             },
             { width: '*', text: '' }
           ]
@@ -425,17 +479,17 @@ export class ResultPage {
           }
         }
     };
-    pdfMake.createPdf(documentDefinition).download();
+    pdfMake.createPdf(documentDefinition).open();
 
-    this.service.resultDownloaded(
-      this.tokenInfo.adresse_email,
-      parseInt(this.tokenInfo.id_utilisateur),
-      this.id_codeholland,
-      this.codeHollandCompose,
-      parseInt(localStorage.getItem('id_nf'))
-    ).subscribe(result => {
-      console.log(result);
-    });
+    // this.service.resultDownloaded(
+    //   this.tokenInfo.adresse_email,
+    //   parseInt(this.tokenInfo.id_utilisateur),
+    //   this.id_codeholland,
+    //   this.codeHollandCompose,
+    //   parseInt(localStorage.getItem('id_nf'))
+    // ).subscribe(result => {
+    //   console.log(result);
+    // });
 
     this.sendRequestMail();
    }

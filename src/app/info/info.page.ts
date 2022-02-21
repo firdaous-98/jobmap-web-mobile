@@ -172,7 +172,7 @@ export class InfoPage {
       prenom: tokenInfo.prenom,
       adresse_email: tokenInfo.adresse_email,
       id_typeutilisateur: this.typeUtilisateur,
-      id_typebac: this.typebac != null ? parseInt(this.typebac) : null,
+      id_typebac: this.typebac != null ? parseInt(this.typebac) : 9,
       id_annee_etude: parseInt(this.anneeEtude),
       jwt: localStorage.getItem('token')
     }
