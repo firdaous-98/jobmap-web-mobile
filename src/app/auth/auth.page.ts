@@ -26,6 +26,11 @@ export class AuthPage implements OnInit {
     ) { }
 
   ngOnInit() {
+    const helper = new JwtHelperService();
+    const token = localStorage.getItem(this.TOKEN);
+    if (token != null && !helper.isTokenExpired(token)){
+      this.router.navigate(['/home']);
+    }
   }
 
   onSubmit() {
