@@ -1,9 +1,11 @@
 import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { UserHelper } from '../core/helpers/user-helper';
 import { Score } from '../core/models/score.model';
 import { TokenInfo } from '../core/models/token.model';
 import { AppService } from '../core/services/app.service';
+import { TranslatorService } from '../core/services/translate.service';
 
 @Component({
   selector: 'app-home',
@@ -20,11 +22,16 @@ export class HomePage {
 
   constructor(
     private router: Router,
+    public translate: TranslateService, 
+    public translatorService: TranslatorService,
     private service: AppService
   ) {
   }
 
   async ngOnInit() {
+    setTimeout(() => {
+      this.translate.use(this.translatorService.getSelectedLanguage());      
+    }, 500);
     this.tokenInfo = UserHelper.getTokenInfo();
     localStorage.setItem('id_type_utilisateur', this.tokenInfo.id_typeutilisateur);
     localStorage.setItem('annee_etude', this.tokenInfo.id_annee_etude);
@@ -64,7 +71,7 @@ export class HomePage {
 
   logOut(){
     localStorage.clear();
-    this.router.navigate(['/auth']);
+    this.router.navigate(['/language']);
   }
 
   @HostListener('unloaded')

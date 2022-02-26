@@ -1,5 +1,6 @@
 import { Component, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import {
   ApexAxisChartSeries,
   ApexChart, ApexTitleSubtitle, ApexXAxis, ChartComponent
@@ -14,6 +15,7 @@ import { Score } from '../core/models/score.model';
 import { TokenInfo } from '../core/models/token.model';
 import { TypeBac } from '../core/models/type-bac.model';
 import { AppService } from '../core/services/app.service';
+import { TranslatorService } from '../core/services/translate.service';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -80,7 +82,11 @@ export class ResultPage {
 
   link = "afa9.org";
 
-  constructor(private router: Router, private service: AppService) {
+  constructor(
+    private router: Router, 
+    public translate: TranslateService, 
+    public translatorService: TranslatorService,
+    private service: AppService) {
     this.resultat = this.router.getCurrentNavigation().extras.state?.resultat;
     this.fromQuiz = this.router.getCurrentNavigation().extras.state?.fromQuiz;
     this.resultPerStep = this.router.getCurrentNavigation().extras.state?.resultPerStep;
@@ -89,6 +95,9 @@ export class ResultPage {
 
 
   async ngOnInit() {
+    setTimeout(() => {
+      this.translate.use(this.translatorService.getSelectedLanguage());      
+    }, 500);
     if(this.resultat != null) {
       this.checkEquality();
       if(!this.twoEquals) {

@@ -1,7 +1,7 @@
 <app-header [showBack]="true" (backClickEvent)="backClick()">
 </app-header>
 <ion-content>
-    <ion-label class="title">Vous avez obtenu :</ion-label>
+    <ion-label class="title">{{'YOU_GOT' | translate}}</ion-label>
     <ng-container *ngIf="twoEquals">
         <ion-card>
             <ion-card-title> Oops ! </ion-card-title>
@@ -9,7 +9,7 @@
                 Vos réponses n'ont pas pu donné un résultat précis, veuillez refaire le questionnaire :)
             </ion-card-content>
         </ion-card>
-        <ion-button class="button" (click)="redoQuiz()">Refaire le questionnaire</ion-button>
+        <ion-button class="button" (click)="redoQuiz()">{{'REDO_QUIZ' | translate}}</ion-button>
     </ng-container>
 
     <ng-container *ngIf="!twoEquals">
@@ -31,10 +31,10 @@
             <div class="item">
                 <div class="content">
                     <div class="title">
-                        <h4>Explication de {{ codeHollandCompose }}</h4>
+                        <h4>{{'EXPLANATION_RIASEC' | translate}} : {{ codeHollandCompose }}</h4>
                     </div>
                     <div class="text">
-                        <span>Cela pourra vous aidez à trouver le métier qui correspond à votre profil</span>
+                        <span>{{'HELPS_FIND_JOB' | translate}}</span>
                     </div>
                     <div class="border">
                         <div class="line"><span class="char"> {{ resultat[0].key }}: </span><span class="word"> {{
@@ -52,7 +52,7 @@
         <table class="center" *ngIf="listeMetiers?.length > 0">
             <thead>
                 <tr>
-                    <th>Métier(s)</th>
+                    <th>{{'JOBS' | translate}}</th>
                     <th>D</th>
                     <th>P</th>
                     <th>C</th>
@@ -72,7 +72,7 @@
         <table class="center" *ngIf="listeTypeBac?.length > 0">
             <thead>
                 <tr>
-                    <th>Les types de bac convenables à ce/ces métier(s)</th>
+                    <th>{{'RELEVANT_BAC_TYPES' | translate}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -85,32 +85,35 @@
 
     <ng-container *ngIf="!showOtherResult && !twoEquals">
         <ion-label class="label" *ngIf="id_type_utilisateur == typeUtilisateur.Parent">
-            Souhaitez-vous comparer votre résultat avec celui de votre fils/ étudiant ?
+            {{'COMPARE_RESULTS_PARENT' | translate}}
         </ion-label>
         <ion-label class="label" *ngIf="id_type_utilisateur == typeUtilisateur.Etudiant">
-            Souhaitez-vous comparer votre résultat avec celui de votre parent/ professeur ?
+            {{'COMPARE_RESULTS' | translate}}
         </ion-label>
         <ion-item>
-            <ion-label position="floating">Adresse Email</ion-label>
+            <ion-label style="text-align:center;" position="floating">{{'EMAIL_ADDRESS' | translate}}</ion-label>
             <ion-input #EmailInput="ngModel" ngModel [(ngModel)]="emailPartner" [pattern]="regexEmail" type="email"
                 name="email" required></ion-input>
         </ion-item>
         
         <ion-text *ngIf="!EmailInput.valid && EmailInput.touched" color="danger">
-            Veuillez renseigner une adresse email valide
+            {{'ENTER_VALID_EMAIL_ADDRESS' | translate}}
         </ion-text>
-        <ion-button class="button" *ngIf="EmailInput.valid && scorePartner == null" (click)="getPartnerScore()">Voir le
-            résultat obtenu par eux</ion-button>
+        <ion-button class="button" *ngIf="EmailInput.valid && scorePartner == null" (click)="getPartnerScore()">
+            {{'CHECK_THEIR_RESULTS' | translate}}
+        </ion-button>
     </ng-container>
 
 
 
     <ng-container *ngIf="!twoEquals && showOtherResult">
         <div class="container">
-            <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Parent" class="title">Résultat obtenu par votre
-                fils/ étudiant :</ion-label>
-            <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Etudiant" class="title">Résultat obtenu par votre
-                parent/ professeur :</ion-label>
+            <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Parent" class="title">
+                Résultat obtenu par votre fils/ étudiant :{{'RESULT_SON' | translate}}
+            </ion-label>
+            <ion-label *ngIf="id_type_utilisateur == typeUtilisateur.Etudiant" class="title">
+                Résultat obtenu par votre parent/ professeur :{{'RESULT_PARENT' | translate}}
+            </ion-label>
             <div class="item">
                 <div class="chart-p">
                     <div class="chart chart-a" [style.height]="OtherFirstHeight">
@@ -128,7 +131,7 @@
             <div class="item">
                 <div class="content">
                     <div class="title">
-                        <h4>Explication de {{ OtherCodeHollandCompose }}</h4>
+                        <h4>{{'EXPLANATION_RIASEC' | translate}} {{ OtherCodeHollandCompose }}</h4>
                     </div>
                     <div class="border">
                         <div class="line"><span class="char"> {{ autreResultat[0].key }}: </span><span class="word"> {{
@@ -146,7 +149,7 @@
         <table class="center" *ngIf="showOtherResult && OtherListeMetiers?.length > 0">
             <thead>
                 <tr>
-                    <th>Métier(s)</th>
+                    <th>{{'JOBS' | translate}}</th>
                     <th>D</th>
                     <th>P</th>
                     <th>C</th>
@@ -166,7 +169,7 @@
         <table class="center" *ngIf="OtherListeTypeBac?.length > 0">
             <thead>
                 <tr>
-                    <th>Les types de bac convenables à ce/ces métier(s)</th>
+                    <th>{{'RELEVANT_BAC_TYPES' | translate}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -178,16 +181,22 @@
     </div>
 
     <ng-container *ngIf="showNoOtherScore && !invitationSent">
-        <ion-text class="label">L'utilisateur ayant cette adresse email n'a pas encore répondu au questionnaire
+        <ion-text class="label">
+            {{'USER_DIDNT_PASS_TEST_YET' | translate}}
         </ion-text>
-        <ion-button class="button" (click)="sendInvitation()">Invitez-les à répondre au questionnaire</ion-button>
+        <ion-button class="button" (click)="sendInvitation()">
+            {{'SEND_INVITATION' | translate}}
+        </ion-button>
     </ng-container>
 
 
     <div class="button-groupe">
-        <ion-button class="button" (click)="generatePdf()">Télécharger votre résultat et recevoir un rapport approfondi
+        <ion-button class="button" (click)="generatePdf()">
+            {{'DOWNLOAD_RESULT_GET_DETAILED_REPORT' | translate}}
         </ion-button>
-        <ion-button class="button" (click)="redoQuiz()">Refaire le questionnaire</ion-button>
+        <ion-button class="button" (click)="redoQuiz()">
+            {{'REDO_QUIZ' | translate}}
+        </ion-button>
     </div>
 
     <div style="visibility: hidden;">

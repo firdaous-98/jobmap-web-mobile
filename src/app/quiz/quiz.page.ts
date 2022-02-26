@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { CodeHolland } from '../core/enums/code-holland.enum';
 import { ResultChoix } from '../core/models/choix.model';
 import { Question } from '../core/models/question.model';
 import { Reponse, Scores } from '../core/models/reponse.model';
 import { Score } from '../core/models/score.model';
 import { AppService } from '../core/services/app.service';
+import { TranslatorService } from '../core/services/translate.service';
 
 @Component({
   selector: 'app-quiz',
@@ -24,9 +26,19 @@ export class QuizPage {
   isBack: boolean = false;
   scores: Scores;
 
-  constructor(private service: AppService, private router: Router) {
+  constructor(
+    private service: AppService, 
+    public translate: TranslateService, 
+    public translatorService: TranslatorService,
+    private router: Router) {
     this.initQuestions();
     this.initScore();
+   }
+
+   ngOnInit() {
+    setTimeout(() => {
+      this.translate.use(this.translatorService.getSelectedLanguage());      
+    }, 500);
    }
 
    initQuestions() {

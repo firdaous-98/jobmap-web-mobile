@@ -7,51 +7,54 @@
     <ion-card>
       <ng-container *ngIf="submissionType === 'join'">
         <ion-item>
-          <ion-label position="floating">Nom</ion-label>
+          <ion-label position="floating">{{ 'LAST_NAME' | translate }}</ion-label>
           <ion-input #NomInput="ngModel" ngModel type="text" name="nom" required></ion-input>
         </ion-item>
         <ion-text *ngIf="!NomInput.valid && NomInput.touched" color="danger">
-            Veuillez renseigner votre nom
+            {{ 'ENTER_NAME' | translate }}
         </ion-text>
       </ng-container>
 
       <ng-container *ngIf="submissionType === 'join'">
         <ion-item>
-          <ion-label position="floating">Prénom</ion-label>
+          <ion-label position="floating">{{ 'FIRST_NAME' | translate }}</ion-label>
           <ion-input #PrenomInput="ngModel" ngModel type="text" name="prenom" required></ion-input>
         </ion-item>
         <ion-text *ngIf="!PrenomInput.valid && PrenomInput.touched" color="danger">
-            Veuillez renseigner votre prénom
+            {{ 'ENTER_FIRST_NAME' | translate }}
         </ion-text>
       </ng-container>
 
       <ion-item>
-        <ion-label position="floating">Adresse Email</ion-label>
+        <ion-label position="floating">{{ 'EMAIL_ADDRESS' | translate }}</ion-label>
         <ion-input #EmailInput="ngModel" ngModel [pattern]="regexEmail" type="email" name="email" required></ion-input>
       </ion-item>
       <ion-text *ngIf="!EmailInput.valid && EmailInput.touched" color="danger">
-          Veuillez renseigner une adresse email valide
+          {{ 'ENTER_VALID_EMAIL_ADDRESS' | translate }}
       </ion-text>
 
       <ion-item>
-        <ion-label position="floating">Mot de passe</ion-label>            
+        <ion-label position="floating">{{ 'PASSWORD' | translate }}</ion-label>            
         <ion-icon (click)="toggleShowPassword()" slot="end" [name]="passwordType=='password' ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
         <ion-input #PasswordInput="ngModel" ngModel [type]="passwordType" name="password" required></ion-input>
       </ion-item>
       <ion-text *ngIf="!PasswordInput.valid && PasswordInput.touched" color="danger">
-          Veuillez renseigner votre mot de passe
+          {{ 'ENTER_PASSWORD' | translate }}
       </ion-text>
 
       <ion-button [disabled]="!form.valid" type="submit" expand="block">
-        {{ submissionType === 'login' ? 'Se connecter' : 'S\'inscrire' }}
+        {{ submissionType === 'login' ? ('LOGIN' | translate) : ('SIGN_UP' | translate) }}
+      </ion-button>
+      <ion-button expand="block" (click)="changeLanguage()">
+          {{ 'CHANGE_LANGUAGE' | translate }}
       </ion-button>
 
     </ion-card>
   </form>
   <div class="toggle-text">
-      {{ submissionType === 'login' ? 'Vous n\'avez pas de compte ?' : 'Vous avez déjà un compte ?' }}
+      {{ submissionType === 'login' ? ('NO_ACCOUNT' | translate) : ('ALREADY_HAVE_ACCOUNT' | translate) }}
       <ion-text (click)="toggleText()" color="primary">
-          {{ submissionType === 'login' ? 'Créer un compte' : 'Se connecter' }}
+          {{ submissionType === 'login' ? ('CREATE_ACCOUNT' | translate) : ('LOGIN' | translate) }}
       </ion-text>
   </div>
 </ion-content>

@@ -1,9 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AccountService } from '../core/services/account.service';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { ToastController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { TranslatorService } from '../core/services/translate.service';
 
 @Component({
   selector: 'app-auth',
@@ -21,11 +23,19 @@ export class AuthPage implements OnInit {
 
   constructor(
     private accountService: AccountService, 
+    public translate: TranslateService, 
+    public translatorService: TranslatorService,
     private router: Router,
     public toastController: ToastController
-    ) { }
+    ) 
+    {
+      // this.translate.use(this.translatorService.getSelectedLanguage());
+    }
 
   ngOnInit() {
+    setTimeout(() => {
+      this.translate.use(this.translatorService.getSelectedLanguage());      
+    }, 500);
     const helper = new JwtHelperService();
     const token = localStorage.getItem(this.TOKEN);
     if (token != null && !helper.isTokenExpired(token)){
@@ -82,6 +92,15 @@ export class AuthPage implements OnInit {
 
   toggleShowPassword() {
     this.passwordType = this.passwordType === 'password' ? 'text' : 'password';
+  }
+
+  changeLanguage() {
+    this.router.navigate(['/language']);
+  }
+
+  @HostListener('unloaded')
+  ngOnDestroy() {
+    console.log('Items destroyed');
   }
 
 }

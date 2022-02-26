@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { TypeUtilisateur } from '../core/enums/type-utilisateur.enum';
 import { UserHelper } from '../core/helpers/user-helper';
 import { NiveauEtude } from '../core/models/filiere.model';
@@ -9,6 +10,7 @@ import { TypeBac } from '../core/models/type-bac.model';
 import { UserUpdate } from '../core/models/user.model';
 import { AccountService } from '../core/services/account.service';
 import { AppService } from '../core/services/app.service';
+import { TranslatorService } from '../core/services/translate.service';
 
 @Component({
   selector: 'app-info',
@@ -40,11 +42,19 @@ export class InfoPage {
     private appSservice: AppService, 
     private accountService: AccountService,
     public toastController: ToastController,
+    public translate: TranslateService, 
+    public translatorService: TranslatorService,
     private router: Router
     ) {
     this.initFilieres();
     this.showType = true;
    }
+
+  ngOnInit(){
+    setTimeout(() => {
+      this.translate.use(this.translatorService.getSelectedLanguage());      
+    }, 500);
+  }
 
   initFilieres(){
     this.appSservice.get_filieresArray().subscribe((result: NiveauEtude[]) => {
@@ -75,7 +85,7 @@ export class InfoPage {
   async Choose(){
     if(this.showType) {
       if(this.typeUtilisateur == null){
-        (await this.toastController.create({ message: 'Veuillez choisir une réponse', duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+        (await this.toastController.create({ message: this.translate.instant('PLEASE_CHOOSE'), duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
         return;
       }
       this.showType = false;
@@ -85,7 +95,7 @@ export class InfoPage {
 
     if(this.showNiveau){
       if(this.niveauEtude == null){
-        (await this.toastController.create({ message: 'Veuillez choisir une réponse', duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+        (await this.toastController.create({ message: this.translate.instant('PLEASE_CHOOSE'), duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
         return;
       }
       this.showNiveau = false;
@@ -97,7 +107,7 @@ export class InfoPage {
 
     if(this.showAnnee){
       if(this.anneeEtude == null){
-        (await this.toastController.create({ message: 'Veuillez choisir une réponse', duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+        (await this.toastController.create({ message: this.translate.instant('PLEASE_CHOOSE'), duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
         return;
       }
       this.showAnnee = false;
@@ -122,7 +132,7 @@ export class InfoPage {
 
     if(this.showTypeBac){
       if(this.typebac == null){
-        (await this.toastController.create({ message: 'Veuillez choisir une réponse', duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+        (await this.toastController.create({ message: this.translate.instant('PLEASE_CHOOSE'), duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
         return;
       }
       this.showAnnee = false;
@@ -179,7 +189,7 @@ export class InfoPage {
 
     this.accountService.update(user).subscribe(async result => {
       if(result.status == 'success'){
-        (await this.toastController.create({ message: 'Les informations ont été bien enregistrées', duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+        (await this.toastController.create({ message: this.translate.instant('INFO_SAVED'), duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
       }
     });
 

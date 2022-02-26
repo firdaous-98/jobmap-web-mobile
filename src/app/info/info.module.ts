@@ -8,6 +8,9 @@ import { InfoPageRoutingModule } from './info-routing.module';
 
 import { InfoPage } from './info.page';
 import { SharedModule } from '../shared/shared.module';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslatorService } from '../core/services/translate.service';
+import { HttpClient } from '@angular/common/http';
 
 @NgModule({
   imports: [
@@ -15,7 +18,14 @@ import { SharedModule } from '../shared/shared.module';
     FormsModule,
     IonicModule,
     SharedModule,
-    InfoPageRoutingModule
+    InfoPageRoutingModule,
+    TranslateModule.forRoot({
+      loader: { 
+        provide: TranslateLoader,
+        useFactory: (TranslatorService.createTranslateLoader()),
+        deps: [HttpClient]
+      }
+  })
   ],
   declarations: [InfoPage]
 })

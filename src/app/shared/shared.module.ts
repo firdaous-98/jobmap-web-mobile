@@ -4,6 +4,9 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { IonicModule } from "@ionic/angular";
 import { HeaderComponent } from "./header/header.component";
 import { QuestionComponent } from "./question/question.component";
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslatorService } from '../core/services/translate.service';
+import { HttpClient } from '@angular/common/http';
 
 @NgModule({
     declarations: [
@@ -14,7 +17,14 @@ import { QuestionComponent } from "./question/question.component";
         CommonModule,
         IonicModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        TranslateModule.forRoot({
+            loader: { 
+              provide: TranslateLoader,
+              useFactory: (TranslatorService.createTranslateLoader()),
+              deps: [HttpClient]
+            }
+        })
     ],
     exports : [
         HeaderComponent,
