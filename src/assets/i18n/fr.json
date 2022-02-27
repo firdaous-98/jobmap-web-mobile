@@ -44,5 +44,9 @@
     "RESULT_SON": "Résultat obtenu par votre fils/ étudiant :",
     "RESULT_PARENT": "Résultat obtenu par votre parent/ professeur :",
     "USER_DIDNT_PASS_TEST_YET": "L'utilisateur ayant cette adresse email n'a pas encore répondu au questionnaire",
-    "SEND_INVITATION": "Invitez-les à répondre au questionnaire"
+    "SEND_INVITATION": "Invitez-les à répondre au questionnaire",
+    "NEXT_QUESTION": "Question suivante",
+    "BAC_PLUS_FIVE_MORE": "Bac +5 et plus",
+    "BAC_PLUS_TWO_THREE": "Bac +2 / Bac +3",
+    "NIVEAU_BAC": "Niveau bac"
   }

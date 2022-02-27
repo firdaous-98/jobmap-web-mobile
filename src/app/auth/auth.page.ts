@@ -20,6 +20,8 @@ export class AuthPage implements OnInit {
   regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   TOKEN = 'token';
 
+  isArab: boolean;
+
 
   constructor(
     private accountService: AccountService, 
@@ -36,6 +38,7 @@ export class AuthPage implements OnInit {
     setTimeout(() => {
       this.translate.use(this.translatorService.getSelectedLanguage());      
     }, 500);
+    this.isArab = localStorage.getItem('language') == "ar";
     const helper = new JwtHelperService();
     const token = localStorage.getItem(this.TOKEN);
     if (token != null && !helper.isTokenExpired(token)){
@@ -56,11 +59,11 @@ export class AuthPage implements OnInit {
               this.router.navigate(['/home']);
             }
             else {
-              (await this.toastController.create({ message: 'Votre session est expirée', duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+              (await this.toastController.create({ message: 'Votre session est expirée', duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
             }
           }
           else {
-            (await this.toastController.create({ message: 'Connexion echouée', duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+            (await this.toastController.create({ message: 'Connexion echouée', duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
           }
         });
       }
@@ -68,11 +71,11 @@ export class AuthPage implements OnInit {
         const { nom, prenom, email, password} = this.form.value;
         this.accountService.signin(nom, prenom, email, password).subscribe(async result => {
           if(result.message == "User was created."){
-            (await this.toastController.create({ message: 'Votre compte a été bien créé', duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+            (await this.toastController.create({ message: 'Votre compte a été bien créé', duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
             this.submissionType = 'login';
           }
           else if(result.message == "Email address already exists") {
-            (await this.toastController.create({ message: 'Cette adresse email est déjà prise par un autre compte', duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+            (await this.toastController.create({ message: 'Cette adresse email est déjà prise par un autre compte', duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
           }
         });
 

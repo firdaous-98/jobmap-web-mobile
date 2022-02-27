@@ -1,10 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ToastController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { CodeHolland } from 'src/app/core/enums/code-holland.enum';
 import { Level } from 'src/app/core/enums/level.enum';
 import { ResultChoix } from 'src/app/core/models/choix.model';
 import { Question } from 'src/app/core/models/question.model';
 import { Reponse } from 'src/app/core/models/reponse.model';
+import { TranslatorService } from 'src/app/core/services/translate.service';
 
 @Component({
   selector: 'app-question',
@@ -38,12 +40,24 @@ export class QuestionComponent {
   currentChoice: Level;
   Level = Level;
   index = 0;
+  isArab: boolean;
 
-  constructor(public toastController: ToastController) {}
+  constructor(
+    public toastController: ToastController,
+    public translate: TranslateService, 
+    public translatorService: TranslatorService
+    ) {}
+
+  ngOnInit(){
+    setTimeout(() => {
+      this.translate.use(this.translatorService.getSelectedLanguage());      
+    }, 500);
+    this.isArab = localStorage.getItem('language') == "ar";
+  }
   
   async goToNextQuestion(){
     if(this.response == null && this.currentChoice == null && this.stepTwoResponses.length == 0){
-      (await this.toastController.create({ message: 'Veuillez choisir une réponse', duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+      (await this.toastController.create({ message: this.translate.instant('PLEASE_CHOOSE'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
     }
     else {
       if(this.question.id_step == '4'){

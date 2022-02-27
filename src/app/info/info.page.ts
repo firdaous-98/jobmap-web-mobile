@@ -31,6 +31,7 @@ export class InfoPage {
   libelleNiveau: string;
   indexNiveau: number;
   indexAnnee: number;
+  isArab: boolean;
 
   showType = false;
   showNiveau = false;
@@ -54,6 +55,7 @@ export class InfoPage {
     setTimeout(() => {
       this.translate.use(this.translatorService.getSelectedLanguage());      
     }, 500);
+    this.isArab = localStorage.getItem('language') == "ar";
   }
 
   initFilieres(){
@@ -85,7 +87,7 @@ export class InfoPage {
   async Choose(){
     if(this.showType) {
       if(this.typeUtilisateur == null){
-        (await this.toastController.create({ message: this.translate.instant('PLEASE_CHOOSE'), duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+        (await this.toastController.create({ message: this.translate.instant('PLEASE_CHOOSE'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
         return;
       }
       this.showType = false;
@@ -95,19 +97,19 @@ export class InfoPage {
 
     if(this.showNiveau){
       if(this.niveauEtude == null){
-        (await this.toastController.create({ message: this.translate.instant('PLEASE_CHOOSE'), duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+        (await this.toastController.create({ message: this.translate.instant('PLEASE_CHOOSE'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
         return;
       }
       this.showNiveau = false;
       this.showAnnee = true;
       this.indexNiveau = this.listeNiveauxEtude.findIndex(e => e.id_niveau_etude == this.niveauEtude);
-      this.libelleNiveau = this.listeNiveauxEtude[this.indexNiveau].Libelle_niveau_etude;
+      this.libelleNiveau = this.isArab ? this.listeNiveauxEtude[this.indexNiveau].Libelle_niveau_etude_ar : this.listeNiveauxEtude[this.indexNiveau].Libelle_niveau_etude;
       return;
     }
 
     if(this.showAnnee){
       if(this.anneeEtude == null){
-        (await this.toastController.create({ message: this.translate.instant('PLEASE_CHOOSE'), duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+        (await this.toastController.create({ message: this.translate.instant('PLEASE_CHOOSE'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
         return;
       }
       this.showAnnee = false;
@@ -132,7 +134,7 @@ export class InfoPage {
 
     if(this.showTypeBac){
       if(this.typebac == null){
-        (await this.toastController.create({ message: this.translate.instant('PLEASE_CHOOSE'), duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+        (await this.toastController.create({ message: this.translate.instant('PLEASE_CHOOSE'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
         return;
       }
       this.showAnnee = false;
@@ -189,7 +191,7 @@ export class InfoPage {
 
     this.accountService.update(user).subscribe(async result => {
       if(result.status == 'success'){
-        (await this.toastController.create({ message: this.translate.instant('INFO_SAVED'), duration: 2500, position: 'bottom', animated: true, mode: 'ios' })).present();
+        (await this.toastController.create({ message: this.translate.instant('INFO_SAVED'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
       }
     });
 
@@ -203,11 +205,11 @@ export class InfoPage {
   getLibelleNiveauFormation(libelle: string) {
     switch(libelle) {
       case 'M':
-        return 'Bac +5 et plus';
+        return this.translate.instant('BAC_PLUS_FIVE_MORE');
       case 'D':
-        return 'Bac +2 / Bac +3';
+        return this.translate.instant('BAC_PLUS_TWO_THREE');
       case 'BAC':
-        return 'Niveau bac';
+        return this.translate.instant('NIVEAU_BAC');
     }
   }
   

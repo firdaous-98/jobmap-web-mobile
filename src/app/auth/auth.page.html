@@ -4,7 +4,7 @@
   </div>
 
   <form #form="ngForm" (ngSubmit)="onSubmit()">
-    <ion-card>
+    <ion-card [class.text-arab]="isArab">
       <ng-container *ngIf="submissionType === 'join'">
         <ion-item>
           <ion-label position="floating">{{ 'LAST_NAME' | translate }}</ion-label>
