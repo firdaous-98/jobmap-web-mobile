@@ -80,6 +80,8 @@ export class ResultPage {
   showNoOtherScore = false;
   invitationSent = false;
 
+  isArab: boolean;
+
   link = "afa9.org";
 
   constructor(
@@ -91,6 +93,7 @@ export class ResultPage {
     this.fromQuiz = this.router.getCurrentNavigation().extras.state?.fromQuiz;
     this.resultPerStep = this.router.getCurrentNavigation().extras.state?.resultPerStep;
     this.tokenInfo = UserHelper.getTokenInfo();
+    this.isArab = localStorage.getItem('language') == "ar";
    }
 
 
@@ -203,7 +206,6 @@ export class ResultPage {
     if(result?.scoring != undefined) {
       this.showNoOtherScore = false;
       this.scorePartner = result;
-      console.log(this.scorePartner);
       this.OtherCodeHollandCompose = this.scorePartner?.scoring;
 
       var score = this.scorePartner?.scoring.split("");
@@ -236,17 +238,17 @@ export class ResultPage {
   getExplanation(code: string) {
     switch(code){
       case 'R':
-        return 'Réaliste'
+        return this.translate.instant('R');
       case 'I':
-        return 'Investigateur'
+        return this.translate.instant('I');
       case 'A':
-        return 'Artistique'
+        return this.translate.instant('A');
       case 'S':
-        return 'Social'
+        return this.translate.instant('S');
       case 'E':
-        return 'Entreprenant'
+        return this.translate.instant('E');
       case 'C':
-        return 'Conventionnel'
+        return this.translate.instant('C');
     }
   }
 
@@ -327,9 +329,9 @@ export class ResultPage {
       metierRows.push([metier.libelle_metier, metier.id_donnees.toString(), metier.id_personnes.toString(), metier.id_choses.toString()]);
     });
 
-    var result: any;
+    var score: any;
     if(!this.showOtherResult) {
-      result = {
+      score = {
         columns: [
           [
             {
@@ -347,7 +349,7 @@ export class ResultPage {
         ]
       }
     } else {
-      result = {
+      score = {
         columns: [
           { width: '*', text: '' },
           {
@@ -390,6 +392,92 @@ export class ResultPage {
       }
     }
 
+    var explanation = {
+      columns: [
+        { width: '*', text: '' },
+        {
+          width: 'auto',
+          table: {
+              body: [
+                  [
+                      {
+                           text : this.resultat[0].key + ": " + this.getExplanation(this.resultat[0].key)
+                      } 
+                  ],
+                  [
+                      {
+                           text : this.resultat[1].key + ": " + this.getExplanation(this.resultat[1].key)
+                      } 
+                  ],
+                  [
+                      {
+                           text : this.resultat[2].key + ": " + this.getExplanation(this.resultat[2].key)
+                      } 
+                  ],
+              ]
+          },
+          layout: {
+            hLineColor: function(i, node) {
+                return (i === 0 || i === node.table.body.length) ? 'black' : 'white';
+            },
+            vLineColor: function(i, node) {
+                'blue';
+            },
+            paddingLeft: function(i, node) { return 80; },
+            paddingRight: function(i, node) { return 80; },
+            paddingTop: function(i, node) { return 10; },
+            paddingBottom: function(i, node) { return 10; }
+          }
+        },
+        { width: '*', text: '' }
+      ]
+  }
+    var OtherExplanation: any;
+    if(this.showOtherResult) {
+      OtherExplanation = {
+        columns: [
+          { width: '*', text: '' },
+          {
+            width: 'auto',
+            table: {
+                body: [
+                    [
+                        {
+                             text : this.autreResultat[0].key + ": " + this.getExplanation(this.autreResultat[0].key)
+                        } 
+                    ],
+                    [
+                        {
+                             text : this.autreResultat[1].key + ": " + this.getExplanation(this.autreResultat[1].key)
+                        } 
+                    ],
+                    [
+                        {
+                             text : this.autreResultat[2].key + ": " + this.getExplanation(this.autreResultat[2].key)
+                        } 
+                    ],
+                ]
+            },
+            layout: {
+              hLineColor: function(i, node) {
+                  return (i === 0 || i === node.table.body.length) ? 'black' : 'white';
+              },
+              vLineColor: function(i, node) {
+                  'blue';
+              },
+              paddingLeft: function(i, node) { return 80; },
+              paddingRight: function(i, node) { return 80; },
+              paddingTop: function(i, node) { return 10; },
+              paddingBottom: function(i, node) { return 10; }
+            }
+          },
+          { width: '*', text: '' }
+        ],
+      } 
+    } else {
+      OtherExplanation = null;
+    }
+
     const documentDefinition = { 
       content: [
         {
@@ -411,7 +499,7 @@ export class ResultPage {
             ]
           ]
         },
-        result,
+        score,
         {
           text: 'Cela pourra vous aidez à trouver le métier qui correspond à votre profil : ',
           fontSize: 15,
@@ -422,46 +510,8 @@ export class ResultPage {
           fontSize: 15,
           margin: [20, 0, 0, 0]
         },
-        {
-          columns: [
-            { width: '*', text: '' },
-            {
-              width: 'auto',
-              table: {
-                  body: [
-                      [
-                          {
-                               text : this.resultat[0].key + ": " + this.getExplanation(this.resultat[0].key)
-                          } 
-                      ],
-                      [
-                          {
-                               text : this.resultat[1].key + ": " + this.getExplanation(this.resultat[1].key)
-                          } 
-                      ],
-                      [
-                          {
-                               text : this.resultat[2].key + ": " + this.getExplanation(this.resultat[2].key)
-                          } 
-                      ],
-                  ]
-              },
-              layout: {
-                hLineColor: function(i, node) {
-                    return (i === 0 || i === node.table.body.length) ? 'black' : 'white';
-                },
-                vLineColor: function(i, node) {
-                    'blue';
-                },
-                paddingLeft: function(i, node) { return 80; },
-                paddingRight: function(i, node) { return 80; },
-                paddingTop: function(i, node) { return 10; },
-                paddingBottom: function(i, node) { return 10; }
-              }
-            },
-            { width: '*', text: '' }
-          ]
-      },
+        explanation,
+        OtherExplanation,
       {
         text: 'Métiers et professions correspondant à votre profil RIASEC :',
         fontSize: 15,

@@ -33,7 +33,7 @@
                     <div class="title">
                         <h4>{{'EXPLANATION_RIASEC' | translate}} : {{ codeHollandCompose }}</h4>
                     </div>
-                    <div class="text">
+                    <div style="text-align:center;" class="text">
                         <span>{{'HELPS_FIND_JOB' | translate}}</span>
                     </div>
                     <div class="border">
@@ -77,7 +77,8 @@
             </thead>
             <tbody>
                 <tr *ngFor="let typebac of listeTypeBac">
-                    <td>{{ typebac.libelle_typebac_complet }}</td>
+                    <td *ngIf="!isArab">{{ typebac.libelle_typebac_complet }}</td>
+                    <td *ngIf="isArab">{{ typebac.libelle_typebac_ar }}</td>
                 </tr>
             </tbody>
         </table>
@@ -174,7 +175,8 @@
             </thead>
             <tbody>
                 <tr *ngFor="let typebac of OtherListeTypeBac">
-                    <td>{{ typebac.libelle_typebac_complet }}</td>
+                    <td *ngIf="!isArab">{{ typebac.libelle_typebac_complet }}</td>
+                    <td *ngIf="isArab">{{ typebac.libelle_typebac_ar }}</td>
                 </tr>
             </tbody>
         </table>

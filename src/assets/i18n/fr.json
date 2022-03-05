@@ -48,5 +48,11 @@
     "NEXT_QUESTION": "Question suivante",
     "BAC_PLUS_FIVE_MORE": "Bac +5 et plus",
     "BAC_PLUS_TWO_THREE": "Bac +2 / Bac +3",
-    "NIVEAU_BAC": "Niveau bac"
+    "NIVEAU_BAC": "Niveau bac",
+    "R": "Réaliste",
+    "I": "Investigateur",
+    "A": "Artistique",
+    "S": "Social",
+    "E": "Entreprenant",
+    "C": "Conventionnel"
   }
