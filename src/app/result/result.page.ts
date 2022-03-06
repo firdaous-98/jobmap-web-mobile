@@ -42,7 +42,7 @@ export class ResultPage {
   scorePartner?: any;
 
   resultat: Score[];
-  resultPerStep: {id_step: string, resultat: any}[] = [];
+  resultPerStep: { id_step: string, resultat: any }[] = [];
   resultatStepOne = "";
   resultatStepTwo = "";
   resultatStepThree = "";
@@ -85,8 +85,8 @@ export class ResultPage {
   link = "afa9.org";
 
   constructor(
-    private router: Router, 
-    public translate: TranslateService, 
+    private router: Router,
+    public translate: TranslateService,
     public translatorService: TranslatorService,
     private service: AppService) {
     this.resultat = this.router.getCurrentNavigation().extras.state?.resultat;
@@ -94,22 +94,22 @@ export class ResultPage {
     this.resultPerStep = this.router.getCurrentNavigation().extras.state?.resultPerStep;
     this.tokenInfo = UserHelper.getTokenInfo();
     this.isArab = localStorage.getItem('language') == "ar";
-   }
+  }
 
 
   async ngOnInit() {
     setTimeout(() => {
-      this.translate.use(this.translatorService.getSelectedLanguage());      
+      this.translate.use(this.translatorService.getSelectedLanguage());
     }, 500);
-    if(this.resultat != null) {
+    if (this.resultat != null) {
       this.checkEquality();
-      if(!this.twoEquals) {
+      if (!this.twoEquals) {
         this.calculChartHeight();
         this.composeCodeHolland();
         await this.getMetiers();
         await this.getTypesBac();
-        if(this.fromQuiz) this.saveScore();
-        this.generateChart();
+        if (this.fromQuiz) this.saveScore();
+        // this.generateChart();
         this.id_type_utilisateur = parseInt(localStorage.getItem('id_type_utilisateur'));
         this.annee_etude = parseInt(localStorage.getItem('annee_etude'));
       }
@@ -121,17 +121,16 @@ export class ResultPage {
     console.log('Items destroyed');
   }
 
-  backClick(){
+  backClick() {
     this.router.navigate(['/home']);
   }
 
-  checkEquality(){
-    if(this.resultat[0].value == this.resultat[1].value ||
+  checkEquality() {
+    if (this.resultat[0].value == this.resultat[1].value ||
       this.resultat[0].value == this.resultat[2].value ||
-      this.resultat[1].value == this.resultat[2].value) 
-      {
-        this.twoEquals = true;
-      }
+      this.resultat[1].value == this.resultat[2].value) {
+      this.twoEquals = true;
+    }
   }
 
   calculChartHeight() {
@@ -148,7 +147,7 @@ export class ResultPage {
   async getMetiers() {
     var id_nf = parseInt(localStorage.getItem('id_nf'));
     var result = await this.service.getMetiers(this.codeHollandCompose, id_nf).toPromise();
-    if(result?.message == null) {
+    if (result?.message == null) {
       this.listeMetiers = result as unknown as Metier[];
       this.id_codeholland = this.listeMetiers[0].id_codeholland;
     }
@@ -162,7 +161,7 @@ export class ResultPage {
 
   mapResultPerStep() {
 
-    if(this.fromQuiz) {
+    if (this.fromQuiz) {
       this.resultatStepOne = this.resultPerStep?.find(e => e.id_step == "1").resultat.map(f => f.key).join('');
       this.resultatStepTwo = this.resultPerStep?.find(e => e.id_step == "2").resultat.map(f => f.key).join('');
       this.resultatStepThree = this.resultPerStep?.find(e => e.id_step == "3").resultat.map(f => f.key).join('');
@@ -183,8 +182,8 @@ export class ResultPage {
     this.mapResultPerStep();
 
     this.service.saveScore(
-      this.codeHollandCompose, 
-      this.id_codeholland, 
+      this.codeHollandCompose,
+      this.id_codeholland,
       id_utilisateur,
       id_nf,
       this.resultat[0]?.value,
@@ -194,16 +193,16 @@ export class ResultPage {
       this.resultatStepTwo,
       this.resultatStepThree,
       this.resultatStepFour
-      )
+    )
       .subscribe(result => {
-      console.log(result);
-    });
+        console.log(result);
+      });
   }
 
   async getPartnerScore() {
     this.autreResultat = [];
     var result = await this.service.getPartnerScore(this.emailPartner).toPromise();
-    if(result?.scoring != undefined) {
+    if (result?.scoring != undefined) {
       this.showNoOtherScore = false;
       this.scorePartner = result;
       this.OtherCodeHollandCompose = this.scorePartner?.scoring;
@@ -227,7 +226,7 @@ export class ResultPage {
       this.OtherListeTypeBac = result2;
 
       this.showOtherResult = true;
-      
+
     }
 
     else {
@@ -236,7 +235,7 @@ export class ResultPage {
   }
 
   getExplanation(code: string) {
-    switch(code){
+    switch (code) {
       case 'R':
         return this.translate.instant('R');
       case 'I':
@@ -249,6 +248,23 @@ export class ResultPage {
         return this.translate.instant('E');
       case 'C':
         return this.translate.instant('C');
+    }
+  }
+
+  getExplanationPdf(code: string) {
+    switch (code) {
+      case 'R':
+        return 'Réaliste'
+      case 'I':
+        return 'Investigateur'
+      case 'A':
+        return 'Artistique'
+      case 'S':
+        return 'Social'
+      case 'E':
+        return 'Entreprenant'
+      case 'C':
+        return 'Conventionnel'
     }
   }
 
@@ -270,36 +286,36 @@ export class ResultPage {
     var email = "bendoudouch.98@gmail.com";
     var subject = "Demande de reception du rapport approfondi";
     var body = `<p>${this.tokenInfo.prenom} ${this.tokenInfo.nom} vient de passer le questionnaire RIASEC et souhaite recevoir un rapport approfondi </p><br>`
-              + "Résultat obtenu : <br>"
-              + `Score final : ${this.codeHollandCompose} <br>` 
-              + `Scores intermédiaires : <br>` 
-              + `Etape 1 : ${this.resultatStepOne} <br>` 
-              + `Etape 2 : ${this.resultatStepTwo} <br>` 
-              + `Etape 3 : ${this.resultatStepThree} <br>` 
-              + `Etape 4 : ${this.resultatStepFour} <br>` 
-              + `Adresse email de l'utilisateur: ${this.tokenInfo.adresse_email} <br>` ;
+      + "Résultat obtenu : <br>"
+      + `Score final : ${this.codeHollandCompose} <br>`
+      + `Scores intermédiaires : <br>`
+      + `Etape 1 : ${this.resultatStepOne} <br>`
+      + `Etape 2 : ${this.resultatStepTwo} <br>`
+      + `Etape 3 : ${this.resultatStepThree} <br>`
+      + `Etape 4 : ${this.resultatStepFour} <br>`
+      + `Adresse email de l'utilisateur: ${this.tokenInfo.adresse_email} <br>`;
 
-  this.service.sendEmail(
-    email,
-    subject,
-    body
-  ).subscribe(_ => {
-    console.log("email sent");
-    this.invitationSent = true;
-  });
+    this.service.sendEmail(
+      email,
+      subject,
+      body
+    ).subscribe(_ => {
+      console.log("email sent");
+      this.invitationSent = true;
+    });
 
   }
 
-  redoQuiz(){
+  redoQuiz() {
     this.router.navigate(['/info']);
   }
 
-  generateChart() {
+  generateChart(resultat: Score[]) {
     this.chartOptions = {
       series: [
         {
           name: 'My-series',
-          data: [this.resultat[0].value, this.resultat[1].value, this.resultat[2].value],
+          data: [resultat[0].value, resultat[1].value, resultat[2].value],
         },
       ],
       chart: {
@@ -311,26 +327,58 @@ export class ResultPage {
       },
       xaxis: {
         categories: [
-          this.resultat[0].key,
-          this.resultat[1].key,
-          this.resultat[2].key
+          resultat[0].key,
+          resultat[1].key,
+          resultat[2].key
         ],
       },
     };
   }
 
-  async generatePdf(){
+  async generatePdf() {
 
     var metierRows: any[] = [];
 
-    metierRows = [[ 'Métier(s)', 'Score données', 'Score personnes', 'Score choses' ]] ;
+    metierRows = [['Métier(s)', 'D', 'P', 'C']];
 
     this.listeMetiers.forEach(metier => {
       metierRows.push([metier.libelle_metier, metier.id_donnees.toString(), metier.id_personnes.toString(), metier.id_choses.toString()]);
     });
 
+    var otherMetierRows: any[] = [];
+    var otherMetierTable: any;
+
+    if (this.OtherListeMetiers?.length > 0) {
+      otherMetierRows = [['Métier(s)', 'D', 'P', 'C']];
+      this.OtherListeMetiers.forEach(metier => {
+        otherMetierRows.push([metier.libelle_metier, metier.id_donnees.toString(), metier.id_personnes.toString(), metier.id_choses.toString()]);
+      });
+
+      otherMetierTable = [
+        {
+          text: this.id_type_utilisateur == TypeUtilisateur.Parent ?
+            'Métiers et professions correspondant au profil RIASEC trouvé par votre fils/étudiant :' :
+            'Métiers et professions correspondant au profil RIASEC trouvé par votre parent/prof :',
+          fontSize: 15,
+          margin: [20, 20, 30, 0]
+        },
+        {
+          layout: 'lightHorizontalLines', // optional
+          table: {
+            headerRows: 1,
+            widths: [200, 70, 70, '*'],
+
+            body: otherMetierRows
+          },
+          margin: 30
+        }
+      ]
+    } else {
+      otherMetierTable = null;
+    }
+
     var score: any;
-    if(!this.showOtherResult) {
+    if (!this.showOtherResult) {
       score = {
         columns: [
           [
@@ -342,7 +390,7 @@ export class ResultPage {
               margin: [20, 0, 0, 20]
             },
             {
-              image: await this.getBase64Image(),
+              image: await this.getBase64Image(this.resultat),
               width: 500
             }
           ]
@@ -356,38 +404,86 @@ export class ResultPage {
             width: 'auto',
             table: {
               body: [
-              [
-                {
-                  text: 'Vous avez obtenu le score : ' + this.codeHollandCompose,
-                  bold: true,
-                  fontSize: 9,
-                  alignment: 'center',
-                  margin: [20, 0, 0, 20]
-                },
-                {
-                  text: (this.id_type_utilisateur == TypeUtilisateur.Parent ? 'Votre fils/ étudiant a obtenu le score : ' : 'Votre parent/prof a obtenu le score : ') + this.OtherCodeHollandCompose,
-                  bold: true,
-                  fontSize: 9,
-                  alignment: 'center',
-                  margin: [20, 0, 0, 20]
-                }
-              ],
-              [
-                {
-                  image: await this.getBase64Image(),
-                  alignment: 'center',
-                  width: 250
-                },
-                {
-                  image: await this.getBase64Image(),
-                  alignment: 'center',
-                  width: 250
-                }
+                [
+                  {
+                    text: 'Vous avez obtenu le score : ' + this.codeHollandCompose,
+                    bold: true,
+                    fontSize: 9,
+                    alignment: 'center',
+                    margin: [20, 0, 0, 20]
+                  },
+                  {
+                    text: (this.id_type_utilisateur == TypeUtilisateur.Parent ? 'Votre fils/ étudiant a obtenu le score : ' : 'Votre parent/prof a obtenu le score : ') + this.OtherCodeHollandCompose,
+                    bold: true,
+                    fontSize: 9,
+                    alignment: 'center',
+                    margin: [20, 0, 0, 20]
+                  }
+                ],
+                [
+                  {
+                    image: await this.getChart(this.resultat),
+                    alignment: 'center',
+                    width: 250
+                  },
+                  {
+                    image: await this.getChart(this.autreResultat),
+                    alignment: 'center',
+                    width: 250
+                  }
+                ],
+                [
+                  [
+                    {
+                      text: this.resultat[0].key + ": " + this.getExplanationPdf(this.resultat[0].key),
+                      bold: true,
+                      fontSize: 9,
+                      alignment: 'center',
+                      margin: [20, 5, 0, 20]
+                    },
+                    {
+                      text: this.resultat[1].key + ": " + this.getExplanationPdf(this.resultat[1].key),
+                      bold: true,
+                      fontSize: 9,
+                      alignment: 'center',
+                      margin: [20, 5, 0, 20]
+                    },
+                    {
+                      text: this.resultat[2].key + ": " + this.getExplanationPdf(this.resultat[2].key),
+                      bold: true,
+                      fontSize: 9,
+                      alignment: 'center',
+                      margin: [20, 5, 0, 20]
+                    }
+                  ],
+                  [
+                    {
+                      text: this.autreResultat[0].key + ": " + this.getExplanationPdf(this.autreResultat[0].key),
+                      bold: true,
+                      fontSize: 9,
+                      alignment: 'center',
+                      margin: [20, 5, 0, 20]
+                    },
+                    {
+                      text: this.autreResultat[1].key + ": " + this.getExplanationPdf(this.autreResultat[1].key),
+                      bold: true,
+                      fontSize: 9,
+                      alignment: 'center',
+                      margin: [20, 5, 0, 20]
+                    },
+                    {
+                      text: this.autreResultat[2].key + ": " + this.getExplanationPdf(this.autreResultat[2].key),
+                      bold: true,
+                      fontSize: 9,
+                      alignment: 'center',
+                      margin: [20, 5, 0, 20]
+                    }
+                  ]
+                ]
               ]
-            ]
             },
             margin: [5, 10, 5, 10]
-            }
+          }
         ]
       }
     }
@@ -398,87 +494,44 @@ export class ResultPage {
         {
           width: 'auto',
           table: {
-              body: [
-                  [
-                      {
-                           text : this.resultat[0].key + ": " + this.getExplanation(this.resultat[0].key)
-                      } 
-                  ],
-                  [
-                      {
-                           text : this.resultat[1].key + ": " + this.getExplanation(this.resultat[1].key)
-                      } 
-                  ],
-                  [
-                      {
-                           text : this.resultat[2].key + ": " + this.getExplanation(this.resultat[2].key)
-                      } 
-                  ],
-              ]
+            body: [
+              [
+                {
+                  text: this.resultat[0].key + ": " + this.getExplanationPdf(this.resultat[0].key)
+                }
+              ],
+              [
+                {
+                  text: this.resultat[1].key + ": " + this.getExplanationPdf(this.resultat[1].key)
+                }
+              ],
+              [
+                {
+                  text: this.resultat[2].key + ": " + this.getExplanationPdf(this.resultat[2].key)
+                }
+              ],
+            ]
           },
           layout: {
-            hLineColor: function(i, node) {
-                return (i === 0 || i === node.table.body.length) ? 'black' : 'white';
+            hLineColor: function (i, node) {
+              return (i === 0 || i === node.table.body.length) ? 'black' : 'white';
             },
-            vLineColor: function(i, node) {
-                'blue';
+            vLineColor: function (i, node) {
+              'blue';
             },
-            paddingLeft: function(i, node) { return 80; },
-            paddingRight: function(i, node) { return 80; },
-            paddingTop: function(i, node) { return 10; },
-            paddingBottom: function(i, node) { return 10; }
+            paddingLeft: function (i, node) { return 80; },
+            paddingRight: function (i, node) { return 80; },
+            paddingTop: function (i, node) { return 10; },
+            paddingBottom: function (i, node) { return 10; }
           }
         },
         { width: '*', text: '' }
       ]
-  }
-    var OtherExplanation: any;
-    if(this.showOtherResult) {
-      OtherExplanation = {
-        columns: [
-          { width: '*', text: '' },
-          {
-            width: 'auto',
-            table: {
-                body: [
-                    [
-                        {
-                             text : this.autreResultat[0].key + ": " + this.getExplanation(this.autreResultat[0].key)
-                        } 
-                    ],
-                    [
-                        {
-                             text : this.autreResultat[1].key + ": " + this.getExplanation(this.autreResultat[1].key)
-                        } 
-                    ],
-                    [
-                        {
-                             text : this.autreResultat[2].key + ": " + this.getExplanation(this.autreResultat[2].key)
-                        } 
-                    ],
-                ]
-            },
-            layout: {
-              hLineColor: function(i, node) {
-                  return (i === 0 || i === node.table.body.length) ? 'black' : 'white';
-              },
-              vLineColor: function(i, node) {
-                  'blue';
-              },
-              paddingLeft: function(i, node) { return 80; },
-              paddingRight: function(i, node) { return 80; },
-              paddingTop: function(i, node) { return 10; },
-              paddingBottom: function(i, node) { return 10; }
-            }
-          },
-          { width: '*', text: '' }
-        ],
-      } 
-    } else {
-      OtherExplanation = null;
     }
 
-    const documentDefinition = { 
+    var explanationTable = this.showOtherResult ? null : explanation;
+
+    const documentDefinition = {
       content: [
         {
           text: 'Résultat du questionnaire',
@@ -510,33 +563,33 @@ export class ResultPage {
           fontSize: 15,
           margin: [20, 0, 0, 0]
         },
-        explanation,
-        OtherExplanation,
-      {
-        text: 'Métiers et professions correspondant à votre profil RIASEC :',
-        fontSize: 15,
-        margin: [20, 20, 0, 0]
-      },
-      {
-        layout: 'lightHorizontalLines', // optional
-        table: {
-          headerRows: 1,
-          widths: [ '*', 'auto', 100, '*' ],
-  
-          body: metierRows
+        explanationTable,
+        {
+          text: 'Métiers et professions correspondant à votre profil RIASEC :',
+          fontSize: 15,
+          margin: [20, 20, 0, 0]
         },
-        margin: 20
-      }
+        {
+          layout: 'lightHorizontalLines', // optional
+          table: {
+            headerRows: 1,
+            widths: [200, 70, 70, '*'],
+
+            body: metierRows
+          },
+          margin: 20
+        },
+        otherMetierTable
       ],
       defaultStyle: {
         alignment: 'justify'
-        },
-        styles: {
-          name: {
-            fontSize: 16,
-            bold: true
-          }
+      },
+      styles: {
+        name: {
+          fontSize: 16,
+          bold: true
         }
+      }
     };
     pdfMake.createPdf(documentDefinition).open();
 
@@ -551,28 +604,34 @@ export class ResultPage {
     // });
 
     this.sendRequestMail();
-   }
+  }
 
-   getBase64Image() {
+  async getChart(resultat: Score[]) {
+    this.generateChart(resultat);
+    await this.getBase64Image(resultat);
+  }
+
+  getBase64Image(resultat: Score[]) {
+    
     return new Promise((resolve, reject) => {
-         const img = new Image();
-         const svgElement: SVGGraphicsElement =
-         document.querySelector('.apexcharts-svg');
-         const imageBlobURL = 'data:image/svg+xml;charset=utf-8,' +
-            encodeURIComponent(svgElement.outerHTML);
-         img.onload = ()=> {
-            var canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            const dataURL = canvas.toDataURL('image/png');
-            resolve(dataURL);
-         };
-         img.onerror = (error) => {
-           reject(error);
-         };
-         img.src = imageBlobURL;
-       });
+      const img = new Image();
+      const svgElement: SVGGraphicsElement =
+        document.querySelector('.apexcharts-svg');
+      const imageBlobURL = 'data:image/svg+xml;charset=utf-8,' +
+        encodeURIComponent(svgElement.outerHTML);
+      img.onload = () => {
+        var canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        const dataURL = canvas.toDataURL('image/png');
+        resolve(dataURL);
+      };
+      img.onerror = (error) => {
+        reject(error);
+      };
+      img.src = imageBlobURL;
+    });
   }
 }

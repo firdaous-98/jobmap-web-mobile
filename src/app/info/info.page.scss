@@ -13,12 +13,14 @@ ion-card {
     box-shadow: none;
     border: 1px solid #e1e1e1;
     width: 450px;
+    --ion-background-color:rgb(241, 240, 237);
   
     ion-card-title {
         display: flex;
         justify-content: center;
         margin-top: 10px;
         font-size: 1.5rem !important;
+        color: black;
     }
   }
   

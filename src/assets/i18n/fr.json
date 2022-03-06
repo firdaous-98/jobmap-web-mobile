@@ -54,5 +54,7 @@
     "A": "Artistique",
     "S": "Social",
     "E": "Entreprenant",
-    "C": "Conventionnel"
+    "C": "Conventionnel",
+    "QUIZ_RESULT": "Résultat du questionnaire",
+    "METIERS_LIST": "Métiers et professions correspondant à votre profil RIASEC :"
   }
