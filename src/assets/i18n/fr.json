@@ -21,12 +21,12 @@
     "TARGET_LEVEL_TRAINING": "Niveau de formation visé",
     "INFO_SAVED": "Les informations ont été bien enregistrées",
     "YOU_GOT": "Vous avez obtenu",
-    "COMPARE_RESULTS": "Souhaitez-vous comparer votre résultat avec celui de votre parent/ professeur ?",
+    "COMPARE_RESULTS": "Votre orientation est une étape importante, souhaitez-vous avoir le point de vue de vos parents ou professeur ? Si c'est le cas envoyez-lui une invitation par mail :",
     "COMPARE_RESULTS_PARENT": "Souhaitez-vous comparer votre résultat avec celui de votre fils/ étudiant ?",
     "DOWNLOAD_RESULT_GET_DETAILED_REPORT": "télécharger votre résultat et recevoir un rapport approfondi",
     "REDO_QUIZ": "Refaire le questionnaire",
-    "HELPS_FIND_JOB": "Cela pourra vous aider à trouver le métier qui correspond à votre profil",
-    "EXPLANATION_RIASEC": "Explication de",
+    "HELPS_FIND_JOB": "Les métiers qui correspondent à votre profil",
+    "RESULTS": "Résultats :",
     "ENTER_NAME": "Veuillez renseigner votre nom",
     "ENTER_FIRST_NAME": "Veuillez renseigner votre prénom",
     "FIRST_NAME": "Prénom",
@@ -57,5 +57,7 @@
     "C": "Conventionnel",
     "QUIZ_RESULT": "Résultat du questionnaire",
     "METIERS_LIST": "Métiers et professions correspondant à votre profil RIASEC :",
-    "INVITATION_SENT": "L'invitation a été bien envoyée"
+    "INVITATION_SENT": "L'invitation a été bien envoyée",
+    "MULTIPLE_CHOICE": "Choix multiple",
+    "SINGLE_CHOICE": "Choix unique"
   }

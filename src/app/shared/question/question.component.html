@@ -7,8 +7,8 @@
         <ion-list [class.text-arab]="isArab">
             <ion-radio-group [value]="response" (ionChange)="selectChoice($event)">
                 <ion-list-header>
-                    <ion-label *ngIf="!isArab">{{ question.Libelle_quest }}/{{ numberOfQuestions }}</ion-label>
-                    <ion-label style="margin-right:1rem;" dir="rtl" *ngIf="isArab">{{ question.Libelle_quest_ar }}/{{ numberOfQuestions }}</ion-label>
+                    <ion-label *ngIf="!isArab">{{ question.Libelle_quest }}/{{ numberOfQuestions }} ({{ 'SINGLE_CHOICE' | translate }})</ion-label>
+                    <ion-label style="margin-right:1rem;" dir="rtl" *ngIf="isArab">{{ question.Libelle_quest_ar }}/{{ numberOfQuestions }} ({{ 'SINGLE_CHOICE' | translate }})</ion-label>
                 </ion-list-header>
 
                 <ion-item *ngFor="let choix of question.choix">
@@ -21,8 +21,8 @@
     </ng-container>
 
     <ng-container *ngIf="question.id_step == '2'">
-        <ion-card-title *ngIf="!isArab">{{ question.Libelle_quest }}/{{ numberOfQuestions }}</ion-card-title>
-        <ion-card-title style="margin-right:1rem;" dir="rtl" *ngIf="isArab">{{ question.Libelle_quest_ar }}/{{ numberOfQuestions }}</ion-card-title>
+        <ion-card-title *ngIf="!isArab">{{ question.Libelle_quest }}/{{ numberOfQuestions }} ({{ 'MULTIPLE_CHOICE' | translate }})</ion-card-title>
+        <ion-card-title style="margin-right:1rem;" dir="rtl" *ngIf="isArab">{{ question.Libelle_quest_ar }}/{{ numberOfQuestions }} ({{ 'MULTIPLE_CHOICE' | translate }})</ion-card-title>
         <ion-list [class.text-arab]="isArab">
             <ion-item *ngFor="let choix of question.choix;let i=index">
                 <p *ngIf="!isArab">{{ choix.libellechoix }}</p>
@@ -33,8 +33,10 @@
     </ng-container>
 
     <ng-container *ngIf="question.id_step == '4'">
+        <ion-card-title *ngIf="!isArab">Question {{ stepFourQuestionsCount }}/60</ion-card-title>
+        <ion-card-title *ngIf="isArab" dir="rtl">سؤال 60/{{ stepFourQuestionsCount }}</ion-card-title>
         <ion-card-title *ngIf="!isArab">{{ question.choix[index].libellechoix }}</ion-card-title>
-        <ion-card-title *ngIf="isArab">{{ question.choix[index].choix_ar }}</ion-card-title>
+        <ion-card-title *ngIf="isArab" dir="rtl">{{ question.choix[index].choix_ar }}</ion-card-title>
         <ion-grid>
             <ion-row>
                 <ion-col size="5" class="cell-class"

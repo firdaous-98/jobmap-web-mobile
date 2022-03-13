@@ -275,7 +275,10 @@ export class ResultPage {
     this.service.sendEmail(
       this.emailPartner,
       "Invitation Afa9",
-      `${this.tokenInfo.prenom} ${this.tokenInfo.nom} vous invite à passer le test présent sur ce lien: ${this.link}`
+      `Vous êtes une personne qui me connaît très bien. Et votre avis m
+      Intéresse. Je vous prie de bien vouloir passer ce test et répondre selon ce que vous pensez de moi .
+      Cela me ferait un plaisir d en discuter avec vous pour affiner mes choix de mon futur métiers.
+      ${this.tokenInfo.prenom} ${this.tokenInfo.nom} vous invite à passer le test présent sur ce lien: ${this.link}`
     );
       this.invitationSent = true;
       (await this.toastController.create({ message: this.translate.instant('INVITATION_SENT'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
@@ -313,7 +316,6 @@ export class ResultPage {
   }
 
   generateChart(resultat: Score[]) {
-    debugger
     this.chartOptions = {
       series: [
         {

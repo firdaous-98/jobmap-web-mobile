@@ -41,6 +41,7 @@ export class QuestionComponent {
   Level = Level;
   index = 0;
   isArab: boolean;
+  stepFourQuestionsCount = 1;
 
   constructor(
     public toastController: ToastController,
@@ -62,6 +63,7 @@ export class QuestionComponent {
     else {
       if(this.question.id_step == '4'){
         for (let i = 0; i < this.currentChoice; i++) {
+          this.stepFourQuestionsCount++;
           var choix: ResultChoix = {
             id: this.question.choix[this.index].id,
             code_holland: this.getCodeHollandStringToEnum(this.question.choix[this.index].code_holland)

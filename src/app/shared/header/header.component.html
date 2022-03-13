@@ -4,11 +4,15 @@
         <ion-button 
           *ngIf="showBack"
           (click)="onBackClicked()">
-        <ion-icon slot="icon-only" name="arrow-back">
-        </ion-icon>
-    </ion-button>
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+      <ion-button 
+          *ngIf="showHome"
+          (click)="onHomeClicked()">
+          <ion-icon slot="icon-only" name="home-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>  
-    <img src="./assets/img/afa9-logo.png" alt="logo" slot="end">
+    <img src="./assets/img/afa9-logo-text.png" alt="logo" slot="end">
   </ion-toolbar>
 </ion-header>
 

@@ -85,7 +85,6 @@ export class InfoPage {
   }
 
   async Choose(){
-    debugger
     if(this.showType) {
       if(this.typeUtilisateur == null){
         (await this.toastController.create({ message: this.translate.instant('PLEASE_CHOOSE'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();

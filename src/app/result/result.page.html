@@ -31,11 +31,9 @@
             <div class="item">
                 <div class="content">
                     <div class="title">
-                        <h4>{{'EXPLANATION_RIASEC' | translate}} : {{ codeHollandCompose }}</h4>
+                        <h4>{{'RESULTS' | translate}} {{ codeHollandCompose }}</h4>
                     </div>
-                    <div style="text-align:center;" class="text">
-                        <span>{{'HELPS_FIND_JOB' | translate}}</span>
-                    </div>
+                    
                     <div class="border">
                         <div class="line"><span class="char"> {{ resultat[0].key }}: </span><span class="word"> {{
                                 getExplanation(resultat[0].key) }} </span></div>
@@ -43,6 +41,10 @@
                                 getExplanation(resultat[1].key) }} </span></div>
                         <div class="line"><span class="char"> {{ resultat[2].key }}: </span><span class="word"> {{
                                 getExplanation(resultat[2].key) }} </span></div>
+                    </div>
+
+                    <div style="text-align:center;" class="text">
+                        <span>{{'HELPS_FIND_JOB' | translate}}</span>
                     </div>
                 </div>
             </div>
@@ -85,27 +87,28 @@
     </div>
 
     <ng-container *ngIf="!showOtherResult && !twoEquals">
-        <ion-label class="label" *ngIf="id_type_utilisateur == typeUtilisateur.Parent">
-            {{'COMPARE_RESULTS_PARENT' | translate}}
-        </ion-label>
-        <ion-label class="label" *ngIf="id_type_utilisateur == typeUtilisateur.Etudiant">
-            {{'COMPARE_RESULTS' | translate}}
-        </ion-label>
-        <ion-item>
-            <ion-label style="text-align:center;" position="floating">{{'EMAIL_ADDRESS' | translate}}</ion-label>
-            <ion-input #EmailInput="ngModel" ngModel [(ngModel)]="emailPartner" [pattern]="regexEmail" type="email"
-                name="email" required></ion-input>
-        </ion-item>
-        
-        <ion-text *ngIf="!EmailInput.valid && EmailInput.touched" color="danger">
-            {{'ENTER_VALID_EMAIL_ADDRESS' | translate}}
-        </ion-text>
-        <ion-button class="button" *ngIf="EmailInput.valid && scorePartner == null" (click)="getPartnerScore()">
-            {{'CHECK_THEIR_RESULTS' | translate}}
-        </ion-button>
-    </ng-container>
-
-
+        <div class="white-box">
+                <ion-label class="label" *ngIf="id_type_utilisateur == typeUtilisateur.Parent">
+                    {{'COMPARE_RESULTS_PARENT' | translate}}
+                </ion-label>
+                <ion-label class="label" *ngIf="id_type_utilisateur == typeUtilisateur.Etudiant">
+                    {{'COMPARE_RESULTS' | translate}}
+                </ion-label>
+                <ion-item class="email-address">
+                    <ion-label style="text-align:center;" position="floating">{{'EMAIL_ADDRESS' | translate}}</ion-label>
+                    <ion-input #EmailInput="ngModel" ngModel [(ngModel)]="emailPartner" [pattern]="regexEmail" type="email"
+                        name="email" required>
+                    </ion-input>
+                </ion-item>
+                
+                <ion-text *ngIf="!EmailInput.valid && EmailInput.touched" color="danger">
+                    {{'ENTER_VALID_EMAIL_ADDRESS' | translate}}
+                </ion-text>
+            </div>
+                <ion-button class="button" *ngIf="EmailInput.valid && scorePartner == null" (click)="getPartnerScore()">
+                    {{'CHECK_THEIR_RESULTS' | translate}}
+                </ion-button>
+            </ng-container>
 
     <ng-container *ngIf="!twoEquals && showOtherResult">
         <div class="container">
@@ -132,7 +135,7 @@
             <div class="item">
                 <div class="content">
                     <div class="title">
-                        <h4>{{'EXPLANATION_RIASEC' | translate}} {{ OtherCodeHollandCompose }}</h4>
+                        <h4>{{'RESULTS' | translate}} {{ OtherCodeHollandCompose }}</h4>
                     </div>
                     <div class="border">
                         <div class="line"><span class="char"> {{ autreResultat[0].key }}: </span><span class="word"> {{

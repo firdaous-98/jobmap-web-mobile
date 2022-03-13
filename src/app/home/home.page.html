@@ -2,8 +2,8 @@
   [showBack]="false">
 </app-header>
 <ion-content>
-    <ion-button class="get-result" *ngIf="hasScore" (click)="goToResultat()">{{'CONSULT_RESULT' | translate}}</ion-button>
     <ion-button class="start-quiz" (click)="startQuiz()">{{'START_QUIZ' | translate}}</ion-button>
+    <ion-button class="get-result" *ngIf="hasScore" (click)="goToResultat()">{{'CONSULT_RESULT' | translate}}</ion-button>
     <ion-button class="logout" (click)="logOut()">{{'LOGOUT' | translate}}</ion-button> 
 </ion-content>
 
