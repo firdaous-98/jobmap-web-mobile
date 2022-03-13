@@ -56,5 +56,6 @@
     "E": "Entreprenant",
     "C": "Conventionnel",
     "QUIZ_RESULT": "Résultat du questionnaire",
-    "METIERS_LIST": "Métiers et professions correspondant à votre profil RIASEC :"
+    "METIERS_LIST": "Métiers et professions correspondant à votre profil RIASEC :",
+    "INVITATION_SENT": "L'invitation a été bien envoyée"
   }

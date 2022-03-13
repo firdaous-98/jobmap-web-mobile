@@ -1,5 +1,6 @@
 import { Component, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
   ApexAxisChartSeries,
@@ -82,13 +83,15 @@ export class ResultPage {
 
   isArab: boolean;
 
-  link = "afa9.org";
+  link = "afa9.org/map";
 
   constructor(
     private router: Router,
     public translate: TranslateService,
     public translatorService: TranslatorService,
-    private service: AppService) {
+    private service: AppService,
+    public toastController: ToastController
+    ) {
     this.resultat = this.router.getCurrentNavigation().extras.state?.resultat;
     this.fromQuiz = this.router.getCurrentNavigation().extras.state?.fromQuiz;
     this.resultPerStep = this.router.getCurrentNavigation().extras.state?.resultPerStep;
@@ -109,7 +112,7 @@ export class ResultPage {
         await this.getMetiers();
         await this.getTypesBac();
         if (this.fromQuiz) this.saveScore();
-        // this.generateChart();
+        this.generateChart(this.resultat);
         this.id_type_utilisateur = parseInt(localStorage.getItem('id_type_utilisateur'));
         this.annee_etude = parseInt(localStorage.getItem('annee_etude'));
       }
@@ -268,15 +271,14 @@ export class ResultPage {
     }
   }
 
-  sendInvitation() {
+  async sendInvitation() {
     this.service.sendEmail(
       this.emailPartner,
       "Invitation Afa9",
       `${this.tokenInfo.prenom} ${this.tokenInfo.nom} vous invite à passer le test présent sur ce lien: ${this.link}`
-    ).subscribe(_ => {
-      console.log("email sent");
+    );
       this.invitationSent = true;
-    });
+      (await this.toastController.create({ message: this.translate.instant('INVITATION_SENT'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
   }
 
   sendRequestMail() {
@@ -311,6 +313,7 @@ export class ResultPage {
   }
 
   generateChart(resultat: Score[]) {
+    debugger
     this.chartOptions = {
       series: [
         {
@@ -390,7 +393,7 @@ export class ResultPage {
               margin: [20, 0, 0, 20]
             },
             {
-              image: await this.getBase64Image(this.resultat),
+              image: await this.getBase64Image(),
               width: 500
             }
           ]
@@ -422,12 +425,12 @@ export class ResultPage {
                 ],
                 [
                   {
-                    image: await this.getChart(this.resultat),
+                    image: await this.getBase64Image(),
                     alignment: 'center',
                     width: 250
                   },
                   {
-                    image: await this.getChart(this.autreResultat),
+                    image: await this.getBase64Image(),
                     alignment: 'center',
                     width: 250
                   }
@@ -591,7 +594,7 @@ export class ResultPage {
         }
       }
     };
-    pdfMake.createPdf(documentDefinition).open();
+    pdfMake.createPdf(documentDefinition).download();
 
     // this.service.resultDownloaded(
     //   this.tokenInfo.adresse_email,
@@ -608,10 +611,10 @@ export class ResultPage {
 
   async getChart(resultat: Score[]) {
     this.generateChart(resultat);
-    await this.getBase64Image(resultat);
+    await this.getBase64Image();
   }
 
-  getBase64Image(resultat: Score[]) {
+  getBase64Image() {
     
     return new Promise((resolve, reject) => {
       const img = new Image();
