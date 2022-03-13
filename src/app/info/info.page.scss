@@ -56,10 +56,12 @@ ion-card {
 
   .next {
     --background: #ff9f04;
-    bottom: 50px;
+    // bottom: 50px;
     left: 10rem;
     right: 10rem;
+    bottom: 20%;
     position: fixed;
+    
   }
 
   .text-arab {

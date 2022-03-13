@@ -4,7 +4,7 @@ import { ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
   ApexAxisChartSeries,
-  ApexChart, ApexTitleSubtitle, ApexXAxis, ChartComponent
+  ApexChart, ApexTitleSubtitle, ApexXAxis, ApexYAxis, ApexPlotOptions, ChartComponent
 } from 'ng-apexcharts';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
@@ -24,7 +24,10 @@ export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   xaxis: ApexXAxis;
+  yaxis: ApexYAxis;
   title: ApexTitleSubtitle;
+  plotOptions: ApexPlotOptions;
+  colors: string[];
 };
 
 @Component({
@@ -337,6 +340,13 @@ export class ResultPage {
           resultat[2].key
         ],
       },
+      colors: ["#f1c40f", "#e74c3c", "#27ae60"],
+      plotOptions: {
+        bar: {
+          columnWidth: "45%",
+          distributed: true
+        }
+      }
     };
   }
 
@@ -344,19 +354,38 @@ export class ResultPage {
 
     var metierRows: any[] = [];
 
-    metierRows = [['Métier(s)', 'D', 'P', 'C']];
+    metierRows = [['Métier(s)', 'D', 'P', 'C', '']];
 
     this.listeMetiers.forEach(metier => {
-      metierRows.push([metier.libelle_metier, metier.id_donnees.toString(), metier.id_personnes.toString(), metier.id_choses.toString()]);
+      metierRows.push([
+        metier.libelle_metier, 
+        metier.id_donnees.toString(), 
+        metier.id_personnes.toString(), 
+        metier.id_choses.toString(),
+        {
+          text: 'Description',
+          link: `http://afa9.org/metier.php?idmetier=${metier.id_metier}`,
+          color: 'blue'
+        }
+      ]);
     });
 
     var otherMetierRows: any[] = [];
     var otherMetierTable: any;
 
     if (this.OtherListeMetiers?.length > 0) {
-      otherMetierRows = [['Métier(s)', 'D', 'P', 'C']];
+      otherMetierRows = [['Métier(s)', 'D', 'P', 'C', '']];
       this.OtherListeMetiers.forEach(metier => {
-        otherMetierRows.push([metier.libelle_metier, metier.id_donnees.toString(), metier.id_personnes.toString(), metier.id_choses.toString()]);
+        otherMetierRows.push([
+          metier.libelle_metier, 
+          metier.id_donnees.toString(), 
+          metier.id_personnes.toString(), 
+          metier.id_choses.toString(),
+          {
+            text: 'Description',
+            link: `http://afa9.org/metier.php?idmetier=${metier.id_metier}`
+          }
+        ]);
       });
 
       otherMetierTable = [
@@ -371,7 +400,7 @@ export class ResultPage {
           layout: 'lightHorizontalLines', // optional
           table: {
             headerRows: 1,
-            widths: [200, 70, 70, '*'],
+            widths: [200, 50, 50, 50, '*'],
 
             body: otherMetierRows
           },
@@ -388,7 +417,7 @@ export class ResultPage {
         columns: [
           [
             {
-              text: 'Vous avez obtenu le score : ' + this.codeHollandCompose,
+              text: 'Votre code RIASEC : ' + this.codeHollandCompose,
               bold: true,
               fontSize: 18,
               alignment: 'center',
@@ -411,14 +440,14 @@ export class ResultPage {
               body: [
                 [
                   {
-                    text: 'Vous avez obtenu le score : ' + this.codeHollandCompose,
+                    text: 'Votre code RIASEC : ' + this.codeHollandCompose,
                     bold: true,
                     fontSize: 9,
                     alignment: 'center',
                     margin: [20, 0, 0, 20]
                   },
                   {
-                    text: (this.id_type_utilisateur == TypeUtilisateur.Parent ? 'Votre fils/ étudiant a obtenu le score : ' : 'Votre parent/prof a obtenu le score : ') + this.OtherCodeHollandCompose,
+                    text: (this.id_type_utilisateur == TypeUtilisateur.Parent ? 'Votre fils/ étudiant a obtenu le code RIASEC : ' : 'Votre parent/prof a obtenu le code RIASEC : ') + this.OtherCodeHollandCompose,
                     bold: true,
                     fontSize: 9,
                     alignment: 'center',
@@ -539,6 +568,12 @@ export class ResultPage {
     const documentDefinition = {
       content: [
         {
+          image: await this.getBase64ImageFromURL(
+            "./assets/img/afa9-logo.png"),
+          alignment: 'right',
+          width: 90
+        },
+        {
           text: 'Résultat du questionnaire',
           bold: true,
           fontSize: 20,
@@ -578,7 +613,7 @@ export class ResultPage {
           layout: 'lightHorizontalLines', // optional
           table: {
             headerRows: 1,
-            widths: [200, 70, 70, '*'],
+            widths: [200, 50, 50, 50, '*'],
 
             body: metierRows
           },
@@ -639,4 +674,29 @@ export class ResultPage {
       img.src = imageBlobURL;
     });
   }
+
+  getBase64ImageFromURL(url) {
+    return new Promise((resolve, reject) => {
+      var img = new Image();
+      img.setAttribute("crossOrigin", "anonymous");
+    
+      img.onload = () => {
+        var canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+    
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+    
+        var dataURL = canvas.toDataURL("image/png");
+    
+        resolve(dataURL);
+      };
+    
+      img.onerror = error => {
+        reject(error);
+      };
+    
+      img.src = url;
+    });}
 }

@@ -205,7 +205,15 @@
     </div>
 
     <div style="visibility: hidden;">
-        <apx-chart [series]="chartOptions?.series" [chart]="chartOptions?.chart" [xaxis]="chartOptions?.xaxis"
-            [title]="chartOptions?.title"></apx-chart>
+        <apx-chart 
+            id="chart"
+            [series]="chartOptions?.series" 
+            [chart]="chartOptions?.chart" 
+            [plotOptions]="chartOptions?.plotOptions"
+            [yaxis]="chartOptions?.yaxis"
+            [xaxis]="chartOptions?.xaxis"
+            [title]="chartOptions?.title"
+            [colors]="chartOptions?.colors">
+        </apx-chart>
     </div>
 </ion-content>
