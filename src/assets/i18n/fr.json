@@ -59,5 +59,12 @@
     "METIERS_LIST": "Métiers et professions correspondant à votre profil RIASEC :",
     "INVITATION_SENT": "L'invitation a été bien envoyée",
     "MULTIPLE_CHOICE": "Choix multiple",
-    "SINGLE_CHOICE": "Choix unique"
+    "SINGLE_CHOICE": "Choix unique",
+    "FIRST_STEP_MESSAGE": "Choisissez les réponses qui vous correspondent et si ce n'est pas le cas, cochez le réponde proche de votre profil",
+    "SECOND_STEP_MESSAGE": "Prenez votre temps, il n y pas de timing précis",
+    "THIRD_STEP_MESSAGE": "Vous avancez ! C'est bien, vous êtes proches de la découverte de vous même",
+    "MID_FOURTH_STEP_MESSAGE": "Plus que quelques questions et votre profil sera généré",
+    "FOURTH_STEP_MESSAGE": "Plus que quelques questions, et votre rapport sera prêt",
+    "QUIZ_DONE": "Bravo c'est fini ! télécharger votre mini rapport et un deuxième rapport approfondi vous sera envoyé par mail",
+    "REPORT_SENT": "Rapport envoyé avec succès"
   }

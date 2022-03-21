@@ -138,12 +138,14 @@ export class AppService {
     sendEmail(
         emailTo: string,
         emailSubject: string,
-        emailBody: string
+        emailBody: string,
+        attachment: string = null
     ): Observable<any> {
         const body = { 
             emailTo, 
             emailSubject,
-            emailBody
+            emailBody,
+            attachment
         };
         return this.http.post<any>(this.API_ENDPOINT + 'sendmail/send_mail.php', body);
     }

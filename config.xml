@@ -16,7 +16,7 @@
     <preference name="SplashMaintainAspectRatio" value="true" />
     <preference name="FadeSplashScreenDuration" value="300" />
     <preference name="SplashShowOnlyFirstTime" value="false" />
-    <preference name="SplashScreen" value="assets/img/afa9-logo.png" />
+    <preference name="SplashScreen" value="assets/img/afa9-intro.gif" />
     <preference name="SplashScreenDelay" value="3000" />
     <platform name="android">
         <preference name="Scheme" value="http" />

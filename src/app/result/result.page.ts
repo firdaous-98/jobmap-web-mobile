@@ -643,7 +643,8 @@ export class ResultPage {
     //   console.log(result);
     // });
 
-    this.sendRequestMail();
+    // this.sendRequestMail();
+    await this.sendRapportApprofondi();
   }
 
   async getChart(resultat: Score[]) {
@@ -698,5 +699,256 @@ export class ResultPage {
       };
     
       img.src = url;
-    });}
+    });
+  }
+
+  async sendRapportApprofondi() {
+    const total = this.resultat.reduce((a, b) => a + b.value, 0);
+
+    const documentDefinition = {
+      content: [
+        {
+          image: await this.getBase64ImageFromURL(
+            "./assets/img/afa9-logo.png"),
+          alignment: 'center'
+        },
+        {
+          text: 'Orientation - Maroc',
+          fontSize: 26,
+          bold: true,
+          alignment: 'center'
+          // margin: [0, 10, 0, 10] // margin: [left, top, right, bottom]
+        },
+        {
+          text: 'Nom: ' + this.tokenInfo.nom,
+          fontSize: 12,
+          align: 'right'
+        },
+        {
+          text: 'Prénom: ' + this.tokenInfo.prenom,
+          fontSize: 12,
+          align: 'right'
+        },
+        {
+          text: 'Mail: ' + this.tokenInfo.adresse_email,
+          fontSize: 12,
+          align: 'right'
+        },
+        {
+          image: await this.getBase64ImageFromURL(
+            "./assets/img/afa9-logo-text.png"),
+          alignment: 'right',
+          width: 80,
+          pageBreak: 'before'
+        },
+        {
+          text: 'Le profil RIASEC',
+          fontSize: 16,
+          alignment: 'center',
+          bold: true
+          // margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
+        },
+        {
+          image: await this.getBase64ImageFromURL(
+            "./assets/img/riasec.png"),
+          alignment: 'center',
+          margin: [0, 10, 0, 10] // margin: [left, top, right, bottom]
+        },
+        {
+          text: 'Selon John Holland, le choix d’un métier ou d\'une profession est une forme d\'expression de la personnalité d\'un individu. La typologie dont il est l’auteur – la typologie de Holland – est représentée par les six types ci-contre.',
+          fontSize: 12,
+          alignment: 'justify',
+          margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
+        },
+        {
+          text: 'Votre appartenance à l\'un ou l\'autre des six types (code RIASEC) est déterminée par vos habiletés, certains traits de personnalité et vos intérêts. Chaque profession est donc associée à une combinaison de plusieurs types.',
+          fontSize: 12,
+          alignment: 'justify',
+          margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
+        },
+        {
+          text: 'Voici comment se situent vos résultats au regard de la typologie de Holland.',
+          bold: true,
+          fontSize: 12,
+          align: 'right',
+          margin: [5, 5, 0, 5] // margin: [left, top, right, bottom]
+        },
+        {
+          ul: [
+            'Réaliste',
+            'Investigateur',
+            'Artistique',
+            'Social',
+            'Entreprenant',
+            'Conventionnel'
+          ],
+          margin: [10, 5, 0, 5] // margin: [left, top, right, bottom]
+        },
+        {
+          text: 'Votre code RIASEC :',
+          fontSize: 12,
+          align: 'right',
+          margin: [5, 5, 0, 5] // margin: [left, top, right, bottom]
+        },
+        this.getTextWithColor(this.resultat[0].key),
+        this.getTextWithColor(this.resultat[1].key),
+        this.getTextWithColor(this.resultat[2].key),
+        {
+          text: this.getParagraphTitleRapport(this.resultat[0], total),
+          fontSize: 12,
+          bold: true,
+          align: 'right',
+          margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
+        },
+        this.getTextWithColor(this.resultat[0].key),
+        {
+          text: this.getParagraphRapport(this.resultat[0].key),
+          fontSize: 12,
+          alignment: 'justify',
+          margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
+        },
+        {
+          text: this.getParagraphTitleRapport(this.resultat[1], total),
+          fontSize: 12,
+          bold: true,
+          align: 'right',
+          margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
+        },
+        this.getTextWithColor(this.resultat[1].key),
+        {
+          text: this.getParagraphRapport(this.resultat[1].key),
+          fontSize: 12,
+          alignment: 'justify',
+          margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
+        },
+        {
+          text: this.getParagraphTitleRapport(this.resultat[2], total),
+          fontSize: 12,
+          bold: true,
+          align: 'right',
+          margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
+        },
+        this.getTextWithColor(this.resultat[2].key),
+        {
+          text: this.getParagraphRapport(this.resultat[2].key),
+          fontSize: 12,
+          alignment: 'justify',
+          margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
+        },
+        {
+          text: 'Après ce sont les métiers et leurs codes DPC avec le descriptif de chaque métier',
+          fontSize: 12,
+          alignment: 'justify',
+          margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
+        }
+      ]
+    };
+
+    let base64 = "";
+
+    const pdfDocGenerator = pdfMake.createPdf(documentDefinition);
+    pdfDocGenerator.getBase64((data) => {
+      this.service.sendEmail(
+        "bendoudouch.98@gmail.com",
+        "Rappot approfondi RIASEC - Afa9",
+        `Bonjour ${this.tokenInfo.prenom}, vous venez de passer le questionnaire d'orientation RIASEC sur notre plateforme Afa9,
+        vous trouvez ci-joint votre rapport approfondi. Bonne journée :D`,
+        data
+      ).subscribe(async result => {
+        console.log(result);
+        (await this.toastController.create({ message: this.translate.instant('REPORT_SENT'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
+      });
+    });      
+  }
+
+  getTextWithColor(key: string) {
+    switch (key) {
+      case "R":
+        return {
+          text: "Réaliste",
+          color: 'white',
+          bold: true,
+          background: 'orange',
+          margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
+        }
+      case "I":
+        return {
+          text: "Investigateur",
+          color: 'white',
+          bold: true,
+          background: 'pink',
+          margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
+        }
+      case "A":
+        return {
+          text: "Artistique",
+          color: 'white',
+          bold: true,
+          background: 'purple',
+          margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
+        }
+      case "S":
+        return {
+          text: "Social",
+          color: 'white',
+          bold: true,
+          background: 'blue',
+          margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
+        }
+      case "E":
+        return {
+          text: "Entreprenant",
+          color: 'white',
+          bold: true,
+          background: 'green',
+          margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
+        }
+      case "C":
+        return {
+          text: "Conventionnel",
+          color: 'white',
+          bold: true,
+          background: 'yellow',
+          margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
+        }
+    }
+  }
+
+  getParagraphTitleRapport(score: Score, total: number) {
+    switch (score.key) {
+      case "R":
+      return "Le type Réaliste " + this.roundingNumber((score.value / total) * 100) + "%";
+      case "I":
+        return "Le type Investigateur " + this.roundingNumber((score.value / total) * 100) + "%";
+      case "A":
+        return "Le type Artistique " + this.roundingNumber((score.value / total) * 100) + "%";
+      case "S":
+        return "Le type Social " + this.roundingNumber((score.value / total) * 100) + "%";
+      case "E":
+        return "Le type Entreprenant " + this.roundingNumber((score.value / total) * 100) + "%";
+      case "C":
+        return "Le type Conventionnel " + this.roundingNumber((score.value / total) * 100) + "%";
+    }
+  }
+
+  getParagraphRapport(key: string) {
+    switch (key) {
+      case "R":
+      return "Les personnes de ce type exercent surtout des tâches concrètes. Habiles de leurs mains, elles savent coordonner leurs gestes. Elles se servent d’outils, font fonctionner des appareils, des machines, des véhicules. Les réalistes ont le sens de la mécanique, le souci de la précision. Plusieurs exercent leur profession à l’extérieur plutôt qu’à l’intérieur. Leur travail demande souvent une bonne endurance physique et même des capacités athlétiques. Ces personnes sont patientes, minutieuses, constantes, sensées, naturelles, franches, pratiques, concrètes, simples.";
+      case "I":
+        return "La plupart des personnes de ce type ont des connaissances théoriques auxquelles elles ont recours pour agir. Elles disposent de renseignements spécialisés dont elles se servent pour résoudre des problèmes. Ce sont des personnes qui observent. Leur principale compétence tient à la compréhension qu’elles ont des phénomènes. Elles aiment bien se laisser absorber dans leurs réflexions. Elles aiment jouer avec les idées. Elles valorisent le savoir. Ces personnes sont critiques, curieuses, soucieuses de se renseigner, calmes, réservées, persévérantes, tolérantes, prudentes dans leurs jugements, logiques, objectives, rigoureuses, intellectuelles.";
+      case "A":
+        return "Les personnes de ce type aiment les activités qui leur permettent de s’exprimer librement à partir de leurs perceptions, de leur sensibilité et de leur intuition. Elles s’intéressent au travail de création, qu’il s’agisse d’art visuel, de littérature, de musique, de publicité ou de spectacle. D’esprit indépendant et non conformiste, elles sont à l’aise dans des situations qui sortent de l’ordinaire. Elles sont dotées d’une grande sensibilité et de beaucoup d’imagination. Bien qu’elles soient rebutées par les tâches méthodiques et routinières, elles sont néanmoins capables de travailler avec discipline. Ces personnes sont spontanées, expressives, imaginatives, émotives, indépendantes, originales, intuitives, passionnées, fières, flexibles, disciplinées.";
+      case "S":
+        return "Les personnes de ce type aiment être en contact avec les autres dans le but de les aider, de les informer, de les éduquer, de les divertir, de les soigner ou encore de favoriser leur croissance. Elles s’intéressent aux comportements humains et sont soucieuses de la qualité de leurs relations avec les autres. Elles utilisent leur savoir ainsi que leurs impressions et leurs émotions pour agir et pour interagir avec les autres. Elles aiment communiquer et s’expriment facilement. Ces personnes sont attentives aux autres, coopératives, collaboratrices, compréhensives, dévouées, sensibles, sympathiques, perspicaces, bienveillantes, communicatives, encourageantes.";
+      case "E":
+        return "Les personnes de ce type aiment influencer leur entourage. Leur capacité de décision, le sens de l’organisation et une habileté particulière à communiquer leur enthousiasme les appuient dans leurs objectifs. Elles savent vendre des idées autant que des biens matériels. Elles ont le sens de l’organisation, de la planification et de l’initiative et savent mener à bien leurs projets. Elles savent faire preuve d’audace et d’efficacité. Ces personnes sont persuasives, énergiques, optimistes, audacieuses, sûres d’elles-mêmes, ambitieuses, déterminées, diplomates, débrouillardes, sociables.";
+      case "C":
+        return "Les personnes de ce type ont une préférence pour les activités précises, méthodiques, axées sur un résultat prévisible. Elles se préoccupent de l’ordre et de la bonne organisation matérielle de leur environnement. Elles préfèrent se conformer à des conventions bien établies et à des consignes claires plutôt que d’agir dans l’improvisation. Elles aiment calculer, classer, tenir à jour des registres ou des dossiers. Elles sont efficaces dans tout travail qui exige de l’exactitude et à l’aise dans les tâches routinières. Ces personnes sont loyales, organisées, efficaces, respectueuses de l’autorité, perfectionnistes, raisonnables, consciencieuses, ponctuelles, discrètes, strictes.";
+    }
+  }
+
+  roundingNumber(amount: number): number {
+    return parseFloat(Number(amount.toString()).toFixed(2));
+}
 }

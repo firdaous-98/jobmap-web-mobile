@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { CodeHolland } from '../core/enums/code-holland.enum';
 import { ResultChoix } from '../core/models/choix.model';
@@ -30,9 +31,13 @@ export class QuizPage {
     private service: AppService, 
     public translate: TranslateService, 
     public translatorService: TranslatorService,
+    public alertController: AlertController,
     private router: Router) {
-    this.initQuestions();
-    this.initScore();
+      setTimeout(() => {
+        this.translate.use(this.translatorService.getSelectedLanguage());      
+      }, 500);
+      this.initQuestions();
+      this.initScore();
    }
 
    ngOnInit() {
@@ -41,13 +46,14 @@ export class QuizPage {
     }, 500);
    }
 
-   initQuestions() {
+   async initQuestions() {
+    await this.showMotivationAlert();
     this.service.get_questionsArray().subscribe((result: Question[]) => {
       this.questionsArray = result;
       this.currentQuestion = this.questionsArray[0];
-      this.currentQuestion = this.questionsArray.find(e => e.id_quest == "40")
+      // this.currentQuestion = this.questionsArray.find(e => e.id_quest == "40")
       // this.currentQuestion = this.questionsArray.find(e => e.id_step == "4" && e.id_quest == "49")
-      //this.numberOfQuestions = this.questionsArray.filter(e => e.id_step == this.currentQuestion.id_step).length;
+      this.numberOfQuestions = this.questionsArray.filter(e => e.id_step == this.currentQuestion.id_step).length;
     });
   }
 
@@ -55,7 +61,7 @@ export class QuizPage {
     this.scores = { totalR: 0, totalI: 0, totalA: 0, totalS: 0, totalE: 0, totalC: 0 }
   }
 
-  getResponse(reponse: Reponse){
+  async getResponse(reponse: Reponse){
     var existingQuestionIndex = this.reponses.findIndex(e => e.id_quest == this.currentQuestion.id_quest);
     if (existingQuestionIndex != -1){
       this.reponses[existingQuestionIndex].code_holland = reponse.code_holland;
@@ -69,6 +75,7 @@ export class QuizPage {
       
     if(nextQuestion != null){
       if(nextQuestion.id_step != this.currentQuestion.id_step) {
+        await this.showMotivationAlert(nextQuestion.id_step);
         this.reponsesPerStep = this.reponses.filter(e => e.id_step == this.currentQuestion.id_step);
         var resultat = this.composeCodeHolland(this.reponsesPerStep);
         this.resultPerStep.push({
@@ -105,6 +112,46 @@ export class QuizPage {
     else {
       this.router.navigate(['/home']);
     }
+  }
+
+  async showMotivationAlert(nextStep: string = null) {
+    let message: string = this.translate.instant('FIRST_STEP_MESSAGE');
+    let image: string = "test.png";
+
+    if(nextStep != null) {
+      switch(nextStep) {
+      case "2":
+        message = this.translate.instant('SECOND_STEP_MESSAGE');
+        break;
+      case "3":
+        message = this.translate.instant('THIRD_STEP_MESSAGE');
+        break;
+      case "4":
+        message = this.translate.instant('MID_FOURTH_STEP_MESSAGE');
+        break;
+      case "49":
+          message = this.translate.instant('FOURTH_STEP_MESSAGE');
+          break;
+      case "done":
+          message = this.translate.instant('QUIZ_DONE');
+          image = "felicitations.png";
+          break;
+      default:
+        message = this.translate.instant('FIRST_STEP_MESSAGE');
+        break;
+    }
+    }
+
+    console.log(message);
+    
+    
+    const alert = await this.alertController.create({
+      message: `<img src="./assets/img/${image}" alt="g-maps" style="border-radius:2px; width:10px; height:auto;"><br/>
+      <p>${message}</p>`,
+      buttons: ['OK']
+    });
+
+    await alert.present();
   }
 
   incrementString(id: string): string {
