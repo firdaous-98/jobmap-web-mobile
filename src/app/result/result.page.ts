@@ -354,19 +354,18 @@ export class ResultPage {
 
     var metierRows: any[] = [];
 
-    metierRows = [['Métier(s)', 'D', 'P', 'C', '']];
+    metierRows = [['Métier(s)', 'D', 'P', 'C']];
 
     this.listeMetiers.forEach(metier => {
       metierRows.push([
-        metier.libelle_metier, 
+        {
+          text: metier.libelle_metier,
+          link: `http://afa9.org/metier.php?idmetier=${metier.id_metier}`,
+          decoration: 'underline'
+        }, 
         metier.id_donnees.toString(), 
         metier.id_personnes.toString(), 
-        metier.id_choses.toString(),
-        {
-          text: 'Description',
-          link: `http://afa9.org/metier.php?idmetier=${metier.id_metier}`,
-          color: 'blue'
-        }
+        metier.id_choses.toString()
       ]);
     });
 
@@ -374,17 +373,17 @@ export class ResultPage {
     var otherMetierTable: any;
 
     if (this.OtherListeMetiers?.length > 0) {
-      otherMetierRows = [['Métier(s)', 'D', 'P', 'C', '']];
+      otherMetierRows = [['Métier(s)', 'D', 'P', 'C']];
       this.OtherListeMetiers.forEach(metier => {
         otherMetierRows.push([
-          metier.libelle_metier, 
+          {
+            text: metier.libelle_metier,
+            link: `http://afa9.org/metier.php?idmetier=${metier.id_metier}`,
+            decoration: 'underline'
+          }, 
           metier.id_donnees.toString(), 
           metier.id_personnes.toString(), 
-          metier.id_choses.toString(),
-          {
-            text: 'Description',
-            link: `http://afa9.org/metier.php?idmetier=${metier.id_metier}`
-          }
+          metier.id_choses.toString()
         ]);
       });
 
@@ -400,7 +399,7 @@ export class ResultPage {
           layout: 'lightHorizontalLines', // optional
           table: {
             headerRows: 1,
-            widths: [200, 50, 50, 50, '*'],
+            widths: ['*', 50, 50, 50],
 
             body: otherMetierRows
           },
@@ -605,7 +604,7 @@ export class ResultPage {
         },
         explanationTable,
         {
-          text: 'Métiers et professions correspondant à votre profil RIASEC :',
+          text: 'Métiers et professions correspondant à votre profil RIASEC (Vous pouvez accéder à la description du métier en cliquant sur sa désignation) :',
           fontSize: 15,
           margin: [20, 20, 0, 0]
         },
@@ -613,7 +612,7 @@ export class ResultPage {
           layout: 'lightHorizontalLines', // optional
           table: {
             headerRows: 1,
-            widths: [200, 50, 50, 50, '*'],
+            widths: ['*', 50, 50, 50],
 
             body: metierRows
           },
@@ -849,8 +848,8 @@ export class ResultPage {
     const pdfDocGenerator = pdfMake.createPdf(documentDefinition);
     pdfDocGenerator.getBase64((data) => {
       this.service.sendEmail(
-        "bendoudouch.98@gmail.com",
-        "Rappot approfondi RIASEC - Afa9",
+        this.tokenInfo.adresse_email,
+        "Rapport approfondi RIASEC - Afa9",
         `Bonjour ${this.tokenInfo.prenom}, vous venez de passer le questionnaire d'orientation RIASEC sur notre plateforme Afa9,
         vous trouvez ci-joint votre rapport approfondi. Bonne journée :D`,
         data

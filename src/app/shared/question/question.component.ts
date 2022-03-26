@@ -62,8 +62,8 @@ export class QuestionComponent {
     }
     else {
       if(this.question.id_step == '4'){
+        this.stepFourQuestionsCount++;
         for (let i = 0; i < this.currentChoice; i++) {
-          this.stepFourQuestionsCount++;
           var choix: ResultChoix = {
             id: this.question.choix[this.index].id,
             code_holland: this.getCodeHollandStringToEnum(this.question.choix[this.index].code_holland)

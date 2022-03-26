@@ -6,4 +6,17 @@ ion-content{
   display: flex;
   justify-content: center;
   align-items: center;
+  
+  .scaledAlert {
+    transform: scale(10);
+  }
+}
+
+  ::ng-deep {
+    .scaledAlert {
+    --min-width: 200px;
+    --max-width: 400px;
+    --width: 80%;
+    --justify-content: center;
+  }
 }

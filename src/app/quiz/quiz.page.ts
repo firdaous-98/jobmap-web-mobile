@@ -26,6 +26,7 @@ export class QuizPage {
   numberOfQuestions: number = 1;
   isBack: boolean = false;
   scores: Scores;
+  isArab: boolean;
 
   constructor(
     private service: AppService, 
@@ -33,9 +34,7 @@ export class QuizPage {
     public translatorService: TranslatorService,
     public alertController: AlertController,
     private router: Router) {
-      setTimeout(() => {
-        this.translate.use(this.translatorService.getSelectedLanguage());      
-      }, 500);
+      this.isArab = localStorage.getItem('language') == "ar";
       this.initQuestions();
       this.initScore();
    }
@@ -83,12 +82,17 @@ export class QuizPage {
           resultat: resultat
         });
 
+        if(nextQuestion.id_quest == "49") {
+          await this.showMotivationAlert(nextQuestion.id_quest);
+        }
+
         this.reponsesPerStep = [];
       }
       this.numberOfQuestions = this.questionsArray.filter(e => e.id_step == nextQuestion.id_step).length;
       this.currentQuestion = nextQuestion;
     }
     else {
+      await this.showMotivationAlert("done");
       this.reponsesPerStep = this.reponses.filter(e => e.id_step == "4");
         var resultat = this.composeCodeHolland(this.reponsesPerStep);
         this.resultPerStep.push({
@@ -115,38 +119,46 @@ export class QuizPage {
   }
 
   async showMotivationAlert(nextStep: string = null) {
-    let message: string = this.translate.instant('FIRST_STEP_MESSAGE');
-    let image: string = "test.png";
+    let message = this.isArab ? 
+    "اختر الإجابات التي تناسبك وإذا لم تكن كذلك ، فحدد الإجابة الأقرب لك" : 
+    "Choisissez les réponses qui vous correspondent et si ce n'est pas le cas, cochez le réponde proche de votre profil";
+    
+    let image = "test.png";
 
     if(nextStep != null) {
       switch(nextStep) {
       case "2":
-        message = this.translate.instant('SECOND_STEP_MESSAGE');
+        message = this.isArab ? "خذ وقتك ، لا يوجد توقيت محدد" :
+        "Prenez votre temps, il n y pas de timing précis";
         break;
       case "3":
-        message = this.translate.instant('THIRD_STEP_MESSAGE');
+        message = this.isArab ? "أنت تتقدم! هذا جيد ، لقد اقتربت من اكتشاف نفسك" :
+        "Vous avancez ! C'est bien, vous êtes proches de la découverte de vous même";
         break;
       case "4":
-        message = this.translate.instant('MID_FOURTH_STEP_MESSAGE');
+        message = this.isArab ? "فقط عدد قليل من الأسئلة وسيتم إنشاء ملف التعريف الخاص بك" :
+        "Plus que quelques questions et votre profil sera généré";
         break;
       case "49":
-          message = this.translate.instant('FOURTH_STEP_MESSAGE');
+          message = this.isArab ? "فقط بضعة أسئلة أخرى ، وسيكون تقريرك جاهزًا" :
+          "Plus que quelques questions, et votre rapport sera prêt";
           break;
       case "done":
-          message = this.translate.instant('QUIZ_DONE');
+          message = this.isArab ? "تهانينا ، لقد انتهى الاختبار ، قم بتنزيل التقرير المصغر الخاص بك وسيتم إرسال تقرير ثاني متعمق إليك عبر البريد الإلكتروني" :
+          "Bravo c'est fini ! télécharger votre mini rapport et un deuxième rapport approfondi vous sera envoyé par mail";
           image = "felicitations.png";
           break;
       default:
-        message = this.translate.instant('FIRST_STEP_MESSAGE');
+        message = this.isArab ? 
+          "اختر الإجابات التي تناسبك وإذا لم تكن كذلك ، فحدد الإجابة الأقرب لك" : 
+          "Choisissez les réponses qui vous correspondent et si ce n'est pas le cas, cochez le réponde proche de votre profil";
         break;
     }
     }
-
-    console.log(message);
-    
     
     const alert = await this.alertController.create({
-      message: `<img src="./assets/img/${image}" alt="g-maps" style="border-radius:2px; width:10px; height:auto;"><br/>
+      cssClass: "scaledAlert",
+      message: `<img src="./assets/img/${image}" alt="g-maps" class="alert-image"><br/>
       <p>${message}</p>`,
       buttons: ['OK']
     });
