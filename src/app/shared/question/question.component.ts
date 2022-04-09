@@ -22,12 +22,12 @@ export class QuestionComponent {
   numberOfQuestions: number;
 
   @Input()
-  set previousResponse(value: CodeHolland | ResultChoix[]){
-    if(value != null && ["1", "3"].includes(this.question.id_step)) {
+  set previousResponse(value: CodeHolland | ResultChoix[]) {
+    if (value != null && ["1", "2"].includes(this.question.id_step)) {
       this.response = this.getCodeHollandEnumToString(value as CodeHolland);
     }
-    else if (value != null && this.question.id_step == "2") {
-      this.stepTwoResponses = value as ResultChoix[];
+    else if (value != null && this.question.id_step == "3") {
+      this.stepThreeResponses = value as ResultChoix[];
     }
   }
 
@@ -35,7 +35,7 @@ export class QuestionComponent {
   nextQuestionEvent = new EventEmitter<Reponse>();
 
   response: string;
-  stepTwoResponses: ResultChoix[] = [];
+  stepThreeResponses: ResultChoix[] = [];
   stepFourResponses: ResultChoix[] = [];
   currentChoice: Level;
   Level = Level;
@@ -45,23 +45,23 @@ export class QuestionComponent {
 
   constructor(
     public toastController: ToastController,
-    public translate: TranslateService, 
+    public translate: TranslateService,
     public translatorService: TranslatorService
-    ) {}
+  ) { }
 
-  ngOnInit(){
+  ngOnInit() {
     setTimeout(() => {
-      this.translate.use(this.translatorService.getSelectedLanguage());      
+      this.translate.use(this.translatorService.getSelectedLanguage());
     }, 500);
     this.isArab = localStorage.getItem('language') == "ar";
   }
-  
-  async goToNextQuestion(){
-    if(this.response == null && this.currentChoice == null && this.stepTwoResponses.length == 0){
+
+  async goToNextQuestion() {
+    if (this.response == null && this.currentChoice == null && this.stepThreeResponses.length == 0) {
       (await this.toastController.create({ message: this.translate.instant('PLEASE_CHOOSE'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
     }
     else {
-      if(this.question.id_step == '4'){
+      if (this.question.id_step == '4') {
         this.stepFourQuestionsCount++;
         for (let i = 0; i < this.currentChoice; i++) {
           var choix: ResultChoix = {
@@ -72,8 +72,8 @@ export class QuestionComponent {
         }
 
         this.currentChoice = undefined;
-        
-        if(this.index < this.question.choix.length - 1){
+
+        if (this.index < this.question.choix.length - 1) {
           this.index++;
         }
         else {
@@ -86,14 +86,14 @@ export class QuestionComponent {
           this.nextQuestionEvent.emit(reponse);
           this.stepFourResponses = [];
         }
-      } else if (this.question.id_step == '2') {
+      } else if (this.question.id_step == '3') {
         const reponse: Reponse = {
           id_quest: this.question.id_quest,
           id_step: this.question.id_step,
-          code_holland: this.stepTwoResponses
+          code_holland: this.stepThreeResponses
         }
         this.nextQuestionEvent.emit(reponse);
-        this.stepTwoResponses = [];
+        this.stepThreeResponses = [];
       }
       else {
         const reponse: Reponse = {
@@ -104,8 +104,8 @@ export class QuestionComponent {
         this.nextQuestionEvent.emit(reponse);
         this.response = undefined;
       }
-      
-    }    
+
+    }
   }
 
   selectChoice(value: any) {
@@ -117,23 +117,23 @@ export class QuestionComponent {
   }
 
   isChecked(id: string) {
-    return this.stepTwoResponses.map(e => e.id).includes(id);
+    return this.stepThreeResponses.map(e => e.id).includes(id);
   }
 
-  selectStepTwoResponses(value: any, index: number) {
+  selectStepThreeResponses(value: any, index: number) {
     if (value.detail.checked) {
       var choix: ResultChoix = {
         id: this.question.choix[index].id,
         code_holland: this.getCodeHollandStringToEnum(this.question.choix[index].code_holland)
       }
-      this.stepTwoResponses?.push(choix);
+      this.stepThreeResponses?.push(choix);
     } else {
-        this.stepTwoResponses = this.stepTwoResponses.filter(e => e.id !== this.question.choix[index]?.id);
+      this.stepThreeResponses = this.stepThreeResponses.filter(e => e.id !== this.question.choix[index]?.id);
     }
   }
 
   getCodeHollandStringToEnum(code: string): CodeHolland {
-    switch(code){
+    switch (code) {
       case "R":
         return CodeHolland.R;
       case "I":
@@ -150,7 +150,7 @@ export class QuestionComponent {
   }
 
   getCodeHollandEnumToString(code: CodeHolland): string {
-    switch(code){
+    switch (code) {
       case CodeHolland.R:
         return "R";
       case CodeHolland.I:
@@ -163,6 +163,19 @@ export class QuestionComponent {
         return "E";
       case CodeHolland.C:
         return "C";
+    }
+  }
+
+  getStepDescription(id_step: string) {
+    switch (id_step) {
+      case "1":
+        return this.translate.instant('INTERETS_ACTIVITES');
+      case "2":
+        return this.translate.instant('INTERETS_OCCUPATIONS');
+      case "3":
+        return this.translate.instant('PERSONNALITE');
+      case "4":
+        return this.translate.instant('APTITUDES');
     }
   }
 }

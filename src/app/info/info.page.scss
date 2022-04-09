@@ -57,11 +57,10 @@ ion-card {
   .next {
     --background: #ff9f04;
     // bottom: 50px;
-    left: 10rem;
-    right: 10rem;
+    left: 30%;
+    right: 30%;
     bottom: 20%;
-    position: fixed;
-    
+    position: fixed;    
   }
 
   .text-arab {
@@ -71,3 +70,9 @@ ion-card {
   .app-toast {
     text-align: center;
   }
+
+  :host .button-solid {
+    @media only screen and (max-width: 550px) {
+    font-size: 2.5vw !important;
+  }
+}

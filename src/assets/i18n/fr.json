@@ -10,6 +10,7 @@
     "CHANGE_LANGUAGE": "Changer la langue",
     "CONSULT_RESULT": "Consulter mon résultat",
     "START_QUIZ": "Commencer le questionnaire",
+    "CONTINUE_QUIZ": "Continuer le questionnaire",
     "LOGOUT": "Se déconnecter",
     "YOU_ARE": "Êtes-vous ?",
     "STUDENT": "Etudiant",
@@ -23,7 +24,7 @@
     "YOU_GOT": "Vous avez obtenu",
     "COMPARE_RESULTS": "Votre orientation est une étape importante, souhaitez-vous avoir le point de vue de vos parents ou professeur ? Si c'est le cas envoyez-lui une invitation par mail :",
     "COMPARE_RESULTS_PARENT": "Souhaitez-vous comparer votre résultat avec celui de votre fils/ étudiant ?",
-    "DOWNLOAD_RESULT_GET_DETAILED_REPORT": "télécharger votre résultat et recevoir un rapport approfondi",
+    "DOWNLOAD_RESULT_GET_DETAILED_REPORT": "télécharger votre rapport approfondi",
     "REDO_QUIZ": "Refaire le questionnaire",
     "HELPS_FIND_JOB": "Les métiers qui correspondent à votre profil",
     "RESULTS": "Résultats :",
@@ -66,5 +67,9 @@
     "MID_FOURTH_STEP_MESSAGE": "Plus que quelques questions et votre profil sera généré",
     "FOURTH_STEP_MESSAGE": "Plus que quelques questions, et votre rapport sera prêt",
     "QUIZ_DONE": "Bravo c'est fini ! télécharger votre mini rapport et un deuxième rapport approfondi vous sera envoyé par mail",
-    "REPORT_SENT": "Rapport envoyé avec succès"
+    "REPORT_SENT": "Rapport envoyé avec succès",
+    "INTERETS_ACTIVITES": "Voici une liste d'activités. Cocher les cases qui se rapportent aux activités que vous aimez ou que vous aimeriez pratiquer. II est important de ne pas cocher si I ‘activité vous déplait ou vous laisse indifférent(e). Pour remplir cette partie, considérez que vous avez les capacités, les connaissances et la formation nécessaires pour effectuer ces activités. Tenez compte uniquement de vos gouts.",
+    "INTERETS_OCCUPATIONS": "Cocher les cases qui se rapportent aux professions qui vous conviendraient. Ne vous préoccupez pas de savoir si vous pouvez réussir dans tel métier ou dans telle profession, ni de votre préparation actuelle. Ne songez ni au salaire, ni l'avancement mais demandez-vous si le travail en question est susceptible de vous plaire.",
+    "PERSONNALITE": "Voici une liste de traits de caractère, d'attitudes, de tendances personnelles. Cocher la case correspondant aux énonces qui s'appliquent à vous, qui décrivent le plus honnêtement possible votre façon d'agir.",
+    "APTITUDES": "Voici une liste d'aptitudes, d'habiletés, de talents qui sont en rapport avec des occupations. Evaluez-vous le plus objectivement possible en choisissant le niveau d'aptitudes que vous pensez posséder. Ne vous sous-estimez pas ou ne vous surestimez pas. Soyez honnête envers vous-même et évaluez votre capacité réelle."
   }

@@ -7,8 +7,8 @@ import { Observable } from "rxjs";
 })
 export class AppService {
 
-    API_ENDPOINT = 'http://localhost/jobmap/api/';
-    // API_ENDPOINT = 'https://afa9.org//api/';
+    // API_ENDPOINT = 'http://localhost/jobmap/api/';
+    API_ENDPOINT = 'https://afa9.org//api/';
 
     constructor(
         private http: HttpClient

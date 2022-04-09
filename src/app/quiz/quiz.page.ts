@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { CodeHolland } from '../core/enums/code-holland.enum';
+import { TypeUtilisateur } from '../core/enums/type-utilisateur.enum';
 import { ResultChoix } from '../core/models/choix.model';
 import { Question } from '../core/models/question.model';
 import { Reponse, Scores } from '../core/models/reponse.model';
@@ -21,59 +22,69 @@ export class QuizPage {
   currentQuestion: Question;
   reponses: Reponse[] = [];
   reponsesPerStep: Reponse[] = [];
-  resultPerStep: {id_step: string, resultat: any}[] = [];
+  resultPerStep: { id_step: string, resultat: any }[] = [];
   previousResponse: CodeHolland | ResultChoix[];
   numberOfQuestions: number = 1;
   isBack: boolean = false;
   scores: Scores;
   isArab: boolean;
+  reponsesArray: string;
 
   constructor(
-    private service: AppService, 
-    public translate: TranslateService, 
+    private service: AppService,
+    public translate: TranslateService,
     public translatorService: TranslatorService,
     public alertController: AlertController,
     private router: Router) {
-      this.isArab = localStorage.getItem('language') == "ar";
-      this.initQuestions();
-      this.initScore();
-   }
+    this.isArab = localStorage.getItem('language') == "ar";
+    this.reponsesArray = localStorage.getItem('reponses');
+    this.initQuestions();
+    this.initScore();
+  }
 
-   ngOnInit() {
+  ngOnInit() {
     setTimeout(() => {
-      this.translate.use(this.translatorService.getSelectedLanguage());      
+      this.translate.use(this.translatorService.getSelectedLanguage());
     }, 500);
-   }
+  }
 
-   async initQuestions() {
+  async initQuestions() {
     await this.showMotivationAlert();
     this.service.get_questionsArray().subscribe((result: Question[]) => {
       this.questionsArray = result;
-      this.currentQuestion = this.questionsArray[0];
-      // this.currentQuestion = this.questionsArray.find(e => e.id_quest == "40")
-      // this.currentQuestion = this.questionsArray.find(e => e.id_step == "4" && e.id_quest == "49")
+      
+      if(this.reponsesArray != null) {
+        this.reponses = <Reponse[]> JSON.parse(this.reponsesArray);
+        var currentQuestion = this.reponses.pop();
+        this.currentQuestion = this.questionsArray.find(e => e.id_step == currentQuestion.id_step && e.id_quest == currentQuestion.id_quest);
+        
+      } else {
+        this.currentQuestion = this.questionsArray[0];
+      }
       this.numberOfQuestions = this.questionsArray.filter(e => e.id_step == this.currentQuestion.id_step).length;
     });
   }
 
-  initScore(){
+  initScore() {
     this.scores = { totalR: 0, totalI: 0, totalA: 0, totalS: 0, totalE: 0, totalC: 0 }
   }
 
-  async getResponse(reponse: Reponse){
+  async getResponse(reponse: Reponse) {
     var existingQuestionIndex = this.reponses.findIndex(e => e.id_quest == this.currentQuestion.id_quest);
-    if (existingQuestionIndex != -1){
+    if (existingQuestionIndex != -1) {
       this.reponses[existingQuestionIndex].code_holland = reponse.code_holland;
     }
     else {
       this.reponses.push(reponse);
-    }     
+    }
 
-    var nextQuestion = this.questionsArray.find(question => 
+    localStorage.setItem('reponses', JSON.stringify(this.reponses));
+
+    var nextQuestion = this.questionsArray.find(question =>
       question.id_quest == (this.currentQuestion.id_quest != '40' ? this.incrementString(this.currentQuestion.id_quest) : '46'));
-      
-    if(nextQuestion != null){
-      if(nextQuestion.id_step != this.currentQuestion.id_step) {
+
+    if (nextQuestion != null) {
+      if (nextQuestion.id_step != this.currentQuestion.id_step) {
         await this.showMotivationAlert(nextQuestion.id_step);
         this.reponsesPerStep = this.reponses.filter(e => e.id_step == this.currentQuestion.id_step);
         var resultat = this.composeCodeHolland(this.reponsesPerStep);
@@ -82,7 +93,7 @@ export class QuizPage {
           resultat: resultat
         });
 
-        if(nextQuestion.id_quest == "49") {
+        if (nextQuestion.id_quest == "49") {
           await this.showMotivationAlert(nextQuestion.id_quest);
         }
 
@@ -94,68 +105,99 @@ export class QuizPage {
     else {
       await this.showMotivationAlert("done");
       this.reponsesPerStep = this.reponses.filter(e => e.id_step == "4");
-        var resultat = this.composeCodeHolland(this.reponsesPerStep);
-        this.resultPerStep.push({
-          id_step: "4",
-          resultat: resultat
-        });
+      var resultat = this.composeCodeHolland(this.reponsesPerStep);
+      this.resultPerStep.push({
+        id_step: "4",
+        resultat: resultat
+      });
       var resultatFinal = this.composeCodeHolland(this.reponses);
-      this.router.navigate(['/result'], { state: { resultat: resultatFinal, resultPerStep: this.resultPerStep, fromQuiz: true }});
+      localStorage.setItem('reponses', null);
+      this.router.navigate(['/result'], { state: { resultat: resultatFinal, resultPerStep: this.resultPerStep, fromQuiz: true } });
     }
   }
 
-  getPreviousQuestion(){
-    var previousQuestion = this.questionsArray.find(question => 
+  getPreviousQuestion() {
+    var previousQuestion = this.questionsArray.find(question =>
       question.id_quest == (this.currentQuestion.id_quest != '46' ? this.decrementString(this.currentQuestion.id_quest) : '40'));
-      
-    if(previousQuestion != null){
+
+    if (previousQuestion != null) {
       this.numberOfQuestions = this.questionsArray.filter(e => e.id_step == previousQuestion.id_step).length;
       this.previousResponse = this.reponses.find(e => e.id_quest == previousQuestion.id_quest)?.code_holland as CodeHolland;
       this.currentQuestion = previousQuestion;
     }
     else {
-      this.router.navigate(['/home']);
+      this.router.navigate(['/info']);
     }
   }
 
   async showMotivationAlert(nextStep: string = null) {
-    let message = this.isArab ? 
-    "اختر الإجابات التي تناسبك وإذا لم تكن كذلك ، فحدد الإجابة الأقرب لك" : 
-    "Choisissez les réponses qui vous correspondent et si ce n'est pas le cas, cochez le réponde proche de votre profil";
-    
+    let typeUtilisateur = parseInt(localStorage.getItem('id_type_utilisateur'));
+    let message = this.isArab ?
+      (typeUtilisateur == TypeUtilisateur.Etudiant ?
+        "اختر الإجابات التي تناسبك وإذا لم تكن كذلك ، فحدد الإجابة الأقرب لك" :
+        "اختر الإجابات التي تتطابق مع الطالب / ابنك ، وإذا لم تكن كذلك ، فحدد الإجابة الأقرب له") :
+      (typeUtilisateur == TypeUtilisateur.Etudiant ?
+        "Choisissez les réponses qui vous correspondent et si ce n'est pas le cas, cochez le réponde proche de votre profil" :
+        "Choisissez les réponses qui correspondent à votre étudiant/fils et si ce n'est pas le cas, cochez le réponde proche de leur profil");
+
     let image = "test.png";
 
-    if(nextStep != null) {
-      switch(nextStep) {
-      case "2":
-        message = this.isArab ? "خذ وقتك ، لا يوجد توقيت محدد" :
-        "Prenez votre temps, il n y pas de timing précis";
-        break;
-      case "3":
-        message = this.isArab ? "أنت تتقدم! هذا جيد ، لقد اقتربت من اكتشاف نفسك" :
-        "Vous avancez ! C'est bien, vous êtes proches de la découverte de vous même";
-        break;
-      case "4":
-        message = this.isArab ? "فقط عدد قليل من الأسئلة وسيتم إنشاء ملف التعريف الخاص بك" :
-        "Plus que quelques questions et votre profil sera généré";
-        break;
-      case "49":
-          message = this.isArab ? "فقط بضعة أسئلة أخرى ، وسيكون تقريرك جاهزًا" :
-          "Plus que quelques questions, et votre rapport sera prêt";
+    if (nextStep != null) {
+      switch (nextStep) {
+        case "2":
+          message = this.isArab ? "خذ وقتك ، لا يوجد توقيت محدد" :
+            "Prenez votre temps, il n y pas de timing précis";
           break;
-      case "done":
-          message = this.isArab ? "تهانينا ، لقد انتهى الاختبار ، قم بتنزيل التقرير المصغر الخاص بك وسيتم إرسال تقرير ثاني متعمق إليك عبر البريد الإلكتروني" :
-          "Bravo c'est fini ! télécharger votre mini rapport et un deuxième rapport approfondi vous sera envoyé par mail";
+        case "3":
+          message = this.isArab ?
+            (typeUtilisateur == TypeUtilisateur.Etudiant ?
+              "أنت تتقدم! هذا جيد ، لقد اقتربت من اكتشاف نفسك" :
+              "أنت تتقدم! هذا جيد ، لقد اقتربت من اكتشاف الملف الشخصي لابنك / الطالب") :
+            (typeUtilisateur == TypeUtilisateur.Etudiant ?
+              "Vous avancez ! C'est bien, vous êtes proches de la découverte de vous même" :
+              "Vous avancez ! C'est bien, vous êtes proches de la découverte du profil de votre fils/étudiant");
+          break;
+        case "4":
+          message = this.isArab ?
+            (typeUtilisateur == TypeUtilisateur.Etudiant ?
+              "فقط عدد قليل من الأسئلة وسيتم إنشاء ملف التعريف الخاص بك" :
+              "فقط عدد قليل من الأسئلة وسيتم إنشاء ملف تعريف ابنك / الطالب") :
+            (typeUtilisateur == TypeUtilisateur.Etudiant ?
+              "Plus que quelques questions et votre profil sera généré" :
+              "Plus que quelques questions et le profil de votre fils/étudiant sera généré");
+          break;
+        case "49":
+          message = this.isArab ?
+            (typeUtilisateur == TypeUtilisateur.Etudiant ?
+              "فقط بضعة أسئلة أخرى ، وسيكون تقريرك جاهزًا" :
+              "فقط بضعة أسئلة أخرى ، وسيكون تقرير ابنك / الطالب جاهزًا") :
+            (typeUtilisateur == TypeUtilisateur.Etudiant ?
+              "Plus que quelques questions, et votre rapport sera prêt" :
+              "Plus que quelques questions, et le rapport de votre fils/étudiant sera prêt");
+          break;
+        case "done":
+          message = this.isArab ?
+            (typeUtilisateur == TypeUtilisateur.Etudiant ?
+              "تهانينا ، لقد انتهى الاختبار ، يمكنك الآن تنزيل تقريرك التفصيلي" :
+              "يمكنك الآن تنزيل التقرير التفصيلي الخاص بابنك / الطالب") :
+            (typeUtilisateur == TypeUtilisateur.Etudiant ?
+              "Bravo c'est fini ! vous pouvez désormais télécharger votre rapport approfondi" :
+              "Bravo c'est fini ! vous pouvez désormais télécharger votre rapport approfondi de votre fils/étudiant");
           image = "felicitations.png";
           break;
-      default:
-        message = this.isArab ? 
-          "اختر الإجابات التي تناسبك وإذا لم تكن كذلك ، فحدد الإجابة الأقرب لك" : 
-          "Choisissez les réponses qui vous correspondent et si ce n'est pas le cas, cochez le réponde proche de votre profil";
-        break;
+        default:
+          message = this.isArab ?
+            (typeUtilisateur == TypeUtilisateur.Etudiant ?
+              "اختر الإجابات التي تناسبك وإذا لم تكن كذلك ، فحدد الإجابة الأقرب لك" :
+              "اختر الإجابات التي تتطابق مع الطالب / ابنك ، وإذا لم تكن كذلك ، فحدد الإجابة الأقرب له") :
+            (typeUtilisateur == TypeUtilisateur.Etudiant ?
+              "Choisissez les réponses qui vous correspondent et si ce n'est pas le cas, cochez le réponde proche de votre profil" :
+              "Choisissez les réponses qui correspondent à votre étudiant/fils et si ce n'est pas le cas, cochez le réponde proche de leur profil");
+
+          break;
+      }
     }
-    }
-    
+
     const alert = await this.alertController.create({
       cssClass: "scaledAlert",
       message: `<img src="./assets/img/${image}" alt="g-maps" class="alert-image"><br/>
@@ -181,7 +223,7 @@ export class QuizPage {
   composeCodeHolland(reponses: Reponse[]) {
     this.initScore();
     reponses.forEach(reponse => {
-      if(typeof reponse.code_holland == 'number'){
+      if (typeof reponse.code_holland == 'number') {
         this.incrementScore(reponse.code_holland);
       }
       else {
@@ -216,11 +258,11 @@ export class QuizPage {
         key: 'C',
         value: this.scores.totalC,
       }
-    ]; 
+    ];
 
-    array.sort(function(obj1, obj2) {
+    array.sort(function (obj1, obj2) {
       return obj2.value - obj1.value;
-   });
+    });
 
     var finalResult: Score[] = [
       { key: array[0].key, value: array[0].value },
@@ -231,10 +273,10 @@ export class QuizPage {
     return finalResult;
   }
 
-  incrementScore(code: CodeHolland){
-    switch(code){
+  incrementScore(code: CodeHolland) {
+    switch (code) {
       case CodeHolland.R:
-          this.scores.totalR++;
+        this.scores.totalR++;
         break;
       case CodeHolland.I:
         this.scores.totalI++;
@@ -252,5 +294,10 @@ export class QuizPage {
         this.scores.totalC++;
         break;
     }
+  }
+
+  @HostListener('unloaded')
+  ngOnDestroy() {
+    console.log('Items destroyed');
   }
 }

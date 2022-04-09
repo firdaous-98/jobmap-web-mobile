@@ -8,8 +8,8 @@ import { UserUpdate } from "../models/user.model";
 })
 export class AccountService {
 
-    API_ENDPOINT = 'http://localhost/jobmap/api/authentication/';
-    // API_ENDPOINT = 'https://afa9.org/api/authentication/';
+    // API_ENDPOINT = 'http://localhost/jobmap/api/authentication/';
+    API_ENDPOINT = 'https://afa9.org/api/authentication/';
 
     constructor(
         private http: HttpClient

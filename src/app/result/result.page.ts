@@ -94,7 +94,7 @@ export class ResultPage {
     public translatorService: TranslatorService,
     private service: AppService,
     public toastController: ToastController
-    ) {
+  ) {
     this.resultat = this.router.getCurrentNavigation().extras.state?.resultat;
     this.fromQuiz = this.router.getCurrentNavigation().extras.state?.fromQuiz;
     this.resultPerStep = this.router.getCurrentNavigation().extras.state?.resultPerStep;
@@ -166,7 +166,6 @@ export class ResultPage {
   }
 
   mapResultPerStep() {
-
     if (this.fromQuiz) {
       this.resultatStepOne = this.resultPerStep?.find(e => e.id_step == "1").resultat.map(f => f.key).join('');
       this.resultatStepTwo = this.resultPerStep?.find(e => e.id_step == "2").resultat.map(f => f.key).join('');
@@ -278,13 +277,14 @@ export class ResultPage {
     this.service.sendEmail(
       this.emailPartner,
       "Invitation Afa9",
-      `Vous êtes une personne qui me connaît très bien. Et votre avis m
+      (this.id_type_utilisateur == TypeUtilisateur.Parent ? `Suites à notre vécu ensemble, je me permets de passer ce test en répondant à toutes les questions selon ma perception de votre personnalité.` :
+        `Vous êtes une personne qui me connaît très bien. Et votre avis m
       Intéresse. Je vous prie de bien vouloir passer ce test et répondre selon ce que vous pensez de moi .
-      Cela me ferait un plaisir d en discuter avec vous pour affiner mes choix de mon futur métiers.
-      ${this.tokenInfo.prenom} ${this.tokenInfo.nom} vous invite à passer le test présent sur ce lien: ${this.link}`
+      Cela me ferait un plaisir d en discuter avec vous pour affiner mes choix de mon futur métiers.`)
+      + `${this.tokenInfo.prenom} ${this.tokenInfo.nom} vous invite à passer le test présent sur ce lien: ${this.link}`
     );
-      this.invitationSent = true;
-      (await this.toastController.create({ message: this.translate.instant('INVITATION_SENT'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
+    this.invitationSent = true;
+    (await this.toastController.create({ message: this.translate.instant('INVITATION_SENT'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
   }
 
   sendRequestMail() {
@@ -350,8 +350,7 @@ export class ResultPage {
     };
   }
 
-  async generatePdf() {
-
+  getMetierRows() {
     var metierRows: any[] = [];
 
     metierRows = [['Métier(s)', 'D', 'P', 'C']];
@@ -362,12 +361,74 @@ export class ResultPage {
           text: metier.libelle_metier,
           link: `http://afa9.org/metier.php?idmetier=${metier.id_metier}`,
           decoration: 'underline'
-        }, 
-        metier.id_donnees.toString(), 
-        metier.id_personnes.toString(), 
+        },
+        metier.id_donnees.toString(),
+        metier.id_personnes.toString(),
         metier.id_choses.toString()
       ]);
     });
+
+    return metierRows;
+  }
+
+  async getChart(resultat: Score[]) {
+    this.generateChart(resultat);
+    await this.getBase64Image();
+  }
+
+  getBase64Image() {
+
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const svgElement: SVGGraphicsElement =
+        document.querySelector('.apexcharts-svg');
+      const imageBlobURL = 'data:image/svg+xml;charset=utf-8,' +
+        encodeURIComponent(svgElement.outerHTML);
+      img.onload = () => {
+        var canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        const dataURL = canvas.toDataURL('image/png');
+        resolve(dataURL);
+      };
+      img.onerror = (error) => {
+        reject(error);
+      };
+      img.src = imageBlobURL;
+    });
+  }
+
+  getBase64ImageFromURL(url) {
+    return new Promise((resolve, reject) => {
+      var img = new Image();
+      img.setAttribute("crossOrigin", "anonymous");
+
+      img.onload = () => {
+        var canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+
+        var dataURL = canvas.toDataURL("image/png");
+
+        resolve(dataURL);
+      };
+
+      img.onerror = error => {
+        reject(error);
+      };
+
+      img.src = url;
+    });
+  }
+
+  async downloadRapportApprofondi() {
+    this.mapResultPerStep();
+    const total = this.resultat.reduce((a, b) => a + b.value, 0);
 
     var otherMetierRows: any[] = [];
     var otherMetierTable: any;
@@ -380,9 +441,9 @@ export class ResultPage {
             text: metier.libelle_metier,
             link: `http://afa9.org/metier.php?idmetier=${metier.id_metier}`,
             decoration: 'underline'
-          }, 
-          metier.id_donnees.toString(), 
-          metier.id_personnes.toString(), 
+          },
+          metier.id_donnees.toString(),
+          metier.id_personnes.toString(),
           metier.id_choses.toString()
         ]);
       });
@@ -565,146 +626,18 @@ export class ResultPage {
     var explanationTable = this.showOtherResult ? null : explanation;
 
     const documentDefinition = {
-      content: [
-        {
-          image: await this.getBase64ImageFromURL(
-            "./assets/img/afa9-logo.png"),
-          alignment: 'right',
-          width: 90
-        },
-        {
-          text: 'Résultat du questionnaire',
-          bold: true,
-          fontSize: 20,
-          alignment: 'center',
-          margin: [0, 0, 0, 20]
-        },
-        {
-          columns: [
-            [{
-              text: this.tokenInfo.nom + ' ' + this.tokenInfo.prenom,
-              style: 'name'
-            },
-            {
-              text: 'Email : ' + this.tokenInfo.adresse_email,
-            }
-            ]
-          ]
-        },
-        score,
-        {
-          text: 'Cela pourra vous aidez à trouver le métier qui correspond à votre profil : ',
-          fontSize: 15,
-          margin: [20, 0, 0, 0]
-        },
-        {
-          text: ' ',
-          fontSize: 15,
-          margin: [20, 0, 0, 0]
-        },
-        explanationTable,
-        {
-          text: 'Métiers et professions correspondant à votre profil RIASEC (Vous pouvez accéder à la description du métier en cliquant sur sa désignation) :',
-          fontSize: 15,
-          margin: [20, 20, 0, 0]
-        },
-        {
-          layout: 'lightHorizontalLines', // optional
-          table: {
-            headerRows: 1,
-            widths: ['*', 50, 50, 50],
-
-            body: metierRows
-          },
-          margin: 20
-        },
-        otherMetierTable
-      ],
-      defaultStyle: {
-        alignment: 'justify'
+      header: {
+        margin: [0, 5, 0, 10],
+        columns: [
+          {
+            image: await this.getBase64ImageFromURL(
+              "./assets/img/afa9-logo-text.png"),
+            alignment: 'right',
+            width: 60,
+            margin: [-500, 5, 0, 20] // margin: [left, top, right, bottom]
+          }
+        ]
       },
-      styles: {
-        name: {
-          fontSize: 16,
-          bold: true
-        }
-      }
-    };
-    pdfMake.createPdf(documentDefinition).download();
-
-    // this.service.resultDownloaded(
-    //   this.tokenInfo.adresse_email,
-    //   parseInt(this.tokenInfo.id_utilisateur),
-    //   this.id_codeholland,
-    //   this.codeHollandCompose,
-    //   parseInt(localStorage.getItem('id_nf'))
-    // ).subscribe(result => {
-    //   console.log(result);
-    // });
-
-    // this.sendRequestMail();
-    await this.sendRapportApprofondi();
-  }
-
-  async getChart(resultat: Score[]) {
-    this.generateChart(resultat);
-    await this.getBase64Image();
-  }
-
-  getBase64Image() {
-    
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      const svgElement: SVGGraphicsElement =
-        document.querySelector('.apexcharts-svg');
-      const imageBlobURL = 'data:image/svg+xml;charset=utf-8,' +
-        encodeURIComponent(svgElement.outerHTML);
-      img.onload = () => {
-        var canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
-        const dataURL = canvas.toDataURL('image/png');
-        resolve(dataURL);
-      };
-      img.onerror = (error) => {
-        reject(error);
-      };
-      img.src = imageBlobURL;
-    });
-  }
-
-  getBase64ImageFromURL(url) {
-    return new Promise((resolve, reject) => {
-      var img = new Image();
-      img.setAttribute("crossOrigin", "anonymous");
-    
-      img.onload = () => {
-        var canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-    
-        var ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-    
-        var dataURL = canvas.toDataURL("image/png");
-    
-        resolve(dataURL);
-      };
-    
-      img.onerror = error => {
-        reject(error);
-      };
-    
-      img.src = url;
-    });
-  }
-
-  async sendRapportApprofondi() {
-    const total = this.resultat.reduce((a, b) => a + b.value, 0);
-
-    const documentDefinition = {
       content: [
         {
           image: await this.getBase64ImageFromURL(
@@ -734,18 +667,11 @@ export class ResultPage {
           align: 'right'
         },
         {
-          image: await this.getBase64ImageFromURL(
-            "./assets/img/afa9-logo-text.png"),
-          alignment: 'right',
-          width: 80,
-          pageBreak: 'before'
-        },
-        {
           text: 'Le profil RIASEC',
           fontSize: 16,
           alignment: 'center',
-          bold: true
-          // margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
+          bold: true,
+          pageBreak: 'before'
         },
         {
           image: await this.getBase64ImageFromURL(
@@ -834,30 +760,56 @@ export class ResultPage {
           alignment: 'justify',
           margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         },
+        score,
         {
-          text: 'Après ce sont les métiers et leurs codes DPC avec le descriptif de chaque métier',
-          fontSize: 12,
-          alignment: 'justify',
-          margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
-        }
+          text: 'Vos scores intermédiaires : ',
+          fontSize: 15,
+          margin: [20, 10, 0, 0]
+        },
+        {
+          text: 'Etape 1 : ' + this.resultatStepOne + ' . Etape 2 : ' + this.resultatStepTwo + ' . Etape 3 : ' + this.resultatStepThree + ' . Etape 4 : ' + this.resultatStepFour,
+          fontSize: 18,
+          alignment: 'center',
+          margin: [0, 10, 0, 10]
+        },
+        {
+          text: ' ',
+          fontSize: 15,
+          margin: [20, 0, 0, 0]
+        },
+        explanationTable,
+        {
+          text: 'Métiers et professions correspondant à votre profil RIASEC (Vous pouvez accéder à la description du métier en cliquant sur sa désignation) :',
+          fontSize: 15,
+          margin: [20, 20, 0, 0]
+        },
+        {
+          layout: 'lightHorizontalLines', // optional
+          table: {
+            headerRows: 1,
+            widths: ['*', 50, 50, 50],
+
+            body: this.getMetierRows()
+          },
+          margin: 20
+        },
+        otherMetierTable
       ]
     };
 
-    let base64 = "";
-
-    const pdfDocGenerator = pdfMake.createPdf(documentDefinition);
-    pdfDocGenerator.getBase64((data) => {
-      this.service.sendEmail(
-        this.tokenInfo.adresse_email,
-        "Rapport approfondi RIASEC - Afa9",
-        `Bonjour ${this.tokenInfo.prenom}, vous venez de passer le questionnaire d'orientation RIASEC sur notre plateforme Afa9,
-        vous trouvez ci-joint votre rapport approfondi. Bonne journée :D`,
-        data
-      ).subscribe(async result => {
-        console.log(result);
-        (await this.toastController.create({ message: this.translate.instant('REPORT_SENT'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
-      });
-    });      
+    const pdfDocGenerator = pdfMake.createPdf(documentDefinition).download();
+    // pdfDocGenerator.getBase64((data) => {
+    //   this.service.sendEmail(
+    //     this.tokenInfo.adresse_email,
+    //     "Rapport approfondi RIASEC - Afa9",
+    //     `Bonjour ${this.tokenInfo.prenom}, vous venez de passer le questionnaire d'orientation RIASEC sur notre plateforme Afa9,
+    //     vous trouvez ci-joint votre rapport approfondi. Bonne journée :D`,
+    //     data
+    //   ).subscribe(async result => {
+    //     console.log(result);
+    //     (await this.toastController.create({ message: this.translate.instant('REPORT_SENT'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
+    //   });
+    // });      
   }
 
   getTextWithColor(key: string) {
@@ -916,7 +868,7 @@ export class ResultPage {
   getParagraphTitleRapport(score: Score, total: number) {
     switch (score.key) {
       case "R":
-      return "Le type Réaliste " + this.roundingNumber((score.value / total) * 100) + "%";
+        return "Le type Réaliste " + this.roundingNumber((score.value / total) * 100) + "%";
       case "I":
         return "Le type Investigateur " + this.roundingNumber((score.value / total) * 100) + "%";
       case "A":
@@ -933,7 +885,7 @@ export class ResultPage {
   getParagraphRapport(key: string) {
     switch (key) {
       case "R":
-      return "Les personnes de ce type exercent surtout des tâches concrètes. Habiles de leurs mains, elles savent coordonner leurs gestes. Elles se servent d’outils, font fonctionner des appareils, des machines, des véhicules. Les réalistes ont le sens de la mécanique, le souci de la précision. Plusieurs exercent leur profession à l’extérieur plutôt qu’à l’intérieur. Leur travail demande souvent une bonne endurance physique et même des capacités athlétiques. Ces personnes sont patientes, minutieuses, constantes, sensées, naturelles, franches, pratiques, concrètes, simples.";
+        return "Les personnes de ce type exercent surtout des tâches concrètes. Habiles de leurs mains, elles savent coordonner leurs gestes. Elles se servent d’outils, font fonctionner des appareils, des machines, des véhicules. Les réalistes ont le sens de la mécanique, le souci de la précision. Plusieurs exercent leur profession à l’extérieur plutôt qu’à l’intérieur. Leur travail demande souvent une bonne endurance physique et même des capacités athlétiques. Ces personnes sont patientes, minutieuses, constantes, sensées, naturelles, franches, pratiques, concrètes, simples.";
       case "I":
         return "La plupart des personnes de ce type ont des connaissances théoriques auxquelles elles ont recours pour agir. Elles disposent de renseignements spécialisés dont elles se servent pour résoudre des problèmes. Ce sont des personnes qui observent. Leur principale compétence tient à la compréhension qu’elles ont des phénomènes. Elles aiment bien se laisser absorber dans leurs réflexions. Elles aiment jouer avec les idées. Elles valorisent le savoir. Ces personnes sont critiques, curieuses, soucieuses de se renseigner, calmes, réservées, persévérantes, tolérantes, prudentes dans leurs jugements, logiques, objectives, rigoureuses, intellectuelles.";
       case "A":
@@ -949,5 +901,5 @@ export class ResultPage {
 
   roundingNumber(amount: number): number {
     return parseFloat(Number(amount.toString()).toFixed(2));
-}
+  }
 }

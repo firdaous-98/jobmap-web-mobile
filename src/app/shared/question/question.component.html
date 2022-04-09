@@ -3,12 +3,18 @@
 <ion-label *ngIf="!isArab" class="libelle-etape">{{ question.Libelle_step }}</ion-label>
 <ion-label *ngIf="isArab" class="libelle-etape">{{ question.libelle_step_ar }}</ion-label>
 <ion-card>
-    <ng-container *ngIf="question.id_step != '4' && question.id_step != '2'">
+    <ion-card-title style="color:grey;text-align: justify;" [class.text-arab]="isArab">
+        {{ getStepDescription(question.id_step) }}
+    </ion-card-title>
+    <ng-container *ngIf="question.id_step != '4' && question.id_step != '3'">
         <ion-list [class.text-arab]="isArab">
             <ion-radio-group [value]="response" (ionChange)="selectChoice($event)">
                 <ion-list-header>
-                    <ion-label *ngIf="!isArab">{{ question.Libelle_quest }}/{{ numberOfQuestions }} ({{ 'SINGLE_CHOICE' | translate }})</ion-label>
-                    <ion-label style="margin-right:1rem;" dir="rtl" *ngIf="isArab">{{ question.Libelle_quest_ar }}/{{ numberOfQuestions }} ({{ 'SINGLE_CHOICE' | translate }})</ion-label>
+                    <ion-label *ngIf="!isArab">{{ question.Libelle_quest }}/{{ numberOfQuestions }}
+                        ({{ 'SINGLE_CHOICE' | translate }})</ion-label>
+                    <ion-label style="margin-right:1rem;" dir="rtl" *ngIf="isArab">
+                        {{ question.Libelle_quest_ar }}/{{ numberOfQuestions }} ({{ 'SINGLE_CHOICE' | translate }})
+                    </ion-label>
                 </ion-list-header>
 
                 <ion-item *ngFor="let choix of question.choix">
@@ -20,14 +26,18 @@
         </ion-list>
     </ng-container>
 
-    <ng-container *ngIf="question.id_step == '2'">
-        <ion-card-title *ngIf="!isArab">{{ question.Libelle_quest }}/{{ numberOfQuestions }} ({{ 'MULTIPLE_CHOICE' | translate }})</ion-card-title>
-        <ion-card-title style="margin-right:1rem;" dir="rtl" *ngIf="isArab">{{ question.Libelle_quest_ar }}/{{ numberOfQuestions }} ({{ 'MULTIPLE_CHOICE' | translate }})</ion-card-title>
+    <ng-container *ngIf="question.id_step == '3'">
+        <ion-card-title *ngIf="!isArab">{{ question.Libelle_quest }}/{{ numberOfQuestions }}
+            ({{ 'MULTIPLE_CHOICE' | translate }})</ion-card-title>
+        <ion-card-title style="margin-right:1rem;" dir="rtl" *ngIf="isArab">
+            {{ question.Libelle_quest_ar }}/{{ numberOfQuestions }} ({{ 'MULTIPLE_CHOICE' | translate }})
+        </ion-card-title>
         <ion-list [class.text-arab]="isArab">
             <ion-item *ngFor="let choix of question.choix;let i=index">
                 <p *ngIf="!isArab">{{ choix.libellechoix }}</p>
                 <p *ngIf="isArab">{{ choix.choix_ar }}</p>
-                <ion-checkbox slot="start" [checked]="isChecked(choix.id)" (ionChange)="selectStepTwoResponses($event, i)"></ion-checkbox>
+                <ion-checkbox slot="start" [checked]="isChecked(choix.id)"
+                    (ionChange)="selectStepThreeResponses($event, i)"></ion-checkbox>
             </ion-item>
         </ion-list>
     </ng-container>

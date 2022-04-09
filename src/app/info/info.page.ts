@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { AnneeEtudeEnum } from '../core/enums/annee-etude.enum';
 import { TypeUtilisateur } from '../core/enums/type-utilisateur.enum';
 import { UserHelper } from '../core/helpers/user-helper';
 import { NiveauEtude } from '../core/models/filiere.model';
@@ -124,9 +125,26 @@ export class InfoPage {
       } else {
         this.listeTypesBac = [];
         this.appSservice.get_niveauFormationArray().subscribe((result: NiveauFormation[]) => {
-          this.listeNiveauxFormation = result.filter(e => ['M', 'D', 'BAC'].includes(e.libelle_nf));;
+          this.listeNiveauxFormation = result.filter(e => ['M', 'D', 'BAC'].includes(e.libelle_nf));
+          if(this.niveauEtude == '3') {
+            if([AnneeEtudeEnum.BacPlus1, AnneeEtudeEnum.BacPlus2, AnneeEtudeEnum.BacPlus3].includes(parseInt(this.anneeEtude))) {
+              var index = this.listeNiveauxFormation.findIndex(e => e.libelle_nf == 'BAC');
+              this.listeNiveauxFormation.splice(index, 1);
+              this.showNiveauFormation = true;
+            } 
+            else if ([AnneeEtudeEnum.BacPlus4, AnneeEtudeEnum.BacPlus5, AnneeEtudeEnum.BacPlus5AndMore].includes(parseInt(this.anneeEtude))) {
+              this.niveauFormation = '1';
+              this.goToQuiz();
+            }
+            else {
+              this.showNiveauFormation = true;
+            }
+          }
+          else {
+            this.showNiveauFormation = true;
+          }
         });
-        this.showNiveauFormation = true;
+        
       }
 
       return;

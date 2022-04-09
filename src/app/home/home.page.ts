@@ -26,9 +26,10 @@ export class HomePage {
     public translatorService: TranslatorService,
     private service: AppService
   ) {
+    this.initComponent();
   }
 
-  async ngOnInit() {
+  async initComponent() {
     setTimeout(() => {
       this.translate.use(this.translatorService.getSelectedLanguage());      
     }, 500);
@@ -65,8 +66,17 @@ export class HomePage {
     this.router.navigate(['/result'], { state: { resultat: this.resultat, resultPerStep: this.resultPerStep, fromQuiz: false }});
   }
 
+  startOrContinueQuiz() {
+    return localStorage.getItem('reponses') == null ? this.translate.instant('START_QUIZ') : this.translate.instant('CONTINUE_QUIZ'); 
+  }
+
   startQuiz(){
-    this.router.navigate(['/info']);
+    if(localStorage.getItem('reponses') != null) {      
+      this.router.navigate(['/quiz']);
+    }
+    else {
+      this.router.navigate(['/info']);      
+    }
   }
 
   logOut(){
