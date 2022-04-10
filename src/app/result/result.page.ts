@@ -52,7 +52,7 @@ export class ResultPage {
   resultatStepThree = "";
   resultatStepFour = "";
 
-  autreResultat: Score[];
+  autreResultat: Score[] = [];
   fromQuiz!: boolean;
 
   id_type_utilisateur!: TypeUtilisateur;
@@ -73,16 +73,17 @@ export class ResultPage {
   OtherSecondHeight: string = '';
   OtherThirdHeight: string = '';
 
-  listeMetiers: Metier[];
-  listeTypeBac: TypeBac[];
+  listeMetiers: Metier[] = [];
+  listeTypeBac: TypeBac[] = [];
   id_codeholland!: number;
 
   OtherCodeHollandCompose: string;
-  OtherListeMetiers: Metier[];
-  OtherListeTypeBac: TypeBac[];
+  OtherListeMetiers: Metier[] = [];
+  OtherListeTypeBac: TypeBac[] = [];
 
   showNoOtherScore = false;
   invitationSent = false;
+  noMetiers = false;
 
   isArab: boolean;
 
@@ -114,7 +115,11 @@ export class ResultPage {
         this.composeCodeHolland();
         await this.getMetiers();
         await this.getTypesBac();
-        if (this.fromQuiz) this.saveScore();
+        
+        if (this.fromQuiz) {
+          this.saveScore();
+        }
+        
         this.generateChart(this.resultat);
         this.id_type_utilisateur = parseInt(localStorage.getItem('id_type_utilisateur'));
         this.annee_etude = parseInt(localStorage.getItem('annee_etude'));
@@ -156,21 +161,37 @@ export class ResultPage {
     if (result?.message == null) {
       this.listeMetiers = result as unknown as Metier[];
       this.id_codeholland = this.listeMetiers[0].id_codeholland;
+      this.noMetiers = false;
+    } else {
+      this.noMetiers = true;
     }
   }
 
   async getTypesBac() {
-    const id_metiers = this.listeMetiers.map(e => e.id_metier);
-    var result = await this.service.getMetierTypeBac(id_metiers).toPromise();
-    this.listeTypeBac = result;
+    if(this.listeMetiers?.length > 0) {
+      const id_metiers = this.listeMetiers.map(e => e.id_metier);
+      var result = await this.service.getMetierTypeBac(id_metiers).toPromise();
+      this.listeTypeBac = result;
+    }
   }
 
   mapResultPerStep() {
     if (this.fromQuiz) {
-      this.resultatStepOne = this.resultPerStep?.find(e => e.id_step == "1").resultat.map(f => f.key).join('');
-      this.resultatStepTwo = this.resultPerStep?.find(e => e.id_step == "2").resultat.map(f => f.key).join('');
-      this.resultatStepThree = this.resultPerStep?.find(e => e.id_step == "3").resultat.map(f => f.key).join('');
-      this.resultatStepFour = this.resultPerStep?.find(e => e.id_step == "4").resultat.map(f => f.key).join('');
+      this.resultatStepOne = (this.resultPerStep.findIndex(e => e.id_step == "1") != -1 ? 
+        this.resultPerStep.find(e => e.id_step == "1").resultat : 
+        <{ id_step: string, resultat: any }[]> JSON.parse(localStorage.getItem('result_step_1'))).map(f => f.key).join('');
+
+      this.resultatStepTwo = (this.resultPerStep.findIndex(e => e.id_step == "2") != -1 ? 
+      this.resultPerStep.find(e => e.id_step == "2").resultat : 
+      <{ id_step: string, resultat: any }[]> JSON.parse(localStorage.getItem('result_step_2'))).map(f => f.key).join('');
+      
+      this.resultatStepThree = (this.resultPerStep.findIndex(e => e.id_step == "3") != -1 ? 
+      this.resultPerStep.find(e => e.id_step == "3").resultat : 
+      <{ id_step: string, resultat: any }[]> JSON.parse(localStorage.getItem('result_step_3'))).map(f => f.key).join('');
+      
+      this.resultatStepFour = (this.resultPerStep.findIndex(e => e.id_step == "4") != -1 ? 
+      this.resultPerStep.find(e => e.id_step == "4").resultat : 
+      <{ id_step: string, resultat: any }[]> JSON.parse(localStorage.getItem('result_step_4'))).map(f => f.key).join('');
     }
     else {
       this.resultatStepOne = this.resultPerStep?.find(e => e.id_step == "1").resultat;
@@ -369,6 +390,10 @@ export class ResultPage {
     });
 
     return metierRows;
+  }
+
+  getMetierLink(id: string) {
+    return `http://afa9.org/metier.php?idmetier=${id}`;
   }
 
   async getChart(resultat: Score[]) {

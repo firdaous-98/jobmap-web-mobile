@@ -29,6 +29,9 @@ export class QuestionComponent {
     else if (value != null && this.question.id_step == "3") {
       this.stepThreeResponses = value as ResultChoix[];
     }
+    else if (value != null && this.question.id_step == "4") {
+      this.stepFourResponses = value as ResultChoix[];
+    }
   }
 
   @Output()
@@ -37,11 +40,8 @@ export class QuestionComponent {
   response: string;
   stepThreeResponses: ResultChoix[] = [];
   stepFourResponses: ResultChoix[] = [];
-  currentChoice: Level;
   Level = Level;
-  index = 0;
   isArab: boolean;
-  stepFourQuestionsCount = 1;
 
   constructor(
     public toastController: ToastController,
@@ -57,35 +57,20 @@ export class QuestionComponent {
   }
 
   async goToNextQuestion() {
-    if (this.response == null && this.currentChoice == null && this.stepThreeResponses.length == 0) {
+    let indexArray = this.stepFourResponses.map(e => e.id).filter((x, i, a) => a.indexOf(x) === i);
+    if (this.response == null && indexArray.length < 10 && this.stepThreeResponses.length == 0) {
       (await this.toastController.create({ message: this.translate.instant('PLEASE_CHOOSE'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
     }
     else {
       if (this.question.id_step == '4') {
-        this.stepFourQuestionsCount++;
-        for (let i = 0; i < this.currentChoice; i++) {
-          var choix: ResultChoix = {
-            id: this.question.choix[this.index].id,
-            code_holland: this.getCodeHollandStringToEnum(this.question.choix[this.index].code_holland)
-          }
-          this.stepFourResponses.push(choix);
+        const reponse: Reponse = {
+          id_quest: this.question.id_quest,
+          id_step: this.question.id_step,
+          code_holland: this.stepFourResponses
         }
+        this.nextQuestionEvent.emit(reponse);
+        this.stepFourResponses = [];
 
-        this.currentChoice = undefined;
-
-        if (this.index < this.question.choix.length - 1) {
-          this.index++;
-        }
-        else {
-          this.index = 0;
-          const reponse: Reponse = {
-            id_quest: this.question.id_quest,
-            id_step: this.question.id_step,
-            code_holland: this.stepFourResponses
-          }
-          this.nextQuestionEvent.emit(reponse);
-          this.stepFourResponses = [];
-        }
       } else if (this.question.id_step == '3') {
         const reponse: Reponse = {
           id_quest: this.question.id_quest,
@@ -112,12 +97,28 @@ export class QuestionComponent {
     this.response = value?.detail?.value;
   }
 
-  selectChoiceBox(value: any) {
-    this.currentChoice = value;
+  selectChoiceLevel(level: Level, index: number) {
+    let id = this.question.choix[index].id;
+    if(this.stepFourResponses.length > 0 && this.stepFourResponses.findIndex(e => e.id == id) != -1) {
+      this.stepFourResponses = this.stepFourResponses.filter(f => f.id !== id);
+    }
+    
+    for (let i = 0; i < level; i++) {
+      var choix: ResultChoix = {
+        id: this.question.choix[index].id,
+        code_holland: this.getCodeHollandStringToEnum(this.question.choix[index].code_holland)
+      }
+      this.stepFourResponses.push(choix);
+    }    
   }
 
   isChecked(id: string) {
     return this.stepThreeResponses.map(e => e.id).includes(id);
+  }
+
+  isCheckedLevel(level: Level, index: number) {
+    let id = this.question.choix[index].id;
+    return this.stepFourResponses.findIndex(e => e.id == id) != -1 && this.stepFourResponses.filter(f => f.id == id).length == level;
   }
 
   selectStepThreeResponses(value: any, index: number) {

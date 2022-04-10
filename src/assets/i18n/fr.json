@@ -40,6 +40,7 @@
     "INTERMEDIATE": "Moyen",
     "WEAK": "Faible",
     "JOBS": "Métier(s)",
+    "NO_JOBS": "Aucun métier ne correspond à ce profil, veuillez refaire le questionnaire :)",
     "RELEVANT_BAC_TYPES": "Les types de bac convenables à ce/ces métier(s)",
     "CHECK_THEIR_RESULTS": "Voir le résultat obtenu par eux",
     "RESULT_SON": "Résultat obtenu par votre fils/ étudiant :",

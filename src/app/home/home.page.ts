@@ -19,6 +19,7 @@ export class HomePage {
   resultPerStep: {id_step: string, resultat: any}[] = [];
   tokenInfo!: TokenInfo;
   hasScore = false;
+  startOrContinue = true;
 
   constructor(
     private router: Router,
@@ -36,6 +37,7 @@ export class HomePage {
     this.tokenInfo = UserHelper.getTokenInfo();
     localStorage.setItem('id_type_utilisateur', this.tokenInfo.id_typeutilisateur);
     localStorage.setItem('annee_etude', this.tokenInfo.id_annee_etude);
+    this.startOrContinue = localStorage.getItem('reponses') == "null";
     await this.getScore();
     if(this.resultat?.length > 0) {
       this.hasScore = true;
@@ -66,12 +68,8 @@ export class HomePage {
     this.router.navigate(['/result'], { state: { resultat: this.resultat, resultPerStep: this.resultPerStep, fromQuiz: false }});
   }
 
-  startOrContinueQuiz() {
-    return localStorage.getItem('reponses') == null ? this.translate.instant('START_QUIZ') : this.translate.instant('CONTINUE_QUIZ'); 
-  }
-
   startQuiz(){
-    if(localStorage.getItem('reponses') != null) {      
+    if(localStorage.getItem('reponses') != "null") {      
       this.router.navigate(['/quiz']);
     }
     else {

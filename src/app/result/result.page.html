@@ -43,8 +43,11 @@
                                 getExplanation(resultat[2].key) }} </span></div>
                     </div>
 
-                    <div style="text-align:center;" class="text">
+                    <div *ngIf="!noMetiers" style="text-align:center;" class="text">
                         <span>{{'HELPS_FIND_JOB' | translate}}</span>
+                    </div>
+                    <div *ngIf="noMetiers" style="text-align:center;" class="text">
+                        <span>{{'NO_JOBS' | translate}}</span>
                     </div>
                 </div>
             </div>
@@ -62,7 +65,7 @@
             </thead>
             <tbody>
                 <tr *ngFor="let metier of listeMetiers">
-                    <td>{{ metier.libelle_metier }}</td>
+                    <td><a style="color:black;" [href]="getMetierLink(metier.id_metier)" target="_blank">{{ metier.libelle_metier }}</a></td>
                     <td>{{ metier.id_donnees }}</td>
                     <td>{{ metier.id_personnes }}</td>
                     <td>{{ metier.id_choses }}</td>

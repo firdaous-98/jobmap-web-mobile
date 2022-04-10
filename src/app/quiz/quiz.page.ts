@@ -53,7 +53,7 @@ export class QuizPage {
     this.service.get_questionsArray().subscribe((result: Question[]) => {
       this.questionsArray = result;
       
-      if(this.reponsesArray != null) {
+      if(this.reponsesArray != "null") {
         this.reponses = <Reponse[]> JSON.parse(this.reponsesArray);
         var currentQuestion = this.reponses.pop();
         this.currentQuestion = this.questionsArray.find(e => e.id_step == currentQuestion.id_step && e.id_quest == currentQuestion.id_quest);
@@ -92,6 +92,7 @@ export class QuizPage {
           id_step: this.currentQuestion.id_step,
           resultat: resultat
         });
+        localStorage.setItem(`result_step_${this.currentQuestion.id_step}`, JSON.stringify(resultat));
 
         if (nextQuestion.id_quest == "49") {
           await this.showMotivationAlert(nextQuestion.id_quest);
@@ -110,6 +111,7 @@ export class QuizPage {
         id_step: "4",
         resultat: resultat
       });
+      localStorage.setItem('result_step_4', JSON.stringify(resultat));
       var resultatFinal = this.composeCodeHolland(this.reponses);
       localStorage.setItem('reponses', null);
       this.router.navigate(['/result'], { state: { resultat: resultatFinal, resultPerStep: this.resultPerStep, fromQuiz: true } });

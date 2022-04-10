@@ -127,12 +127,12 @@ export class InfoPage {
         this.appSservice.get_niveauFormationArray().subscribe((result: NiveauFormation[]) => {
           this.listeNiveauxFormation = result.filter(e => ['M', 'D', 'BAC'].includes(e.libelle_nf));
           if(this.niveauEtude == '3') {
-            if([AnneeEtudeEnum.BacPlus1, AnneeEtudeEnum.BacPlus2, AnneeEtudeEnum.BacPlus3].includes(parseInt(this.anneeEtude))) {
+            if([AnneeEtudeEnum.BacPlus1, AnneeEtudeEnum.BacPlus2].includes(parseInt(this.anneeEtude))) {
               var index = this.listeNiveauxFormation.findIndex(e => e.libelle_nf == 'BAC');
               this.listeNiveauxFormation.splice(index, 1);
               this.showNiveauFormation = true;
             } 
-            else if ([AnneeEtudeEnum.BacPlus4, AnneeEtudeEnum.BacPlus5, AnneeEtudeEnum.BacPlus5AndMore].includes(parseInt(this.anneeEtude))) {
+            else if ([AnneeEtudeEnum.BacPlus3, AnneeEtudeEnum.BacPlus4, AnneeEtudeEnum.BacPlus5, AnneeEtudeEnum.BacPlus5AndMore].includes(parseInt(this.anneeEtude))) {
               this.niveauFormation = '1';
               this.goToQuiz();
             }

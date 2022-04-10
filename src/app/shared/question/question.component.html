@@ -43,42 +43,41 @@
     </ng-container>
 
     <ng-container *ngIf="question.id_step == '4'">
-        <ion-card-title *ngIf="!isArab">Question {{ stepFourQuestionsCount }}/60</ion-card-title>
-        <ion-card-title *ngIf="isArab" dir="rtl">سؤال 60/{{ stepFourQuestionsCount }}</ion-card-title>
-        <ion-card-title *ngIf="!isArab">{{ question.choix[index].libellechoix }}</ion-card-title>
-        <ion-card-title *ngIf="isArab" dir="rtl">{{ question.choix[index].choix_ar }}</ion-card-title>
-        <ion-grid>
-            <ion-row>
-                <ion-col size="5" class="cell-class"
-                    [style]="'border-color:' + (currentChoice == Level.Fort ? '#ff9f04;' : '#333;')"
-                    (click)="selectChoiceBox(Level.Fort)">
-                    <div class="battery">
-                        <div class="battery-level" style="background:#30b455; height:100%;"></div>
-                    </div>
-                    <ion-label class="level-indicator">{{'STRONG' | translate}}</ion-label>
-                </ion-col>
-                <ion-col size="5" class="cell-class"
-                    [style]="'border-color:' + (currentChoice == Level.Moyen ? '#ff9f04;' : '#333;')"
-                    (click)="selectChoiceBox(Level.Moyen)">
-                    <div class="battery">
-                        <div class="battery-level" style="background:#ff9f04; height:50%;"></div>
-                    </div>
-                    <ion-label class="level-indicator">{{'INTERMEDIATE' | translate}}</ion-label>
-                </ion-col>
-            </ion-row>
-            <ion-row>
-                <ion-col size="5" class="cell-class"
-                    [style]="'border-color:' + (currentChoice == Level.Faible ? '#ff9f04;' : '#333;')"
-                    (click)="selectChoiceBox(Level.Faible)">
-                    <div class="battery">
-                        <div class="battery-level" style="background:#e81309; height:10%;"></div>
-                    </div>
-                    <ion-label class="level-indicator">{{'WEAK' | translate}}</ion-label>
-                </ion-col>
-            </ion-row>
+        <ion-card-title *ngIf="!isArab">{{ question.Libelle_quest }}/{{ numberOfQuestions }}</ion-card-title>
+        <ion-card-title style="margin-right:1rem;" dir="rtl" *ngIf="isArab">
+                {{ question.Libelle_quest_ar }}/{{ numberOfQuestions }}
+            </ion-card-title>
+        <table [class.text-arab]="isArab">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>{{'WEAK' | translate}}</th>
+                    <th>{{'INTERMEDIATE' | translate}}</th>
+                    <th>{{'STRONG' | translate}}</th>
+                </tr>
+            </thead>
 
-
-        </ion-grid>
+            <tbody>
+                <tr *ngFor="let choix of question.choix; let index=index">
+                    <td>
+                        <p *ngIf="!isArab">{{ choix.libellechoix }}</p>
+                        <p *ngIf="isArab" style="text-align:right;">{{ choix.choix_ar }}</p>
+                    </td>
+                    <td>
+                        <input type="radio" (input)="selectChoiceLevel(Level.Faible, index)" [name]="'groupname'+index"
+                            [value]="Level.Faible" [checked]="isCheckedLevel(Level.Faible, index)">
+                    </td>
+                    <td>
+                        <input type="radio" (input)="selectChoiceLevel(Level.Moyen, index)" [name]="'groupname'+index"
+                            [value]="Level.Moyen" [checked]="isCheckedLevel(Level.Moyen, index)">
+                    </td>
+                    <td>
+                        <input type="radio" (input)="selectChoiceLevel(Level.Fort, index)" [name]="'groupname'+index"
+                            [value]="Level.Fort" [checked]="isCheckedLevel(Level.Fort, index)">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </ng-container>
 
 </ion-card>
