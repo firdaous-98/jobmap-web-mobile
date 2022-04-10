@@ -141,6 +141,7 @@ export class AppService {
         emailBody: string,
         attachment: string = null
     ): Observable<any> {
+        debugger
         const body = { 
             emailTo, 
             emailSubject,

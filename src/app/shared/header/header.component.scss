@@ -10,3 +10,10 @@ img {
     margin-top: 15px;
     margin-right: 15px;
   }
+
+.profile {
+    display: -webkit-flex;
+    -webkit-align-items: center;
+    align-items: center;
+    width: fit-content;
+}

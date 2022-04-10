@@ -37,7 +37,8 @@ export class HomePage {
     this.tokenInfo = UserHelper.getTokenInfo();
     localStorage.setItem('id_type_utilisateur', this.tokenInfo.id_typeutilisateur);
     localStorage.setItem('annee_etude', this.tokenInfo.id_annee_etude);
-    this.startOrContinue = localStorage.getItem('reponses') == "null";
+    debugger
+    this.startOrContinue = ["null", null].includes(localStorage.getItem('reponses'));
     await this.getScore();
     if(this.resultat?.length > 0) {
       this.hasScore = true;
@@ -69,7 +70,7 @@ export class HomePage {
   }
 
   startQuiz(){
-    if(localStorage.getItem('reponses') != "null") {      
+    if(!["null", null].includes(localStorage.getItem('reponses'))) {      
       this.router.navigate(['/quiz']);
     }
     else {

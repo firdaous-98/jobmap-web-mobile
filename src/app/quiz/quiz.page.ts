@@ -53,7 +53,7 @@ export class QuizPage {
     this.service.get_questionsArray().subscribe((result: Question[]) => {
       this.questionsArray = result;
       
-      if(this.reponsesArray != "null") {
+      if(!["null", null].includes(this.reponsesArray)) {
         this.reponses = <Reponse[]> JSON.parse(this.reponsesArray);
         var currentQuestion = this.reponses.pop();
         this.currentQuestion = this.questionsArray.find(e => e.id_step == currentQuestion.id_step && e.id_quest == currentQuestion.id_quest);

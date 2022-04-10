@@ -7,6 +7,7 @@ import { ResultChoix } from 'src/app/core/models/choix.model';
 import { Question } from 'src/app/core/models/question.model';
 import { Reponse } from 'src/app/core/models/reponse.model';
 import { TranslatorService } from 'src/app/core/services/translate.service';
+import { Howl } from 'howler';
 
 @Component({
   selector: 'app-question',
@@ -42,6 +43,7 @@ export class QuestionComponent {
   stepFourResponses: ResultChoix[] = [];
   Level = Level;
   isArab: boolean;
+  player: Howl = null;
 
   constructor(
     public toastController: ToastController,
@@ -99,17 +101,17 @@ export class QuestionComponent {
 
   selectChoiceLevel(level: Level, index: number) {
     let id = this.question.choix[index].id;
-    if(this.stepFourResponses.length > 0 && this.stepFourResponses.findIndex(e => e.id == id) != -1) {
+    if (this.stepFourResponses.length > 0 && this.stepFourResponses.findIndex(e => e.id == id) != -1) {
       this.stepFourResponses = this.stepFourResponses.filter(f => f.id !== id);
     }
-    
+
     for (let i = 0; i < level; i++) {
       var choix: ResultChoix = {
         id: this.question.choix[index].id,
         code_holland: this.getCodeHollandStringToEnum(this.question.choix[index].code_holland)
       }
       this.stepFourResponses.push(choix);
-    }    
+    }
   }
 
   isChecked(id: string) {
@@ -178,5 +180,33 @@ export class QuestionComponent {
       case "4":
         return this.translate.instant('APTITUDES');
     }
+  }
+
+  start(id_step: string) {
+    let lang = localStorage.getItem('language');
+    if (this.player) {
+      this.player.stop();
+    }
+
+    let path = "";
+
+    switch (id_step) {
+      case "1":
+        path = `./assets/audio/${lang}/interets_activites.m4a`;
+        break;
+      case "2":
+        path = `./assets/audio/${lang}/interets_occupations.m4a`;
+        break;
+      case "3":
+        path = `./assets/audio/${lang}/personnalite.m4a`;
+        break;
+      case "4":
+        path = `./assets/audio/${lang}/aptitudes.m4a`;
+        break;
+    }
+    this.player = new Howl({
+      src: [path]
+    });
+    this.player.play();
   }
 }

@@ -11,8 +11,14 @@
           (click)="onHomeClicked()">
           <ion-icon slot="icon-only" name="home-outline"></ion-icon>
       </ion-button>
-    </ion-buttons>  
-    <img src="./assets/img/afa9-logo-text.png" alt="logo" slot="end">
+    </ion-buttons> 
+    <div class="profile">
+      <ion-button disabled="true" fill="clear" color="dark">
+        <ion-icon slot="icon-only" name="person-outline"></ion-icon>
+      </ion-button>
+      <ion-label style="font-family:Helvetica Neue, Helvetica, sans-serif;">{{ tokenInfo.prenom }}</ion-label>
+    </div>
+    <img src="./assets/img/logo2.png" alt="logo" slot="end">
   </ion-toolbar>
 </ion-header>
 

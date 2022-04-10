@@ -295,16 +295,20 @@ export class ResultPage {
   }
 
   async sendInvitation() {
+    let body = (this.id_type_utilisateur == TypeUtilisateur.Parent ? `Suites à notre vécu ensemble, je me permets de passer ce test en répondant à toutes les questions selon ma perception de votre personnalité.` :
+    `Vous êtes une personne qui me connaît très bien. Et votre avis m
+  Intéresse. Je vous prie de bien vouloir passer ce test et répondre selon ce que vous pensez de moi .
+  Cela me ferait un plaisir d en discuter avec vous pour affiner mes choix de mon futur métiers.`)
+  + `${this.tokenInfo.prenom} ${this.tokenInfo.nom} vous invite à passer le test présent sur ce lien: ${this.link}`;
+
+    debugger
     this.service.sendEmail(
       this.emailPartner,
       "Invitation Afa9",
-      (this.id_type_utilisateur == TypeUtilisateur.Parent ? `Suites à notre vécu ensemble, je me permets de passer ce test en répondant à toutes les questions selon ma perception de votre personnalité.` :
-        `Vous êtes une personne qui me connaît très bien. Et votre avis m
-      Intéresse. Je vous prie de bien vouloir passer ce test et répondre selon ce que vous pensez de moi .
-      Cela me ferait un plaisir d en discuter avec vous pour affiner mes choix de mon futur métiers.`)
-      + `${this.tokenInfo.prenom} ${this.tokenInfo.nom} vous invite à passer le test présent sur ce lien: ${this.link}`
-    );
-    this.invitationSent = true;
+      body).subscribe(async _ => {
+      console.log("email sent");
+      this.invitationSent = true;
+    });
     (await this.toastController.create({ message: this.translate.instant('INVITATION_SENT'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
   }
 
@@ -671,7 +675,7 @@ export class ResultPage {
         },
         {
           text: 'Orientation - Maroc',
-          fontSize: 26,
+          fontSize: 24,
           bold: true,
           alignment: 'center'
           // margin: [0, 10, 0, 10] // margin: [left, top, right, bottom]
@@ -690,6 +694,13 @@ export class ResultPage {
           text: 'Mail: ' + this.tokenInfo.adresse_email,
           fontSize: 12,
           align: 'right'
+        },
+        {
+          image: await this.getBase64ImageFromURL(
+            "./assets/img/afa9_qr.png"),
+          alignment: 'right',
+          width: 60,
+          margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         },
         {
           text: 'Le profil RIASEC',

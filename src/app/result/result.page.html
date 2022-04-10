@@ -108,9 +108,11 @@
                     {{'ENTER_VALID_EMAIL_ADDRESS' | translate}}
                 </ion-text>
             </div>
+            <div class="button-groupe">
                 <ion-button class="button" *ngIf="EmailInput.valid && scorePartner == null" (click)="getPartnerScore()">
                     {{'CHECK_THEIR_RESULTS' | translate}}
                 </ion-button>
+            </div>
             </ng-container>
 
     <ng-container *ngIf="!twoEquals && showOtherResult">
@@ -192,9 +194,11 @@
         <ion-text class="label">
             {{'USER_DIDNT_PASS_TEST_YET' | translate}}
         </ion-text>
-        <ion-button class="button" (click)="sendInvitation()">
-            {{'SEND_INVITATION' | translate}}
-        </ion-button>
+        <div class="button-groupe">
+            <ion-button class="button" (click)="sendInvitation()">
+                {{'SEND_INVITATION' | translate}}
+            </ion-button>
+        </div>
     </ng-container>
 
 

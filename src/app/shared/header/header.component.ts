@@ -1,5 +1,7 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserHelper } from 'src/app/core/helpers/user-helper';
+import { TokenInfo } from 'src/app/core/models/token.model';
 
 @Component({
   selector: 'app-header',
@@ -17,7 +19,11 @@ export class HeaderComponent implements OnInit {
   @Output()
   backClickEvent = new EventEmitter();
 
-  constructor(private router: Router) { }
+  tokenInfo: TokenInfo;
+
+  constructor(private router: Router) {
+    this.tokenInfo = UserHelper.getTokenInfo();
+   }
 
   ngOnInit() {}
 
