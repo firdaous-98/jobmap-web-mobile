@@ -3,13 +3,17 @@
 <ion-content>
     <ion-label class="title">{{'YOU_GOT' | translate}}</ion-label>
     <ng-container *ngIf="twoEquals">
-        <ion-card>
-            <ion-card-title> Oops ! </ion-card-title>
-            <ion-card-content>
-                Vos réponses n'ont pas pu donné un résultat précis, veuillez refaire le questionnaire :)
-            </ion-card-content>
-        </ion-card>
-        <ion-button class="button" (click)="redoQuiz()">{{'REDO_QUIZ' | translate}}</ion-button>
+        <div class="container">
+            <ion-card>
+                <ion-card-title> Oops ! </ion-card-title>
+                <ion-card-content>
+                    Vos réponses n'ont pas pu donné un résultat précis, veuillez refaire le questionnaire :)
+                </ion-card-content>
+            </ion-card>
+            <div class="button-groupe">
+                <ion-button class="button" (click)="redoQuiz()">{{'REDO_QUIZ' | translate}}</ion-button>
+            </div>
+        </div>
     </ng-container>
 
     <ng-container *ngIf="!twoEquals">
@@ -33,7 +37,7 @@
                     <div class="title">
                         <h4>{{'RESULTS' | translate}} {{ codeHollandCompose }}</h4>
                     </div>
-                    
+
                     <div class="border">
                         <div class="line"><span class="char"> {{ resultat[0].key }}: </span><span class="word"> {{
                                 getExplanation(resultat[0].key) }} </span></div>
@@ -57,7 +61,10 @@
         <table class="center" *ngIf="listeMetiers?.length > 0">
             <thead>
                 <tr>
-                    <th>{{'JOBS' | translate}}</th>
+                    <th rowspan="2" colspan="1">{{'JOBS' | translate}}</th>
+                    <th rowspan="1" colspan="3">{{'REQUIRED_SKILLS' | translate}}</th>
+                </tr>
+                <tr>
                     <th>D</th>
                     <th>P</th>
                     <th>C</th>
@@ -65,10 +72,26 @@
             </thead>
             <tbody>
                 <tr *ngFor="let metier of listeMetiers">
-                    <td><a style="color:black;" [href]="getMetierLink(metier.id_metier)" target="_blank">{{ metier.libelle_metier }}</a></td>
-                    <td>{{ metier.id_donnees }}</td>
-                    <td>{{ metier.id_personnes }}</td>
-                    <td>{{ metier.id_choses }}</td>
+                    <td>
+                        <a style="color:black;" [href]="getMetierLink(metier.id_metier)" target="_blank">
+                            {{ metier.libelle_metier }}
+                        </a>
+                    </td>
+                    <td>
+                        <a style="color:black;" [href]="getDPCLink(metier.id_donnees, 'd')" target="_blank">
+                            {{ metier.id_donnees }}
+                        </a>
+                    </td>
+                    <td>
+                        <a style="color:black;" [href]="getDPCLink(metier.id_personnes, 'p')" target="_blank">
+                            {{ metier.id_personnes }}
+                        </a>
+                    </td>
+                    <td>
+                        <a style="color:black;" [href]="getDPCLink(metier.id_choses, 'c')" target="_blank">
+                            {{ metier.id_choses }}
+                        </a>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -91,29 +114,29 @@
 
     <ng-container *ngIf="!showOtherResult && !twoEquals">
         <div class="white-box">
-                <ion-label class="label" *ngIf="id_type_utilisateur == typeUtilisateur.Parent">
-                    {{'COMPARE_RESULTS_PARENT' | translate}}
-                </ion-label>
-                <ion-label class="label" *ngIf="id_type_utilisateur == typeUtilisateur.Etudiant">
-                    {{'COMPARE_RESULTS' | translate}}
-                </ion-label>
-                <ion-item class="email-address">
-                    <ion-label style="text-align:center;" position="floating">{{'EMAIL_ADDRESS' | translate}}</ion-label>
-                    <ion-input #EmailInput="ngModel" ngModel [(ngModel)]="emailPartner" [pattern]="regexEmail" type="email"
-                        name="email" required>
-                    </ion-input>
-                </ion-item>
-                
-                <ion-text *ngIf="!EmailInput.valid && EmailInput.touched" color="danger">
-                    {{'ENTER_VALID_EMAIL_ADDRESS' | translate}}
-                </ion-text>
-            </div>
-            <div class="button-groupe">
-                <ion-button class="button" *ngIf="EmailInput.valid && scorePartner == null" (click)="getPartnerScore()">
-                    {{'CHECK_THEIR_RESULTS' | translate}}
-                </ion-button>
-            </div>
-            </ng-container>
+            <ion-label class="label" *ngIf="id_type_utilisateur == typeUtilisateur.Parent">
+                {{'COMPARE_RESULTS_PARENT' | translate}}
+            </ion-label>
+            <ion-label class="label" *ngIf="id_type_utilisateur == typeUtilisateur.Etudiant">
+                {{'COMPARE_RESULTS' | translate}}
+            </ion-label>
+            <ion-item class="email-address">
+                <ion-label style="text-align:center;" position="floating">{{'EMAIL_ADDRESS' | translate}}</ion-label>
+                <ion-input #EmailInput="ngModel" ngModel [(ngModel)]="emailPartner" [pattern]="regexEmail" type="email"
+                    name="email" required>
+                </ion-input>
+            </ion-item>
+
+            <ion-text *ngIf="!EmailInput.valid && EmailInput.touched" color="danger">
+                {{'ENTER_VALID_EMAIL_ADDRESS' | translate}}
+            </ion-text>
+        </div>
+        <div class="button-groupe">
+            <ion-button class="button" *ngIf="EmailInput.valid && scorePartner == null" (click)="getPartnerScore()">
+                {{'CHECK_THEIR_RESULTS' | translate}}
+            </ion-button>
+        </div>
+    </ng-container>
 
     <ng-container *ngIf="!twoEquals && showOtherResult">
         <div class="container">
@@ -158,7 +181,10 @@
         <table class="center" *ngIf="showOtherResult && OtherListeMetiers?.length > 0">
             <thead>
                 <tr>
-                    <th>{{'JOBS' | translate}}</th>
+                    <th rowspan="2" colspan="1">{{'JOBS' | translate}}</th>
+                    <th rowspan="1" colspan="3">{{'REQUIRED_SKILLS' | translate}}</th>
+                </tr>
+                <tr>
                     <th>D</th>
                     <th>P</th>
                     <th>C</th>
@@ -166,10 +192,26 @@
             </thead>
             <tbody>
                 <tr *ngFor="let metier of OtherListeMetiers">
-                    <td>{{ metier.libelle_metier }}</td>
-                    <td>{{ metier.id_donnees }}</td>
-                    <td>{{ metier.id_personnes }}</td>
-                    <td>{{ metier.id_choses }}</td>
+                    <td>
+                        <a style="color:black;" [href]="getMetierLink(metier.id_metier)" target="_blank">
+                            {{ metier.libelle_metier }}
+                        </a>
+                    </td>
+                    <td>
+                        <a style="color:black;" [href]="getDPCLink(metier.id_donnees, 'd')" target="_blank">
+                            {{ metier.id_donnees }}
+                        </a>
+                    </td>
+                    <td>
+                        <a style="color:black;" [href]="getDPCLink(metier.id_personnes, 'p')" target="_blank">
+                            {{ metier.id_personnes }}
+                        </a>
+                    </td>
+                    <td>
+                        <a style="color:black;" [href]="getDPCLink(metier.id_choses, 'c')" target="_blank">
+                            {{ metier.id_choses }}
+                        </a>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -202,7 +244,7 @@
     </ng-container>
 
 
-    <div class="button-groupe">
+    <div class="button-groupe" *ngIf="!twoEquals">
         <ion-button class="button" (click)="downloadRapportApprofondi()">
             {{'DOWNLOAD_RESULT_GET_DETAILED_REPORT' | translate}}
         </ion-button>
@@ -212,15 +254,9 @@
     </div>
 
     <div style="visibility: hidden;">
-        <apx-chart 
-            id="chart"
-            [series]="chartOptions?.series" 
-            [chart]="chartOptions?.chart" 
-            [plotOptions]="chartOptions?.plotOptions"
-            [yaxis]="chartOptions?.yaxis"
-            [xaxis]="chartOptions?.xaxis"
-            [title]="chartOptions?.title"
-            [colors]="chartOptions?.colors">
+        <apx-chart id="chart" [series]="chartOptions?.series" [chart]="chartOptions?.chart"
+            [plotOptions]="chartOptions?.plotOptions" [yaxis]="chartOptions?.yaxis" [xaxis]="chartOptions?.xaxis"
+            [title]="chartOptions?.title" [colors]="chartOptions?.colors">
         </apx-chart>
     </div>
 </ion-content>

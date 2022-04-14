@@ -1,17 +1,14 @@
-<app-header
-  [showBack]="true"
-  [showHome]="true"
-  (backClickEvent)="getPreviousQuestion()">
+<app-header [showBack]="true" [showHome]="true" (backClickEvent)="getPreviousQuestion()">
 </app-header>
 <ion-content>
   <div class="container">
-    <app-question
-      *ngIf="questionsArray"
-      [question]="currentQuestion"
-      [previousResponse]="previousResponse"
-      [numberOfQuestions]="numberOfQuestions"
-      (nextQuestionEvent)="getResponse($event)">
-    </app-question>
+    <div class="bg"></div>
+    <div class="bg bg2"></div>
+    <div class="bg bg3"></div>
+    <div>
+      <app-question *ngIf="questionsArray" [Question]="currentQuestion" [previousResponse]="previousResponse"
+        [numberOfQuestions]="numberOfQuestions" (nextQuestionEvent)="getResponse($event)">
+      </app-question>
+    </div>
   </div>
-  
 </ion-content>

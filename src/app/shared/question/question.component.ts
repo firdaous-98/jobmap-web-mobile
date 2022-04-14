@@ -17,8 +17,16 @@ import { Howl } from 'howler';
 export class QuestionComponent {
 
   @Input()
-  question: Question;
-
+  set Question(value: Question) {
+    if(value != null) {
+      this.question = value;
+      if(["1", "16", "31", "46"].includes(value.id_quest)) {
+        this.showDescription = true;
+      } else {
+        this.showDescription = false;
+      }
+    }
+  }
   @Input()
   numberOfQuestions: number;
 
@@ -38,11 +46,14 @@ export class QuestionComponent {
   @Output()
   nextQuestionEvent = new EventEmitter<Reponse>();
 
+  question: Question;
   response: string;
   stepThreeResponses: ResultChoix[] = [];
   stepFourResponses: ResultChoix[] = [];
   Level = Level;
   isArab: boolean;
+  showDescription: boolean;
+  icon = 'play-circle-outline';
   player: Howl = null;
 
   constructor(
@@ -186,27 +197,34 @@ export class QuestionComponent {
     let lang = localStorage.getItem('language');
     if (this.player) {
       this.player.stop();
+      this.player = null;
+      this.icon = 'play-circle-outline';
+    } else {
+      let path = "";
+  
+      switch (id_step) {
+        case "1":
+          path = `./assets/audio/${lang}/interets_activites.m4a`;
+          break;
+        case "2":
+          path = `./assets/audio/${lang}/interets_occupations.m4a`;
+          break;
+        case "3":
+          path = `./assets/audio/${lang}/personnalite.m4a`;
+          break;
+        case "4":
+          path = `./assets/audio/${lang}/aptitudes.m4a`;
+          break;
+      }
+      this.player = new Howl({
+        src: [path],
+        onend: function() {
+          this.icon = 'play-circle-outline';
+          console.log(this.icon);
+        }
+      });
+      this.icon = 'pause-circle-outline';
+      this.player.play();
     }
-
-    let path = "";
-
-    switch (id_step) {
-      case "1":
-        path = `./assets/audio/${lang}/interets_activites.m4a`;
-        break;
-      case "2":
-        path = `./assets/audio/${lang}/interets_occupations.m4a`;
-        break;
-      case "3":
-        path = `./assets/audio/${lang}/personnalite.m4a`;
-        break;
-      case "4":
-        path = `./assets/audio/${lang}/aptitudes.m4a`;
-        break;
-    }
-    this.player = new Howl({
-      src: [path]
-    });
-    this.player.play();
   }
 }

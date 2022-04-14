@@ -37,7 +37,7 @@ export class HomePage {
     this.tokenInfo = UserHelper.getTokenInfo();
     localStorage.setItem('id_type_utilisateur', this.tokenInfo.id_typeutilisateur);
     localStorage.setItem('annee_etude', this.tokenInfo.id_annee_etude);
-    debugger
+    
     this.startOrContinue = ["null", null].includes(localStorage.getItem('reponses'));
     await this.getScore();
     if(this.resultat?.length > 0) {

@@ -1,11 +1,15 @@
-<app-header
-  [showBack]="false">
+<app-header [showBack]="false">
 </app-header>
 <ion-content>
+  <div class="bg"></div>
+  <div class="bg bg2"></div>
+  <div class="bg bg3"></div>
+  <div>
     <img src="./assets/img/fille.png" class="girl">
-    <ion-button class="start-quiz" (click)="startQuiz()">{{ startOrContinue ? ('START_QUIZ' | translate) : ('CONTINUE_QUIZ' | translate) }}</ion-button>
-    <ion-button class="get-result" *ngIf="hasScore" (click)="goToResultat()">{{'CONSULT_RESULT' | translate}}</ion-button>
-    <ion-button class="logout" (click)="logOut()">{{'LOGOUT' | translate}}</ion-button> 
+    <ion-button class="start-quiz" (click)="startQuiz()">
+      {{ startOrContinue ? ('START_QUIZ' | translate) : ('CONTINUE_QUIZ' | translate) }}</ion-button>
+    <ion-button class="get-result" *ngIf="hasScore" (click)="goToResultat()">{{'CONSULT_RESULT' | translate}}
+    </ion-button>
+    <ion-button class="logout" (click)="logOut()">{{'LOGOUT' | translate}}</ion-button>
+  </div>
 </ion-content>
-
-

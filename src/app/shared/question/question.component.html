@@ -3,12 +3,12 @@
 <ion-label *ngIf="!isArab" class="libelle-etape">{{ question.Libelle_step }}</ion-label>
 <ion-label *ngIf="isArab" class="libelle-etape">{{ question.libelle_step_ar }}</ion-label>
 <div class="audio-div">
-    <ion-button class="audio" (click)="start(question.id_step)">
-        <ion-icon slot="icon-only" name="mic-circle-outline"></ion-icon>
+    <ion-button *ngIf="showDescription" class="audio" (click)="start(question.id_step)">
+        <ion-icon slot="icon-only" [name]="icon"></ion-icon>
     </ion-button>
 </div>
 <ion-card>
-    <ion-card-title style="color:grey;text-align: justify;" [class.text-arab]="isArab">
+    <ion-card-title *ngIf="showDescription" style="color:grey;text-align: justify;" [class.text-arab]="isArab">
         {{ getStepDescription(question.id_step) }}
     </ion-card-title>
     <ng-container *ngIf="question.id_step != '4' && question.id_step != '3'">

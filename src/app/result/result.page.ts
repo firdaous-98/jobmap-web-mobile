@@ -115,11 +115,11 @@ export class ResultPage {
         this.composeCodeHolland();
         await this.getMetiers();
         await this.getTypesBac();
-        
+
         if (this.fromQuiz) {
           this.saveScore();
         }
-        
+
         this.generateChart(this.resultat);
         this.id_type_utilisateur = parseInt(localStorage.getItem('id_type_utilisateur'));
         this.annee_etude = parseInt(localStorage.getItem('annee_etude'));
@@ -168,7 +168,7 @@ export class ResultPage {
   }
 
   async getTypesBac() {
-    if(this.listeMetiers?.length > 0) {
+    if (this.listeMetiers?.length > 0) {
       const id_metiers = this.listeMetiers.map(e => e.id_metier);
       var result = await this.service.getMetierTypeBac(id_metiers).toPromise();
       this.listeTypeBac = result;
@@ -177,21 +177,21 @@ export class ResultPage {
 
   mapResultPerStep() {
     if (this.fromQuiz) {
-      this.resultatStepOne = (this.resultPerStep.findIndex(e => e.id_step == "1") != -1 ? 
-        this.resultPerStep.find(e => e.id_step == "1").resultat : 
-        <{ id_step: string, resultat: any }[]> JSON.parse(localStorage.getItem('result_step_1'))).map(f => f.key).join('');
+      this.resultatStepOne = (this.resultPerStep.findIndex(e => e.id_step == "1") != -1 ?
+        this.resultPerStep.find(e => e.id_step == "1").resultat :
+        <{ id_step: string, resultat: any }[]>JSON.parse(localStorage.getItem('result_step_1'))).map(f => f.key).join('');
 
-      this.resultatStepTwo = (this.resultPerStep.findIndex(e => e.id_step == "2") != -1 ? 
-      this.resultPerStep.find(e => e.id_step == "2").resultat : 
-      <{ id_step: string, resultat: any }[]> JSON.parse(localStorage.getItem('result_step_2'))).map(f => f.key).join('');
-      
-      this.resultatStepThree = (this.resultPerStep.findIndex(e => e.id_step == "3") != -1 ? 
-      this.resultPerStep.find(e => e.id_step == "3").resultat : 
-      <{ id_step: string, resultat: any }[]> JSON.parse(localStorage.getItem('result_step_3'))).map(f => f.key).join('');
-      
-      this.resultatStepFour = (this.resultPerStep.findIndex(e => e.id_step == "4") != -1 ? 
-      this.resultPerStep.find(e => e.id_step == "4").resultat : 
-      <{ id_step: string, resultat: any }[]> JSON.parse(localStorage.getItem('result_step_4'))).map(f => f.key).join('');
+      this.resultatStepTwo = (this.resultPerStep.findIndex(e => e.id_step == "2") != -1 ?
+        this.resultPerStep.find(e => e.id_step == "2").resultat :
+        <{ id_step: string, resultat: any }[]>JSON.parse(localStorage.getItem('result_step_2'))).map(f => f.key).join('');
+
+      this.resultatStepThree = (this.resultPerStep.findIndex(e => e.id_step == "3") != -1 ?
+        this.resultPerStep.find(e => e.id_step == "3").resultat :
+        <{ id_step: string, resultat: any }[]>JSON.parse(localStorage.getItem('result_step_3'))).map(f => f.key).join('');
+
+      this.resultatStepFour = (this.resultPerStep.findIndex(e => e.id_step == "4") != -1 ?
+        this.resultPerStep.find(e => e.id_step == "4").resultat :
+        <{ id_step: string, resultat: any }[]>JSON.parse(localStorage.getItem('result_step_4'))).map(f => f.key).join('');
     }
     else {
       this.resultatStepOne = this.resultPerStep?.find(e => e.id_step == "1").resultat;
@@ -296,19 +296,18 @@ export class ResultPage {
 
   async sendInvitation() {
     let body = (this.id_type_utilisateur == TypeUtilisateur.Parent ? `Suites à notre vécu ensemble, je me permets de passer ce test en répondant à toutes les questions selon ma perception de votre personnalité.` :
-    `Vous êtes une personne qui me connaît très bien. Et votre avis m
+      `Vous êtes une personne qui me connaît très bien. Et votre avis m
   Intéresse. Je vous prie de bien vouloir passer ce test et répondre selon ce que vous pensez de moi .
   Cela me ferait un plaisir d en discuter avec vous pour affiner mes choix de mon futur métiers.`)
-  + `${this.tokenInfo.prenom} ${this.tokenInfo.nom} vous invite à passer le test présent sur ce lien: ${this.link}`;
+      + `${this.tokenInfo.prenom} ${this.tokenInfo.nom} vous invite à passer le test présent sur ce lien: ${this.link}`;
 
-    debugger
     this.service.sendEmail(
       this.emailPartner,
       "Invitation Afa9",
       body).subscribe(async _ => {
-      console.log("email sent");
-      this.invitationSent = true;
-    });
+        console.log("email sent");
+        this.invitationSent = true;
+      });
     (await this.toastController.create({ message: this.translate.instant('INVITATION_SENT'), duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
   }
 
@@ -387,9 +386,21 @@ export class ResultPage {
           link: `http://afa9.org/metier.php?idmetier=${metier.id_metier}`,
           decoration: 'underline'
         },
-        metier.id_donnees.toString(),
-        metier.id_personnes.toString(),
-        metier.id_choses.toString()
+        {
+          text: metier.id_donnees.toString(),
+          link: this.getDPCLink(metier.id_donnees, 'd'),
+          decoration: 'underline'
+        },
+        {
+          text: metier.id_personnes.toString(),
+          link: this.getDPCLink(metier.id_personnes, 'p'),
+          decoration: 'underline'
+        },
+        {
+          text: metier.id_choses.toString(),
+          link: this.getDPCLink(metier.id_choses, 'c'),
+          decoration: 'underline'
+        }
       ]);
     });
 
@@ -398,6 +409,10 @@ export class ResultPage {
 
   getMetierLink(id: string) {
     return `http://afa9.org/metier.php?idmetier=${id}`;
+  }
+
+  getDPCLink(score: number, dpc: string) {
+    return `http://afa9.org/DPC.php?att=${dpc}${score}#${dpc}${score}`;
   }
 
   async getChart(resultat: Score[]) {
@@ -471,9 +486,21 @@ export class ResultPage {
             link: `http://afa9.org/metier.php?idmetier=${metier.id_metier}`,
             decoration: 'underline'
           },
-          metier.id_donnees.toString(),
-          metier.id_personnes.toString(),
-          metier.id_choses.toString()
+          {
+            text: metier.id_donnees.toString(),
+            link: this.getDPCLink(metier.id_donnees, 'd'),
+            decoration: 'underline'
+          },
+          {
+            text: metier.id_personnes.toString(),
+            link: this.getDPCLink(metier.id_personnes, 'p'),
+            decoration: 'underline'
+          },
+          {
+            text: metier.id_choses.toString(),
+            link: this.getDPCLink(metier.id_choses, 'c'),
+            decoration: 'underline'
+          }
         ]);
       });
 
@@ -829,7 +856,32 @@ export class ResultPage {
           },
           margin: 20
         },
-        otherMetierTable
+        otherMetierTable,
+        {
+          image: await this.getBase64ImageFromURL(
+            "./assets/img/manuel/manualFR_page-0002.jpg"),
+          width: 500
+        },
+        {
+          image: await this.getBase64ImageFromURL(
+            "./assets/img/manuel/manualFR_page-0003.jpg"),
+          width: 500
+        },
+        {
+          image: await this.getBase64ImageFromURL(
+            "./assets/img/manuel/manualFR_page-0004.jpg"),
+          width: 500
+        },
+        {
+          image: await this.getBase64ImageFromURL(
+            "./assets/img/manuel/manualFR_page-0005.jpg"),
+          width: 500
+        },
+        {
+          image: await this.getBase64ImageFromURL(
+            "./assets/img/manuel/manualFR_page-0006.jpg"),
+          width: 500
+        }
       ]
     };
 

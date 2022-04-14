@@ -1,87 +1,87 @@
-<app-header
-  [showBack]="true"
-  [showHome]="true"
-  (backClickEvent)="backClick()">
+<app-header [showBack]="true" [showHome]="true" (backClickEvent)="backClick()">
 </app-header>
 <ion-content>
   <div class="container">
-  <ion-card>
-    <ng-container *ngIf="showType">
-      <ion-card-title>{{ 'YOU_ARE' | translate }}</ion-card-title>
-      <ion-grid>
-        <ion-row>
-            <ion-col 
-                size="5" 
-                class="cell-class"
+    <div class="bg"></div>
+    <div class="bg bg2"></div>
+    <div class="bg bg3"></div>
+    <div>
+      <ion-card>
+        <ng-container *ngIf="showType">
+          <ion-card-title>{{ 'YOU_ARE' | translate }}</ion-card-title>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="5" class="cell-class"
                 [style]="'border-color:' + (typeUtilisateur == TypeUtilisateur.Etudiant ? '#ff9f04;' : '#333;')"
                 (click)="selectTypeUtilisateur(TypeUtilisateur.Etudiant)">
                 <img src="./assets/img/Student-01.png" alt="student">
                 <ion-label class="indicator">
                   {{ 'STUDENT' | translate }}
                 </ion-label>
-            </ion-col>
-            <ion-col 
-                size="5" 
-                class="cell-class"
+              </ion-col>
+              <ion-col size="5" class="cell-class"
                 [style]="'border-color:' + (typeUtilisateur == TypeUtilisateur.Parent ? '#ff9f04;' : '#333;')"
                 (click)="selectTypeUtilisateur(TypeUtilisateur.Parent)">
                 <img src="./assets/img/parent.png" alt="student">
                 <ion-label class="indicator">
                   {{ 'PARENT' | translate }}
                 </ion-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-    </ng-container>
-    <ng-container *ngIf="showNiveau">
-        <ion-card-title *ngIf="typeUtilisateur == TypeUtilisateur.Etudiant">{{ 'CURRENT_SITUATION' | translate }}</ion-card-title>
-        <ion-card-title *ngIf="typeUtilisateur == TypeUtilisateur.Parent">{{ 'CURRENT_SITUATION_SON' | translate }}</ion-card-title>
-        <ion-list [class.text-arab]="isArab">
-          <ion-radio-group [value]="niveauEtude" (ionChange)="selectNiveauEtude($event)">
-            <ion-item *ngFor="let niveau of listeNiveauxEtude">
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ng-container>
+        <ng-container *ngIf="showNiveau">
+          <ion-card-title *ngIf="typeUtilisateur == TypeUtilisateur.Etudiant">{{ 'CURRENT_SITUATION' | translate }}
+          </ion-card-title>
+          <ion-card-title *ngIf="typeUtilisateur == TypeUtilisateur.Parent">{{ 'CURRENT_SITUATION_SON' | translate }}
+          </ion-card-title>
+          <ion-list [class.text-arab]="isArab">
+            <ion-radio-group [value]="niveauEtude" (ionChange)="selectNiveauEtude($event)">
+              <ion-item *ngFor="let niveau of listeNiveauxEtude">
                 <p *ngIf="!isArab">{{ niveau.Libelle_niveau_etude }}</p>
                 <p dir="rtl" *ngIf="isArab">{{ niveau.Libelle_niveau_etude_ar }}</p>
                 <ion-radio slot="start" [value]="niveau.id_niveau_etude"></ion-radio>
-            </ion-item>
-        </ion-radio-group>
-        </ion-list>  
-    </ng-container>
-    <ng-container *ngIf="showAnnee">
-        <ion-card-title> {{ libelleNiveau }} </ion-card-title>
-        <ion-list [class.text-arab]="isArab">
+              </ion-item>
+            </ion-radio-group>
+          </ion-list>
+        </ng-container>
+        <ng-container *ngIf="showAnnee">
+          <ion-card-title> {{ libelleNiveau }} </ion-card-title>
+          <ion-list [class.text-arab]="isArab">
             <ion-radio-group [value]="anneeEtude" (ionChange)="selectAnneeEtude($event)">
               <ion-item *ngFor="let annee of listeNiveauxEtude[indexNiveau].annees">
-                  <p *ngIf="!isArab">{{ annee.libelle_annee_etude }}</p>
-                  <p *ngIf="isArab">{{ annee.libelle_annee_etude_ar }}</p>
-                  <ion-radio slot="start" [value]="annee.id_annee_etude"></ion-radio>
+                <p *ngIf="!isArab">{{ annee.libelle_annee_etude }}</p>
+                <p *ngIf="isArab">{{ annee.libelle_annee_etude_ar }}</p>
+                <ion-radio slot="start" [value]="annee.id_annee_etude"></ion-radio>
               </ion-item>
-          </ion-radio-group>
-        </ion-list>  
-    </ng-container>
-    <ng-container *ngIf="showTypeBac">
-        <ion-card-title>{{ 'BAC_TYPE' | translate }}</ion-card-title>
-        <ion-list [class.text-arab]="isArab">
-          <ion-radio-group [value]="typebac" (ionChange)="selectTypeBac($event)">
-            <ion-item *ngFor="let typebac of listeTypesBac">
+            </ion-radio-group>
+          </ion-list>
+        </ng-container>
+        <ng-container *ngIf="showTypeBac">
+          <ion-card-title>{{ 'BAC_TYPE' | translate }}</ion-card-title>
+          <ion-list [class.text-arab]="isArab">
+            <ion-radio-group [value]="typebac" (ionChange)="selectTypeBac($event)">
+              <ion-item *ngFor="let typebac of listeTypesBac">
                 <p *ngIf="!isArab">{{ typebac.libelle_typebac_complet }}</p>
                 <p *ngIf="isArab">{{ typebac.libelle_typebac_ar }}</p>
                 <ion-radio slot="start" [value]="typebac.id_typebac"></ion-radio>
-            </ion-item>
-          </ion-radio-group>
-        </ion-list>  
-    </ng-container>
-    <ng-container *ngIf="showNiveauFormation">
-        <ion-card-title>{{ 'TARGET_LEVEL_TRAINING' | translate }}</ion-card-title>
-        <ion-list [class.text-arab]="isArab">
+              </ion-item>
+            </ion-radio-group>
+          </ion-list>
+        </ng-container>
+        <ng-container *ngIf="showNiveauFormation">
+          <ion-card-title>{{ 'TARGET_LEVEL_TRAINING' | translate }}</ion-card-title>
+          <ion-list [class.text-arab]="isArab">
             <ion-radio-group [value]="niveauFormation" (ionChange)="selectNiveauFormation($event)">
               <ion-item *ngFor="let nf of listeNiveauxFormation">
                 <p>{{ getLibelleNiveauFormation(nf.libelle_nf) }}</p>
                 <ion-radio slot="start" [value]="nf.id_nf"></ion-radio>
-            </ion-item>
-          </ion-radio-group>
-        </ion-list>  
-    </ng-container>
-  </ion-card>
-  <ion-button class="next" (click)="Choose()">{{ 'CHOOSE' | translate }}</ion-button>
-</div>
+              </ion-item>
+            </ion-radio-group>
+          </ion-list>
+        </ng-container>
+      </ion-card>
+      <ion-button class="next" (click)="Choose()">{{ 'CHOOSE' | translate }}</ion-button>
+    </div>
+  </div>
 </ion-content>
