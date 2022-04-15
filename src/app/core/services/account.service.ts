@@ -30,10 +30,16 @@ export class AccountService {
      * @param nom user last name
      * @param prenom user first name
      * @param adresse_email the user email address
+     * @param numero_telephone the user email address
      * @param motdepasse the user password
      */
-    signin(nom: string, prenom: string, adresse_email: string, motdepasse: string): Observable<any> {
-        const bodyLogin = { nom, prenom, adresse_email, motdepasse };
+    signin(
+        nom: string, 
+        prenom: string, 
+        numero_telephone: string, 
+        adresse_email: string, 
+        motdepasse: string): Observable<any> {
+        const bodyLogin = { nom, prenom, numero_telephone, adresse_email, motdepasse };
         return this.http.post<any>(this.API_ENDPOINT + 'create_user.php', bodyLogin);
     }
 

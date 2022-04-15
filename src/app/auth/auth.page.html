@@ -33,7 +33,17 @@
           {{ 'ENTER_VALID_EMAIL_ADDRESS' | translate }}
       </ion-text>
 
-      <ion-item>
+      <ng-container *ngIf="submissionType === 'join'">
+        <ion-item>
+          <ion-label position="floating">{{ 'PHONE_NUMBER' | translate }}</ion-label>
+          <ion-input #PhoneInput="ngModel" ngModel [pattern]="regexPhone" type="tel" name="phone" required></ion-input>
+        </ion-item>
+        <ion-text *ngIf="!PhoneInput.valid && PhoneInput.touched" color="danger">
+            {{ 'ENTER_VALID_PHONE_NUMBER' | translate }}
+        </ion-text>
+      </ng-container>
+  
+        <ion-item>
         <ion-label position="floating">{{ 'PASSWORD' | translate }}</ion-label>            
         <ion-icon (click)="toggleShowPassword()" slot="end" [name]="passwordType=='password' ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
         <ion-input #PasswordInput="ngModel" ngModel [type]="passwordType" name="password" required></ion-input>

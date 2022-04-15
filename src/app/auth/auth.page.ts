@@ -18,6 +18,7 @@ export class AuthPage implements OnInit {
   submissionType : 'login' | 'join' = 'login';
   passwordType = 'password';
   regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  regexPhone = /^\+?\d*$/;
   TOKEN = 'token';
 
   isArab: boolean;
@@ -68,8 +69,8 @@ export class AuthPage implements OnInit {
         });
       }
       else if(this.submissionType === 'join') {
-        const { nom, prenom, email, password} = this.form.value;
-        this.accountService.signin(nom, prenom, email, password).subscribe(async result => {
+        const { nom, prenom, phone, email, password} = this.form.value;
+        this.accountService.signin(nom, prenom, phone, email, password).subscribe(async result => {
           if(result.message == "User was created."){
             (await this.toastController.create({ message: 'Votre compte a été bien créé', duration: 2500, cssClass: 'app-toast', position: 'bottom', animated: true, mode: 'ios' })).present();
             this.submissionType = 'login';

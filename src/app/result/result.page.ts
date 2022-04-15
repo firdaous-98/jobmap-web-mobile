@@ -698,6 +698,7 @@ export class ResultPage {
         {
           image: await this.getBase64ImageFromURL(
             "./assets/img/afa9-logo.png"),
+            width: 500,
           alignment: 'center'
         },
         {
@@ -708,17 +709,22 @@ export class ResultPage {
           // margin: [0, 10, 0, 10] // margin: [left, top, right, bottom]
         },
         {
-          text: 'Nom: ' + this.tokenInfo.nom,
+          text: 'Nom : ' + this.tokenInfo.nom,
           fontSize: 12,
           align: 'right'
         },
         {
-          text: 'Prénom: ' + this.tokenInfo.prenom,
+          text: 'Prénom : ' + this.tokenInfo.prenom,
           fontSize: 12,
           align: 'right'
         },
         {
-          text: 'Mail: ' + this.tokenInfo.adresse_email,
+          text: 'Mail : ' + this.tokenInfo.adresse_email,
+          fontSize: 12,
+          align: 'right'
+        },
+        {
+          text: 'Tél : ' + this.tokenInfo?.numero_telephone,
           fontSize: 12,
           align: 'right'
         },
@@ -726,7 +732,7 @@ export class ResultPage {
           image: await this.getBase64ImageFromURL(
             "./assets/img/afa9_qr.png"),
           alignment: 'right',
-          width: 60,
+          width: 100,
           margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         },
         {
