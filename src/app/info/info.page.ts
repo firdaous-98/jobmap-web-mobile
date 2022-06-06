@@ -217,7 +217,7 @@ export class InfoPage {
     localStorage.setItem('id_type_utilisateur', this.typeUtilisateur.toString());
     localStorage.setItem('annee_etude', this.anneeEtude);
 
-    this.router.navigate(['/quiz']);
+    this.router.navigate(['/music']);
   }
 
   getLibelleNiveauFormation(libelle: string) {

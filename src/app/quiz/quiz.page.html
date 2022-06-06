@@ -1,4 +1,8 @@
-<app-header [showBack]="true" [showHome]="true" (backClickEvent)="getPreviousQuestion()">
+<app-header 
+  [showBack]="true" 
+  [showHome]="true" 
+  [showMusic]="true"
+  (backClickEvent)="getPreviousQuestion()">
 </app-header>
 <ion-content>
   <div class="container">
@@ -6,9 +10,25 @@
     <div class="bg bg2"></div>
     <div class="bg bg3"></div>
     <div>
-      <app-question *ngIf="questionsArray" [Question]="currentQuestion" [previousResponse]="previousResponse"
-        [numberOfQuestions]="numberOfQuestions" (nextQuestionEvent)="getResponse($event)">
+      <app-question 
+        *ngIf="questionsArray" 
+        [Question]="currentQuestion" 
+        [previousResponse]="previousResponse"
+        [numberOfQuestions]="numberOfQuestions" 
+        (nextQuestionEvent)="getResponse($event)">
       </app-question>
+      <div class="audio-div" *ngIf="musicPlaying">
+        <button 
+          (click)="pausePlayMusic()"
+          [class]="musicButtonClass">
+          <ion-icon 
+            slot="icon-only" 
+            name="musical-note-outline" 
+            color="light" 
+            style="font-size: 20px;">
+          </ion-icon>
+        </button>
+      </div>
     </div>
   </div>
 </ion-content>

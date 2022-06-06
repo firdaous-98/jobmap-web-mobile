@@ -8,8 +8,8 @@ import { UserUpdate } from "../models/user.model";
 })
 export class AccountService {
 
-    API_ENDPOINT = 'http://localhost/jobmap/api/authentication/';
-    // API_ENDPOINT = 'https://afa9.org/api/authentication/';
+    // API_ENDPOINT = 'http://localhost/jobmap/api/authentication/';
+    API_ENDPOINT = 'https://afa9.org/api/authentication/';
 
     constructor(
         private http: HttpClient
@@ -30,7 +30,7 @@ export class AccountService {
      * @param nom user last name
      * @param prenom user first name
      * @param adresse_email the user email address
-     * @param numero_telephone the user email address
+     * @param numero_telephone the user phone number
      * @param motdepasse the user password
      */
     signin(

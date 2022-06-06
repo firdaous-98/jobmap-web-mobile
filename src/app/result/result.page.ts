@@ -1,13 +1,13 @@
 import { Component, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
+import { LoadingController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
   ApexAxisChartSeries,
   ApexChart, ApexTitleSubtitle, ApexXAxis, ApexYAxis, ApexPlotOptions, ChartComponent
 } from 'ng-apexcharts';
 import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+import pdfFonts from './../../assets/vfs_fonts.js';
 import { AnneeEtudeEnum } from '../core/enums/annee-etude.enum';
 import { TypeUtilisateur } from '../core/enums/type-utilisateur.enum';
 import { UserHelper } from '../core/helpers/user-helper';
@@ -17,8 +17,10 @@ import { TokenInfo } from '../core/models/token.model';
 import { TypeBac } from '../core/models/type-bac.model';
 import { AppService } from '../core/services/app.service';
 import { TranslatorService } from '../core/services/translate.service';
+import { fonts } from "./../config/pdffonts";
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
+pdfMake.fonts = fonts;
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -89,12 +91,15 @@ export class ResultPage {
 
   link = "afa9.org/map";
 
+  loader: HTMLIonLoadingElement;
+
   constructor(
     private router: Router,
     public translate: TranslateService,
     public translatorService: TranslatorService,
     private service: AppService,
-    public toastController: ToastController
+    public toastController: ToastController,
+    public loadingController: LoadingController
   ) {
     this.resultat = this.router.getCurrentNavigation().extras.state?.resultat;
     this.fromQuiz = this.router.getCurrentNavigation().extras.state?.fromQuiz;
@@ -277,22 +282,6 @@ export class ResultPage {
     }
   }
 
-  getExplanationPdf(code: string) {
-    switch (code) {
-      case 'R':
-        return 'Réaliste'
-      case 'I':
-        return 'Investigateur'
-      case 'A':
-        return 'Artistique'
-      case 'S':
-        return 'Social'
-      case 'E':
-        return 'Entreprenant'
-      case 'C':
-        return 'Conventionnel'
-    }
-  }
 
   async sendInvitation() {
     let body = (this.id_type_utilisateur == TypeUtilisateur.Parent ? `Suites à notre vécu ensemble, je me permets de passer ce test en répondant à toutes les questions selon ma perception de votre personnalité.` :
@@ -377,42 +366,153 @@ export class ResultPage {
   getMetierRows() {
     var metierRows: any[] = [];
 
-    metierRows = [['Métier(s)', 'D', 'P', 'C']];
+    metierRows = [['Métier(s)']];
 
     this.listeMetiers.forEach(metier => {
       metierRows.push([
         {
           text: metier.libelle_metier,
-          link: `http://afa9.org/metier.php?idmetier=${metier.id_metier}`,
-          decoration: 'underline'
-        },
-        {
-          text: metier.id_donnees.toString(),
-          link: this.getDPCLink(metier.id_donnees, 'd'),
-          decoration: 'underline'
-        },
-        {
-          text: metier.id_personnes.toString(),
-          link: this.getDPCLink(metier.id_personnes, 'p'),
-          decoration: 'underline'
-        },
-        {
-          text: metier.id_choses.toString(),
-          link: this.getDPCLink(metier.id_choses, 'c'),
+          link: `http://afa9.org/index/metier.php?idmetier=${metier.id_metier}`,
           decoration: 'underline'
         }
+        // {
+        //   text: metier.id_donnees.toString() + ". " + this.getDPCLibelle(metier.id_donnees, 'd'),
+        //   link: this.getDPCLink(metier.id_donnees, 'd'),
+        //   decoration: 'underline'
+        // },
+        // {
+        //   text: metier.id_personnes.toString() + ". " + this.getDPCLibelle(metier.id_personnes, 'p'),
+        //   link: this.getDPCLink(metier.id_personnes, 'p'),
+        //   decoration: 'underline'
+        // },
+        // {
+        //   text: metier.id_choses.toString() + ". " + this.getDPCLibelle(metier.id_choses, 'c'),
+        //   link: this.getDPCLink(metier.id_choses, 'c'),
+        //   decoration: 'underline'
+        // }
       ]);
     });
 
     return metierRows;
   }
 
+  metiersWithDPCDesc() {
+    let metierTableList = [];
+    this.listeMetiers.forEach(metier => {
+      let table = {
+        layout: 'lightHorizontalLines', // optional
+        table: {
+          // headers are automatically repeated if the table spans over multiple pages
+          // you can declare how many rows should be treated as headers
+          headerRows: 1,
+          widths: ['*', 'auto', 100, '*'],
+
+          body: [
+            ['Métier', 'D', 'P', 'C'],
+            [{
+              text: metier.libelle_metier,
+              link: `http://afa9.org/index/metier.php?idmetier=${metier.id_metier}`,
+              decoration: 'underline'
+            }, {
+              text: metier.id_donnees.toString(),
+              link: this.getDPCLink(metier.id_donnees, 'd'),
+              decoration: 'underline'
+            },
+            {
+              text: metier.id_personnes.toString(),
+              link: this.getDPCLink(metier.id_personnes, 'p'),
+              decoration: 'underline'
+            },
+            {
+              text: metier.id_choses.toString(),
+              link: this.getDPCLink(metier.id_choses, 'c'),
+              decoration: 'underline'
+            }],
+            [
+              metier.id_donnees.toString() + ". " + this.getDPCLibelle(metier.id_donnees, 'd'),
+              {
+                text: this.getDPCDesc(metier.id_donnees, 'd'),
+                colSpan: 3
+              },
+              '', ''
+            ],
+            [
+              metier.id_personnes.toString() + ". " + this.getDPCLibelle(metier.id_personnes, 'p'),
+              {
+                text: this.getDPCDesc(metier.id_personnes, 'p'),
+                colSpan: 3
+              },
+              '', ''
+            ],
+            [
+              metier.id_choses.toString() + ". " + this.getDPCLibelle(metier.id_choses, 'c'),
+              {
+                text: this.getDPCDesc(metier.id_choses, 'c'),
+                colSpan: 3
+              },
+              '', ''
+            ]
+          ]
+        },
+        margin: 20
+      }
+
+      metierTableList.push(table);
+    });
+
+    return metierTableList;
+  }
+
   getMetierLink(id: string) {
-    return `http://afa9.org/metier.php?idmetier=${id}`;
+    return `http://afa9.org/index/metier.php?idmetier=${id}`;
   }
 
   getDPCLink(score: number, dpc: string) {
-    return `http://afa9.org/DPC.php?att=${dpc}${score}#${dpc}${score}`;
+    let lang = localStorage.getItem('language');
+    return `http://afa9.org/index/DPC.php?att=${score}&code=${dpc}&lang=${lang}`;
+  }
+
+  getDPCLibelle(score: number, dpc: string) {
+    switch (dpc) {
+      case 'd':
+        return this.RTLize(this.translate.instant(`DONNEES.${score}.competence`));
+      case 'p':
+        return this.RTLize(this.translate.instant(`PERSONNES.${score}.competence`));
+      case 'c':
+        return this.RTLize(this.translate.instant(`CHOSES.${score}.competence`));
+    }
+  }
+
+  getDPCDesc(score: number, dpc: string) {
+    switch (dpc) {
+      case 'd':
+        if(this.isArab) {
+          return this.RTLize(this.translate.instant(`DONNEES.${score}.description1`)) + "\n"
+          + this.RTLize(this.translate.instant(`DONNEES.${score}.description2`)) + "\n"
+          + this.RTLize(this.translate.instant(`DONNEES.${score}.description3`));
+        }
+        else {
+          return this.RTLize(this.translate.instant(`DONNEES.${score}.description`));
+        }
+      case 'p':
+        if(this.isArab) {
+          return this.RTLize(this.translate.instant(`PERSONNES.${score}.description1`)) + "\n"
+          + this.RTLize(this.translate.instant(`PERSONNES.${score}.description2`)) + "\n"
+          + this.RTLize(this.translate.instant(`PERSONNES.${score}.description3`));
+        }
+        else {
+          return this.RTLize(this.translate.instant(`PERSONNES.${score}.description`));
+        }
+      case 'c':
+        if(this.isArab) {
+          return this.RTLize(this.translate.instant(`CHOSES.${score}.description1`)) + "\n"
+          + this.RTLize(this.translate.instant(`CHOSES.${score}.description2`)) + "\n"
+          + this.RTLize(this.translate.instant(`CHOSES.${score}.description3`));
+        }
+        else {
+          return this.RTLize(this.translate.instant(`CHOSES.${score}.description`));
+        }
+    }
   }
 
   async getChart(resultat: Score[]) {
@@ -470,7 +570,17 @@ export class ResultPage {
     });
   }
 
+  RTLize(text: string) {
+    return this.isArab ? text.split(' ').reverse().join(' ') : text;
+  }
+
   async downloadRapportApprofondi() {
+    this.loader = await this.loadingController.create({
+      message: this.translate.instant('PLEASE_WAIT'),
+      spinner: 'circular'
+    });
+    await this.loader.present();
+
     this.mapResultPerStep();
     const total = this.resultat.reduce((a, b) => a + b.value, 0);
 
@@ -483,7 +593,7 @@ export class ResultPage {
         otherMetierRows.push([
           {
             text: metier.libelle_metier,
-            link: `http://afa9.org/metier.php?idmetier=${metier.id_metier}`,
+            link: `http://afa9.org/index/metier.php?idmetier=${metier.id_metier}`,
             decoration: 'underline'
           },
           {
@@ -533,7 +643,14 @@ export class ResultPage {
         columns: [
           [
             {
-              text: 'Votre code RIASEC : ' + this.codeHollandCompose,
+              text: this.translate.instant('YOUR_RIASEC_CODE'),
+              bold: true,
+              fontSize: 18,
+              alignment: 'center',
+              margin: [20, 0, 0, 20]
+            },
+            {
+              text: this.codeHollandCompose,
               bold: true,
               fontSize: 18,
               alignment: 'center',
@@ -585,21 +702,21 @@ export class ResultPage {
                 [
                   [
                     {
-                      text: this.resultat[0].key + ": " + this.getExplanationPdf(this.resultat[0].key),
+                      text: this.resultat[0].key + ": " + this.  getExplanation(this.resultat[0].key),
                       bold: true,
                       fontSize: 9,
                       alignment: 'center',
                       margin: [20, 5, 0, 20]
                     },
                     {
-                      text: this.resultat[1].key + ": " + this.getExplanationPdf(this.resultat[1].key),
+                      text: this.resultat[1].key + ": " + this.  getExplanation(this.resultat[1].key),
                       bold: true,
                       fontSize: 9,
                       alignment: 'center',
                       margin: [20, 5, 0, 20]
                     },
                     {
-                      text: this.resultat[2].key + ": " + this.getExplanationPdf(this.resultat[2].key),
+                      text: this.resultat[2].key + ": " + this.  getExplanation(this.resultat[2].key),
                       bold: true,
                       fontSize: 9,
                       alignment: 'center',
@@ -608,21 +725,21 @@ export class ResultPage {
                   ],
                   [
                     {
-                      text: this.autreResultat[0].key + ": " + this.getExplanationPdf(this.autreResultat[0].key),
+                      text: this.autreResultat[0].key + ": " + this.  getExplanation(this.autreResultat[0].key),
                       bold: true,
                       fontSize: 9,
                       alignment: 'center',
                       margin: [20, 5, 0, 20]
                     },
                     {
-                      text: this.autreResultat[1].key + ": " + this.getExplanationPdf(this.autreResultat[1].key),
+                      text: this.autreResultat[1].key + ": " + this.  getExplanation(this.autreResultat[1].key),
                       bold: true,
                       fontSize: 9,
                       alignment: 'center',
                       margin: [20, 5, 0, 20]
                     },
                     {
-                      text: this.autreResultat[2].key + ": " + this.getExplanationPdf(this.autreResultat[2].key),
+                      text: this.autreResultat[2].key + ": " + this.  getExplanation(this.autreResultat[2].key),
                       bold: true,
                       fontSize: 9,
                       alignment: 'center',
@@ -647,17 +764,17 @@ export class ResultPage {
             body: [
               [
                 {
-                  text: this.resultat[0].key + ": " + this.getExplanationPdf(this.resultat[0].key)
+                  text: this.resultat[0].key + ": " + this.  getExplanation(this.resultat[0].key)
                 }
               ],
               [
                 {
-                  text: this.resultat[1].key + ": " + this.getExplanationPdf(this.resultat[1].key)
+                  text: this.resultat[1].key + ": " + this.  getExplanation(this.resultat[1].key)
                 }
               ],
               [
                 {
-                  text: this.resultat[2].key + ": " + this.getExplanationPdf(this.resultat[2].key)
+                  text: this.resultat[2].key + ": " + this.  getExplanation(this.resultat[2].key)
                 }
               ],
             ]
@@ -681,6 +798,8 @@ export class ResultPage {
 
     var explanationTable = this.showOtherResult ? null : explanation;
 
+    let lang = localStorage.getItem('language');
+
     const documentDefinition = {
       header: {
         margin: [0, 5, 0, 10],
@@ -698,49 +817,55 @@ export class ResultPage {
         {
           image: await this.getBase64ImageFromURL(
             "./assets/img/afa9-logo.png"),
-            width: 500,
+          width: 500,
           alignment: 'center'
         },
         {
-          text: 'Orientation - Maroc',
+          text: this.RTLize(this.translate.instant('orientation')),
           fontSize: 24,
           bold: true,
           alignment: 'center'
-          // margin: [0, 10, 0, 10] // margin: [left, top, right, bottom]
         },
         {
-          text: 'Nom : ' + this.tokenInfo.nom,
+          text: this.RTLize(this.translate.instant('LAST_NAME') + ' : ' + this.tokenInfo.nom),
           fontSize: 12,
-          align: 'right'
+          alignment: this.isArab ? 'right' : 'left'
         },
         {
-          text: 'Prénom : ' + this.tokenInfo.prenom,
+          text: this.RTLize(this.translate.instant('FIRST_NAME') + ' : ' + this.tokenInfo.prenom),
           fontSize: 12,
-          align: 'right'
+          alignment: this.isArab ? 'right' : 'left'
         },
         {
-          text: 'Mail : ' + this.tokenInfo.adresse_email,
+          text: this.RTLize(this.translate.instant('EMAIL_ADDRESS') + ' : ' + this.tokenInfo.adresse_email),
           fontSize: 12,
-          align: 'right'
+          alignment: this.isArab ? 'right' : 'left'
         },
         {
-          text: 'Tél : ' + this.tokenInfo?.numero_telephone,
+          text: this.RTLize(this.translate.instant('PHONE_NUMBER') + ' : ' + this.tokenInfo.numero_telephone),
           fontSize: 12,
-          align: 'right'
+          alignment: this.isArab ? 'right' : 'left'
         },
         {
           image: await this.getBase64ImageFromURL(
             "./assets/img/afa9_qr.png"),
-          alignment: 'right',
-          width: 100,
+            alignment: this.isArab ? 'left' : 'right',
+          width: 90,
           margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         },
         {
-          text: 'Le profil RIASEC',
+          text: this.RTLize(this.translate.instant('INTRO')),
+          fontSize: 18,
+          margin: [0, 25, 0, 45], // margin: [left, top, right, bottom],
+          bold: true,
+          alignment: 'center',
+          pageBreak: 'before'
+        },
+        {
+          text: this.RTLize(this.translate.instant('RIASEC_PROFILE')),
           fontSize: 16,
           alignment: 'center',
-          bold: true,
-          pageBreak: 'before'
+          bold: true
         },
         {
           image: await this.getBase64ImageFromURL(
@@ -749,39 +874,45 @@ export class ResultPage {
           margin: [0, 10, 0, 10] // margin: [left, top, right, bottom]
         },
         {
-          text: 'Selon John Holland, le choix d’un métier ou d\'une profession est une forme d\'expression de la personnalité d\'un individu. La typologie dont il est l’auteur – la typologie de Holland – est représentée par les six types ci-contre.',
-          fontSize: 12,
-          alignment: 'justify',
+          text: this.isArab ? this.RTLize(this.translate.instant('HOLLAND_DESC1')) + "\n" +
+          this.RTLize(this.translate.instant('HOLLAND_DESC2')) + "\n" + this.RTLize(this.translate.instant('HOLLAND_DESC3')) + "\n" +
+          this.RTLize(this.translate.instant('HOLLAND_DESC4'))  : 
+          this.RTLize(this.translate.instant('HOLLAND_DESC')),
+          fontSize: 11.5,
+          alignment: this.isArab ? 'right' : 'justify',
           margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         },
         {
-          text: 'Votre appartenance à l\'un ou l\'autre des six types (code RIASEC) est déterminée par vos habiletés, certains traits de personnalité et vos intérêts. Chaque profession est donc associée à une combinaison de plusieurs types.',
-          fontSize: 12,
-          alignment: 'justify',
+          text: this.isArab ? this.RTLize(this.translate.instant('DESC_SUITE1')) + "\n" +
+          this.RTLize(this.translate.instant('DESC_SUITE2')) : 
+          this.RTLize(this.translate.instant('HOLLAND_DESC')),
+          fontSize: 11.5,
+          alignment: this.isArab ? 'right' : 'justify',
           margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         },
         {
-          text: 'Voici comment se situent vos résultats au regard de la typologie de Holland.',
+          text: this.RTLize(this.translate.instant('SITUATION_TYPOLOGY')),
           bold: true,
           fontSize: 12,
-          align: 'right',
+          alignment: this.isArab ? 'right' : 'left',
           margin: [5, 5, 0, 5] // margin: [left, top, right, bottom]
         },
         {
           ul: [
-            'Réaliste',
-            'Investigateur',
-            'Artistique',
-            'Social',
-            'Entreprenant',
-            'Conventionnel'
+            this.translate.instant('R'),
+            this.translate.instant('I'),
+            this.translate.instant('A'),
+            this.translate.instant('S'),
+            this.translate.instant('E'),
+            this.translate.instant('C')
           ],
+          alignment: this.isArab ? 'right' : 'left',
           margin: [10, 5, 0, 5] // margin: [left, top, right, bottom]
         },
         {
-          text: 'Votre code RIASEC :',
+          text: this.translate.instant('YOUR_RIASEC_CODE'),
           fontSize: 12,
-          align: 'right',
+          alignment: this.isArab ? 'right' : 'left',
           margin: [5, 5, 0, 5] // margin: [left, top, right, bottom]
         },
         this.getTextWithColor(this.resultat[0].key),
@@ -791,56 +922,45 @@ export class ResultPage {
           text: this.getParagraphTitleRapport(this.resultat[0], total),
           fontSize: 12,
           bold: true,
-          align: 'right',
+          alignment: this.isArab ? 'right' : 'left',
           margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         },
         this.getTextWithColor(this.resultat[0].key),
         {
           text: this.getParagraphRapport(this.resultat[0].key),
-          fontSize: 12,
-          alignment: 'justify',
+          fontSize: 11.5,
+          alignment: this.isArab ? 'right' : 'justify',
           margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         },
         {
           text: this.getParagraphTitleRapport(this.resultat[1], total),
           fontSize: 12,
           bold: true,
-          align: 'right',
+          alignment: this.isArab ? 'right' : 'left',
           margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         },
         this.getTextWithColor(this.resultat[1].key),
         {
           text: this.getParagraphRapport(this.resultat[1].key),
-          fontSize: 12,
-          alignment: 'justify',
+          fontSize: 11.5,
+          alignment: this.isArab ? 'right' : 'justify',
           margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         },
         {
           text: this.getParagraphTitleRapport(this.resultat[2], total),
           fontSize: 12,
           bold: true,
-          align: 'right',
+          alignment: this.isArab ? 'right' : 'left',
           margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         },
         this.getTextWithColor(this.resultat[2].key),
         {
           text: this.getParagraphRapport(this.resultat[2].key),
-          fontSize: 12,
-          alignment: 'justify',
+          fontSize: 11.5,
+          alignment: this.isArab ? 'right' : 'justify',
           margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         },
         score,
-        {
-          text: 'Vos scores intermédiaires : ',
-          fontSize: 15,
-          margin: [20, 10, 0, 0]
-        },
-        {
-          text: 'Etape 1 : ' + this.resultatStepOne + ' . Etape 2 : ' + this.resultatStepTwo + ' . Etape 3 : ' + this.resultatStepThree + ' . Etape 4 : ' + this.resultatStepFour,
-          fontSize: 18,
-          alignment: 'center',
-          margin: [0, 10, 0, 10]
-        },
         {
           text: ' ',
           fontSize: 15,
@@ -848,50 +968,63 @@ export class ResultPage {
         },
         explanationTable,
         {
-          text: 'Métiers et professions correspondant à votre profil RIASEC (Vous pouvez accéder à la description du métier en cliquant sur sa désignation) :',
+          text: this.RTLize(this.translate.instant('METIERS_LIST')),
           fontSize: 15,
+          alignment: this.isArab ? 'right' : 'left',
           margin: [20, 20, 0, 0]
         },
         {
           layout: 'lightHorizontalLines', // optional
           table: {
             headerRows: 1,
-            widths: ['*', 50, 50, 50],
+            widths: ['*'],
 
             body: this.getMetierRows()
           },
-          margin: 20
+          margin: 20,
+          pageBreak: 'before'
         },
+        {
+          text: this.RTLize(this.translate.instant('COMPETENCES_DESC')),
+          fontSize: 15,
+          alignment: this.isArab ? 'right' : 'left',
+          margin: [20, 20, 0, 0]
+        },
+        this.metiersWithDPCDesc(),
         otherMetierTable,
         {
           image: await this.getBase64ImageFromURL(
-            "./assets/img/manuel/manualFR_page-0002.jpg"),
+            `./assets/img/manuel/${lang}/manual_page-0002.jpg`),
           width: 500
         },
         {
           image: await this.getBase64ImageFromURL(
-            "./assets/img/manuel/manualFR_page-0003.jpg"),
+            `./assets/img/manuel/${lang}/manual_page-0003.jpg`),
           width: 500
         },
         {
           image: await this.getBase64ImageFromURL(
-            "./assets/img/manuel/manualFR_page-0004.jpg"),
+            `./assets/img/manuel/${lang}/manual_page-0004.jpg`),
           width: 500
         },
         {
           image: await this.getBase64ImageFromURL(
-            "./assets/img/manuel/manualFR_page-0005.jpg"),
+            `./assets/img/manuel/${lang}/manual_page-0005.jpg`),
           width: 500
         },
         {
           image: await this.getBase64ImageFromURL(
-            "./assets/img/manuel/manualFR_page-0006.jpg"),
+            `./assets/img/manuel/${lang}/manual_page-0006.jpg`),
           width: 500
         }
-      ]
+      ],
+      defaultStyle: {
+        font: 'ArialUnicodeMS'
+      }
     };
-
+    // pdfMake.createPdf(documentDefinition).open();
     const pdfDocGenerator = pdfMake.createPdf(documentDefinition).download();
+    await this.loader.dismiss();
     // pdfDocGenerator.getBase64((data) => {
     //   this.service.sendEmail(
     //     this.tokenInfo.adresse_email,
@@ -910,50 +1043,56 @@ export class ResultPage {
     switch (key) {
       case "R":
         return {
-          text: "Réaliste",
+          text: this.translate.instant('R'),
           color: 'white',
           bold: true,
           background: 'orange',
+          alignment: this.isArab ? 'right' : 'left',
           margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         }
       case "I":
         return {
-          text: "Investigateur",
+          text: this.translate.instant('I'),
           color: 'white',
           bold: true,
           background: 'pink',
+          alignment: this.isArab ? 'right' : 'left',
           margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         }
       case "A":
         return {
-          text: "Artistique",
+          text: this.translate.instant('A'),
           color: 'white',
           bold: true,
           background: 'purple',
+          alignment: this.isArab ? 'right' : 'left',
           margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         }
       case "S":
         return {
-          text: "Social",
+          text: this.translate.instant('S'),
           color: 'white',
           bold: true,
           background: 'blue',
+          alignment: this.isArab ? 'right' : 'left',
           margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         }
       case "E":
         return {
-          text: "Entreprenant",
+          text: this.translate.instant('E'),
           color: 'white',
           bold: true,
           background: 'green',
+          alignment: this.isArab ? 'right' : 'left',
           margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         }
       case "C":
         return {
-          text: "Conventionnel",
+          text: this.translate.instant('C'),
           color: 'white',
           bold: true,
           background: 'yellow',
+          alignment: this.isArab ? 'right' : 'left',
           margin: [0, 5, 0, 5] // margin: [left, top, right, bottom]
         }
     }
@@ -962,34 +1101,68 @@ export class ResultPage {
   getParagraphTitleRapport(score: Score, total: number) {
     switch (score.key) {
       case "R":
-        return "Le type Réaliste " + this.roundingNumber((score.value / total) * 100) + "%";
+        return this.RTLize(this.translate.instant('TYPE_R') + this.roundingNumber((score.value / total) * 100) + "% ");
       case "I":
-        return "Le type Investigateur " + this.roundingNumber((score.value / total) * 100) + "%";
+        return this.RTLize(this.translate.instant('TYPE_I') + this.roundingNumber((score.value / total) * 100) + "% ");
       case "A":
-        return "Le type Artistique " + this.roundingNumber((score.value / total) * 100) + "%";
+        return this.RTLize(this.translate.instant('TYPE_A') + this.roundingNumber((score.value / total) * 100) + "% ");
       case "S":
-        return "Le type Social " + this.roundingNumber((score.value / total) * 100) + "%";
+        return this.RTLize(this.translate.instant('TYPE_S') + this.roundingNumber((score.value / total) * 100) + "% ");
       case "E":
-        return "Le type Entreprenant " + this.roundingNumber((score.value / total) * 100) + "%";
+        return this.RTLize(this.translate.instant('TYPE_E') + this.roundingNumber((score.value / total) * 100) + "% ");
       case "C":
-        return "Le type Conventionnel " + this.roundingNumber((score.value / total) * 100) + "%";
+        return this.RTLize(this.translate.instant('TYPE_C') + this.roundingNumber((score.value / total) * 100) + "% ");
     }
   }
 
   getParagraphRapport(key: string) {
     switch (key) {
       case "R":
-        return "Les personnes de ce type exercent surtout des tâches concrètes. Habiles de leurs mains, elles savent coordonner leurs gestes. Elles se servent d’outils, font fonctionner des appareils, des machines, des véhicules. Les réalistes ont le sens de la mécanique, le souci de la précision. Plusieurs exercent leur profession à l’extérieur plutôt qu’à l’intérieur. Leur travail demande souvent une bonne endurance physique et même des capacités athlétiques. Ces personnes sont patientes, minutieuses, constantes, sensées, naturelles, franches, pratiques, concrètes, simples.";
+        return this.isArab ? this.RTLize(this.translate.instant('DESC_R1')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_R2')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_R3')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_R4')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_R5')) : 
+        this.RTLize(this.translate.instant('DESC_R'));
       case "I":
-        return "La plupart des personnes de ce type ont des connaissances théoriques auxquelles elles ont recours pour agir. Elles disposent de renseignements spécialisés dont elles se servent pour résoudre des problèmes. Ce sont des personnes qui observent. Leur principale compétence tient à la compréhension qu’elles ont des phénomènes. Elles aiment bien se laisser absorber dans leurs réflexions. Elles aiment jouer avec les idées. Elles valorisent le savoir. Ces personnes sont critiques, curieuses, soucieuses de se renseigner, calmes, réservées, persévérantes, tolérantes, prudentes dans leurs jugements, logiques, objectives, rigoureuses, intellectuelles.";
+        return this.isArab ? this.RTLize(this.translate.instant('DESC_I1')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_I2')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_I3')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_I4')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_I5')) : 
+        this.RTLize(this.translate.instant('DESC_I'));
       case "A":
-        return "Les personnes de ce type aiment les activités qui leur permettent de s’exprimer librement à partir de leurs perceptions, de leur sensibilité et de leur intuition. Elles s’intéressent au travail de création, qu’il s’agisse d’art visuel, de littérature, de musique, de publicité ou de spectacle. D’esprit indépendant et non conformiste, elles sont à l’aise dans des situations qui sortent de l’ordinaire. Elles sont dotées d’une grande sensibilité et de beaucoup d’imagination. Bien qu’elles soient rebutées par les tâches méthodiques et routinières, elles sont néanmoins capables de travailler avec discipline. Ces personnes sont spontanées, expressives, imaginatives, émotives, indépendantes, originales, intuitives, passionnées, fières, flexibles, disciplinées.";
+        return this.isArab ? this.RTLize(this.translate.instant('DESC_A1')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_A2')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_A3')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_A4')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_A5')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_A6')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_A7')) : 
+        this.RTLize(this.translate.instant('DESC_A'));
       case "S":
-        return "Les personnes de ce type aiment être en contact avec les autres dans le but de les aider, de les informer, de les éduquer, de les divertir, de les soigner ou encore de favoriser leur croissance. Elles s’intéressent aux comportements humains et sont soucieuses de la qualité de leurs relations avec les autres. Elles utilisent leur savoir ainsi que leurs impressions et leurs émotions pour agir et pour interagir avec les autres. Elles aiment communiquer et s’expriment facilement. Ces personnes sont attentives aux autres, coopératives, collaboratrices, compréhensives, dévouées, sensibles, sympathiques, perspicaces, bienveillantes, communicatives, encourageantes.";
+        return this.isArab ? this.RTLize(this.translate.instant('DESC_S1')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_S2')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_S3')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_S4')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_S5')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_S6')) : 
+        this.RTLize(this.translate.instant('DESC_S'));
       case "E":
-        return "Les personnes de ce type aiment influencer leur entourage. Leur capacité de décision, le sens de l’organisation et une habileté particulière à communiquer leur enthousiasme les appuient dans leurs objectifs. Elles savent vendre des idées autant que des biens matériels. Elles ont le sens de l’organisation, de la planification et de l’initiative et savent mener à bien leurs projets. Elles savent faire preuve d’audace et d’efficacité. Ces personnes sont persuasives, énergiques, optimistes, audacieuses, sûres d’elles-mêmes, ambitieuses, déterminées, diplomates, débrouillardes, sociables.";
+        return this.isArab ? this.RTLize(this.translate.instant('DESC_E1')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_E2')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_E3')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_E4')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_E5')) : 
+        this.RTLize(this.translate.instant('DESC_E'));
       case "C":
-        return "Les personnes de ce type ont une préférence pour les activités précises, méthodiques, axées sur un résultat prévisible. Elles se préoccupent de l’ordre et de la bonne organisation matérielle de leur environnement. Elles préfèrent se conformer à des conventions bien établies et à des consignes claires plutôt que d’agir dans l’improvisation. Elles aiment calculer, classer, tenir à jour des registres ou des dossiers. Elles sont efficaces dans tout travail qui exige de l’exactitude et à l’aise dans les tâches routinières. Ces personnes sont loyales, organisées, efficaces, respectueuses de l’autorité, perfectionnistes, raisonnables, consciencieuses, ponctuelles, discrètes, strictes.";
+        return this.isArab ? this.RTLize(this.translate.instant('DESC_C1')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_C2')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_C3')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_C4')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_C5')) + "\n" +
+        this.RTLize(this.translate.instant('DESC_C6')) : 
+        this.RTLize(this.translate.instant('DESC_C'));
     }
   }
 

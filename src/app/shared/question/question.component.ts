@@ -220,7 +220,6 @@ export class QuestionComponent {
         src: [path],
         onend: function() {
           this.icon = 'play-circle-outline';
-          console.log(this.icon);
         }
       });
       this.icon = 'pause-circle-outline';

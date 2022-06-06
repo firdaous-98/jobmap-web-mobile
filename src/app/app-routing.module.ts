@@ -34,7 +34,11 @@ const routes: Routes = [
   {
     path: 'language',
     loadChildren: () => import('./language/language.module').then( m => m.LanguagePageModule)
+  },  {
+    path: 'music',
+    loadChildren: () => import('./music/music.module').then( m => m.MusicPageModule)
   },
+
 
 ];
 

@@ -20,13 +20,13 @@ import { HttpClient } from '@angular/common/http';
     QuizPageRoutingModule,
     SharedModule,
     TranslateModule.forRoot({
-      loader: { 
+      loader: {
         provide: TranslateLoader,
         useFactory: (TranslatorService.createTranslateLoader()),
         deps: [HttpClient]
       }
-  })
+    })
   ],
   declarations: [QuizPage]
 })
-export class QuizPageModule {}
+export class QuizPageModule { }

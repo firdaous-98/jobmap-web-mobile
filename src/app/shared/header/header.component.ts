@@ -16,6 +16,9 @@ export class HeaderComponent implements OnInit {
   @Input()
   showHome: boolean;
 
+  @Input()
+  showMusic: boolean;
+
   @Output()
   backClickEvent = new EventEmitter();
 

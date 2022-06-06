@@ -11,11 +11,11 @@ body {
 }
 
 .bg {
-  animation:slide 3s ease-in-out infinite alternate;
-  background-image: linear-gradient(-60deg, #ff9f04 50%, #f1f0ed 50%);
+  animation:slide 25s ease-in-out infinite alternate;
+  background-image: linear-gradient(315deg, #f8ad5491 50%, #f19917 50%);
   bottom:0;
   left:-50%;
-  opacity:.5;
+  opacity:.2;
   position:fixed;
   right:-50%;
   top:0;
@@ -24,11 +24,11 @@ body {
 
 .bg2 {
   animation-direction:alternate-reverse;
-  animation-duration:4s;
+  animation-duration:30s;
 }
 
 .bg3 {
-  animation-duration:5s;
+  animation-duration:30s;
 }
 
 .content {
@@ -73,4 +73,50 @@ h1 {
     --width: 80%;
     --justify-content: center;
   }
+}
+
+.unpulse-button {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border: none;
+  box-shadow: 0 0 0 0 #ebbd75;
+  border-radius: 50%;
+  background-color: #ff9f04;
+  background-size:cover;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.pulse-button {
+
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border: none;
+  box-shadow: 0 0 0 0 #ebbd75;
+  border-radius: 50%;
+  background-color: #ff9f04;
+  background-size:cover;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  -webkit-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+  -moz-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+  -ms-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+  animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+.pulse-button:hover 
+{
+  -webkit-animation: none;-moz-animation: none;-ms-animation: none;animation: none;
+}
+
+@-webkit-keyframes pulse {to {box-shadow: 0 0 0 45px rgba(232, 76, 61, 0);}}
+@-moz-keyframes pulse {to {box-shadow: 0 0 0 45px rgba(232, 76, 61, 0);}}
+@-ms-keyframes pulse {to {box-shadow: 0 0 0 45px rgba(232, 76, 61, 0);}}
+@keyframes pulse {to {box-shadow: 0 0 0 45px rgba(232, 76, 61, 0);}}
+
+.audio-div {
+  position: fixed;
+    bottom: 5px;
+    right: 5px; 
 }

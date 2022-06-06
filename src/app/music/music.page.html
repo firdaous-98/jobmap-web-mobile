@@ -1,0 +1,24 @@
+<app-header [showBack]="true" [showHome]="true" (backClickEvent)="backClick()">
+</app-header>
+
+<ion-content>
+  <div class="container">
+    <div class="bg"></div>
+    <div class="bg bg2"></div>
+    <div class="bg bg3"></div>
+    <div>
+      <ion-card>
+          <ion-card-title>{{ 'MUSIC_CHOICE' | translate }}</ion-card-title>
+          <ion-list [class.text-arab]="isArab">
+              <ion-radio-group [(ngModel)]="currentMusic" (ionChange)="play($event)">
+                  <ion-item *ngFor="let song of playlist">
+                    <p>{{ song.title }}</p>
+                    <ion-radio slot="start" [value]="song.id"></ion-radio>
+                  </ion-item>
+                </ion-radio-group>
+          </ion-list>
+      </ion-card>
+      <ion-button class="next" (click)="Choose()">{{ 'START' | translate }}</ion-button>
+    </div>
+  </div>
+</ion-content>

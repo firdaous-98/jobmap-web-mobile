@@ -10,6 +10,26 @@ ion-card {
   }
 }
 
+@media screen and (max-width: 767px) {
+  ion-card {
+    width: 16rem;
+
+    ion-card-title {
+      font-size: 1rem !important;
+    }
+  }
+
+  p {
+    font-size: 0.75rem !important;
+  }
+}
+
+@media screen and (max-width: 250px) {
+  ion-card {
+    width: 13rem;
+  }
+}
+
 .numero-etape {
   display: flex;
   justify-content: center;

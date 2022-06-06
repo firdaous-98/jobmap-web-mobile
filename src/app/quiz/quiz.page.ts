@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,13 +10,14 @@ import { Reponse, Scores } from '../core/models/reponse.model';
 import { Score } from '../core/models/score.model';
 import { AppService } from '../core/services/app.service';
 import { TranslatorService } from '../core/services/translate.service';
+import { Howl } from 'howler';
 
 @Component({
   selector: 'app-quiz',
   templateUrl: './quiz.page.html',
   styleUrls: ['./quiz.page.scss'],
 })
-export class QuizPage {
+export class QuizPage implements OnDestroy {
 
   questionsArray: Question[];
   currentQuestion: Question;
@@ -29,6 +30,9 @@ export class QuizPage {
   scores: Scores;
   isArab: boolean;
   reponsesArray: string;
+  player: Howl = null;
+  musicPlaying = false;
+  musicButtonClass = "pulse-button";
 
   constructor(
     private service: AppService,
@@ -46,18 +50,19 @@ export class QuizPage {
     setTimeout(() => {
       this.translate.use(this.translatorService.getSelectedLanguage());
     }, 500);
+    this.playMusic();
   }
 
   async initQuestions() {
     await this.showMotivationAlert();
     this.service.get_questionsArray().subscribe((result: Question[]) => {
       this.questionsArray = result;
-      
-      if(!["null", null].includes(this.reponsesArray)) {
-        this.reponses = <Reponse[]> JSON.parse(this.reponsesArray);
+
+      if (!["null", null].includes(this.reponsesArray)) {
+        this.reponses = <Reponse[]>JSON.parse(this.reponsesArray);
         var currentQuestion = this.reponses.pop();
         this.currentQuestion = this.questionsArray.find(e => e.id_step == currentQuestion.id_step && e.id_quest == currentQuestion.id_quest);
-        
+
       } else {
         this.currentQuestion = this.questionsArray[0];
       }
@@ -67,6 +72,36 @@ export class QuizPage {
 
   initScore() {
     this.scores = { totalR: 0, totalI: 0, totalA: 0, totalS: 0, totalE: 0, totalC: 0 }
+  }
+
+  playMusic() {
+    if (!["null", null].includes(localStorage.getItem('music'))) {
+      this.musicPlaying = true;
+      let path = localStorage.getItem('music');
+      this.player = new Howl({
+        src: [path]
+      });
+      this.player.play();
+    }
+  }
+
+  pausePlayMusic() {
+    if (this.player) {
+      this.player.stop();
+      this.player = null;
+      this.musicButtonClass = "unpulse-button";
+    } else {
+      let path = localStorage.getItem('music');
+  
+      this.player = new Howl({
+        src: [path],
+        onend: function() {
+          this.player.play();
+        }
+      });
+      this.musicButtonClass = "pulse-button";
+      this.player.play();
+    }
   }
 
   async getResponse(reponse: Reponse) {
@@ -114,6 +149,7 @@ export class QuizPage {
       localStorage.setItem('result_step_4', JSON.stringify(resultat));
       var resultatFinal = this.composeCodeHolland(this.reponses);
       localStorage.setItem('reponses', null);
+      localStorage.setItem('music', null);
       this.router.navigate(['/result'], { state: { resultat: resultatFinal, resultPerStep: this.resultPerStep, fromQuiz: true } });
     }
   }
@@ -128,7 +164,7 @@ export class QuizPage {
       this.currentQuestion = previousQuestion;
     }
     else {
-      this.router.navigate(['/info']);
+      this.router.navigate(['/music']);
     }
   }
 
@@ -301,5 +337,9 @@ export class QuizPage {
   @HostListener('unloaded')
   ngOnDestroy() {
     console.log('Items destroyed');
+    if(this.player != null) {
+      this.player.stop();
+    }
+    localStorage.setItem('music', null);
   }
 }
