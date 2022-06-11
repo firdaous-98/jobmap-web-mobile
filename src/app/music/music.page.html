@@ -10,7 +10,7 @@
       <ion-card>
           <ion-card-title>{{ 'MUSIC_CHOICE' | translate }}</ion-card-title>
           <ion-list [class.text-arab]="isArab">
-              <ion-radio-group [(ngModel)]="currentMusic" (ionChange)="play($event)">
+              <ion-radio-group [(ngModel)]="currentMusic" (ionChange)="play()">
                   <ion-item *ngFor="let song of playlist">
                     <p>{{ song.title }}</p>
                     <ion-radio slot="start" [value]="song.id"></ion-radio>

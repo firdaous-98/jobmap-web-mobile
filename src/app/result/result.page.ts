@@ -463,7 +463,7 @@ export class ResultPage {
     return metierTableList;
   }
 
-  getMetierLink(id: string) {
+  getMetierLink(id: number) {
     return `http://afa9.org/index/metier.php?idmetier=${id}`;
   }
 
