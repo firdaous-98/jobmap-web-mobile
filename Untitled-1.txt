@@ -1,0 +1,8 @@
+instructions:
+
+generate aab file: 
+ionic cordova build android --prod --release -- -- --packageType=bundle --minifyjs --minifycss --optimizejs
+
+sign file: 
+jarsigner -sigalg SHA256withRSA -digestalg SHA-256 -keystore release.jks ./platforms/android/app/build/outputs/bundle/release/app-release.aab afa9 
+password: edutech2022@@
